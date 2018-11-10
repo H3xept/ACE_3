@@ -8,17 +8,7 @@
 #include "OOP.h"
 #include "../utilities/utilities.h"
 
-static const char* const 	DESCRIPTOR_PREFIX = "<String:";
-static const char* const 	DESCRIPTOR_SUFFIX = ">";
-
 static const char* const 	type_string = "String";
-
-// PRIVATE FUNCTIONS
-static char* make_description(const char* const prefix, const char* const suffix, const char* const str);
-
-// PRIVATE METHODS 
-static void __Invalidate_Description(String* self);
-static char* __Compute_Description(String* self);
 
 // INTERFACE - @OVERRIDE VIRTUAL METHODS
 static Object* 			 	_Object_Ctor(Object * self, va_list args);
@@ -38,7 +28,6 @@ static struct Class_Descriptor _String_Class_Descriptor = {
 	sizeof(String),
 	&vtbl
 };
-
 const void * String_Class_Descriptor = &_String_Class_Descriptor;
 
 // VIRTUAL METHODS (PRIVATE)
@@ -77,6 +66,18 @@ static const char* const _Object_Descriptor(Object * self)
 		_self->description = __Compute_Description(_self);
 	return _self->description;
 }
+
+// ------------- END BOILERPLATE
+
+static const char* const 	DESCRIPTOR_PREFIX = "<String:";
+static const char* const 	DESCRIPTOR_SUFFIX = ">";
+
+// PRIVATE FUNCTIONS
+static char* make_description(const char* const prefix, const char* const suffix, const char* const str);
+
+// PRIVATE METHODS 
+static void __Invalidate_Description(String* self);
+static char* __Compute_Description(String* self);
 
 // NON-VIRTUAL METHODS
 
