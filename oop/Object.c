@@ -3,7 +3,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include "Object.h"
-#include "OOP.h"
+#include "Class_Descriptor.h"
 #include "../utilities/utilities.h"
 
 static const char* const 	type_string = "Object";
