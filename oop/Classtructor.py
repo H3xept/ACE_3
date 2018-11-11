@@ -17,6 +17,7 @@ class Classtructor(object):
 	def set_description(self, description):
 		self.description = description
 
+
 	def run(self):
 		if not self.validate():
 			print("[!!] Class invalid, arguments missing.")
@@ -24,6 +25,7 @@ class Classtructor(object):
 
 		self.build_class_header()
 		self.build_class_source()
+		self.add_to_umbrella()
 
 	def build_class_header(self):
 
@@ -34,7 +36,7 @@ class Classtructor(object):
 				temp_content = temp_content.replace("__DATE__",DATE_STRING)
 				if (self.description != ""):
 					temp_content = temp_content.replace("__DESCRIPTION__",self.description)
-				temp_content = temp_content.replace("__AUTHORS__",','.join(K_AUTHORS))
+				temp_content = temp_content.replace("__AUTHORS__",', '.join(K_AUTHORS))
 				header.write(temp_content)
 
 	def build_class_source(self):
@@ -49,6 +51,15 @@ class Classtructor(object):
 				temp_content = temp_content.replace("__AUTHORS__",','.join(K_AUTHORS))
 				source.write(temp_content)
 
+	def add_to_umbrella(self):
+		lines = []
+		with open("umbrella.h","r") as umbrella:
+			lines = umbrella.readlines()
+		with open("umbrella.h","w") as umbrella:
+			lines.insert(-2, '#include "'+self.name+'.h"\n')
+			umbrella.write("".join(lines) if (lines[-1] == '\n') else "".join(lines))
+
+
 	def validate(self):
 		return self.name != ""
 
@@ -56,7 +67,7 @@ def main(argv):
 	constructor = Classtructor()
 
 	available_flags = { ('-n','--name'): constructor.set_class_name, 
-						('-d','--description'): constructor.set_description }
+						('-d','--description'): constructor.set_description}
 
 	for flag_tuple in available_flags:
 		for index, arg in enumerate(argv):
