@@ -30,6 +30,17 @@ static struct Class_Descriptor _String_Class_Descriptor = {
 };
 const void * String_Class_Descriptor = &_String_Class_Descriptor;
 
+static const char* const 	DESCRIPTOR_PREFIX = "<String:";
+static const char* const 	DESCRIPTOR_SUFFIX = ">";
+
+// PRIVATE FUNCTIONS
+static char* make_description(const char* const prefix, const char* const suffix, const char* const str);
+
+// PRIVATE METHODS 
+static void __Invalidate_Description(String* self);
+static char* __Compute_Description(String* self);
+static char* __Compute_Description(String* self);
+
 // VIRTUAL METHODS (PRIVATE)
 
 static Object* _Object_Ctor(Object * self, va_list args)
@@ -68,16 +79,6 @@ static const char* const _Object_Descriptor(Object * self)
 }
 
 // ------------- END BOILERPLATE
-
-static const char* const 	DESCRIPTOR_PREFIX = "<String:";
-static const char* const 	DESCRIPTOR_SUFFIX = ">";
-
-// PRIVATE FUNCTIONS
-static char* make_description(const char* const prefix, const char* const suffix, const char* const str);
-
-// PRIVATE METHODS 
-static void __Invalidate_Description(String* self);
-static char* __Compute_Description(String* self);
 
 // NON-VIRTUAL METHODS
 
