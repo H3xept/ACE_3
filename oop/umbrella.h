@@ -6,5 +6,6 @@
 #include "String.h"
 #include "../utilities/utilities.h"
 #include "MemoryController.h"
+#include "ALU.h"
 
 #endif
