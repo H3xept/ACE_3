@@ -154,7 +154,7 @@ int16_t SHL(ALU* self, int16_t num_1, int16_t num_2){
 	return num_1 << num_2;
 }
 
-//logical right-shift on argument 1 (argument 2 specifies displacement)
+//arithmetic right-shift on argument 1 (argument 2 specifies displacement)
 int16_t SHR(ALU* self, int16_t num_1, int16_t num_2){
 	return num_1 >> num_2;
 }
