@@ -109,12 +109,12 @@ static const char* const _Object_Descriptor(Object * self)
 // ...
 
 //returns true if value given was greater than 0
-bool SKC(int16_t num){
+bool SKC(ALU* self, int16_t num){
 	return (num > 0);
 }
 
 //returns sum of two 16bit ints
-int16_t ADD(int16_t num_1, int16_t num_2, int16_t* status_reg){
+int16_t ADD(ALU* self, int16_t num_1, int16_t num_2, int16_t* status_reg){
 	int16_t ans = num_1 + num_2;
 	if((num_1 >> 15 == num_2 >> 15) & (num_1 >> 15 != ans >> 15)) 
 		status_reg = OR(status_reg, 0b10);
@@ -123,7 +123,7 @@ int16_t ADD(int16_t num_1, int16_t num_2, int16_t* status_reg){
 
 //returns product of two 16bit ints
 //DETECTING OVERFLOW? ALSO SIZE OF PRODUCT TOO BIG?(I think this works...)
-int16_t MUL(int16_t num_1, int16_t num_2, int16_t* status_reg){
+int16_t MUL(ALU* self, int16_t num_1, int16_t num_2, int16_t* status_reg){
 	int16_t ans = num_1 * num_2;
 	if(((num_1 >> 15 == num_2 >> 15) & (num_1 >> 15 != ans >> 15)) | ((num_1 >> 15 != num_2 >> 15) &  ((ans >> 15) == 0)))
 		*status_reg = OR(*status_reg, 0b10);
@@ -131,31 +131,31 @@ int16_t MUL(int16_t num_1, int16_t num_2, int16_t* status_reg){
 }
 
 //returns result of first argument divided by second argument
-int16_t DIV(int16_t num_1, int16_t num_2){
+int16_t DIV(ALU* self, int16_t num_1, int16_t num_2){
 	return num_1 / num_2;
 }
 
 //bitwise AND of two 16bit ints 
-int16_t AND(int16_t num_1, int16_t num_2){
+int16_t AND(ALU* self, int16_t num_1, int16_t num_2){
 	return num_1 & num_2;
 }
 
 //bitwise OR of two 16bit ints 
-int16_t OR(int16_t num_1, int16_t num_2){
+int16_t OR(ALU* self, int16_t num_1, int16_t num_2){
 	return num_1 | num_2;
 }
 
-int16_t NOT(int16_t num){
+int16_t NOT(ALU* self, int16_t num){
 	return ~num;
 }
 
 //logical left-shift on argument 1 (argument 2 specifies displacement)
-int16_t SHL(int16_t num_1, int16_t num_2){
+int16_t SHL(ALU* self, int16_t num_1, int16_t num_2){
 	return num_1 << num_2;
 }
 
 //logical right-shift on argument 1 (argument 2 specifies displacement)
-int16_t SHR(int16_t num_1, int16_t num_2){
+int16_t SHR(ALU* self, int16_t num_1, int16_t num_2){
 	return num_1 >> num_2;
 }
 
