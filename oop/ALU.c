@@ -1,7 +1,7 @@
 /**
 * Filename: ALU.c
 * Class: ALU
-* Authors: Leonardo Cascianelli,Rory Brown,Ewan Skene
+* Authors: Leonardo Cascianelli, Rory Brown, Ewan Skene
 * Date: 2018-11-12
 * 
 * Description: the place where arithmetic and logical operations take place
@@ -18,7 +18,7 @@
 #include "../utilities/utilities.h"
 #include "ALU.h"
 
-#warning Temporary
+#warning Temporary - We will have a constants file
 #define WORD_LENGTH 16
 
 /// The type string of ALU

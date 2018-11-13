@@ -25,13 +25,15 @@ static Object* 			 	_Object_Ctor(Object * self, va_list args);
 static Object* 			 	_Object_Dtor(Object * self);
 static const char* const 	_Object_Type_Descriptor(Object * _self);
 static const char* const 	_Object_Descriptor(Object * self);
+static unsigned int 		_Object_Equals(Object* self, Object* obj);
 
 /// Function binding for virtual methods table
 static struct ObjectVTbl 	vtbl = {
 								&_Object_Ctor,
 								&_Object_Dtor,
 								&_Object_Type_Descriptor,
-								&_Object_Descriptor
+								&_Object_Descriptor,
+								&_Object_Equals
 							};
 
 /// Class descriptor structure to instantiate __CLASS_NAME__
@@ -89,6 +91,15 @@ static const char* const _Object_Type_Descriptor(Object * self)
 * @return: const char* const - The string that describes the instantiated object.
 */
 static const char* const _Object_Descriptor(Object * self)
+{
+	// Downcast to __CLASS_NAME__
+	__CLASS_NAME__* _self = (__CLASS_NAME__*)self;
+	_warn("Class __CLASS_NAME__ does not respond to %s",__func__);
+	assert(0);
+	return NULL;
+}
+
+static unsigned int _Object_Equals(Object* self, Object* obj)
 {
 	// Downcast to __CLASS_NAME__
 	__CLASS_NAME__* _self = (__CLASS_NAME__*)self;
