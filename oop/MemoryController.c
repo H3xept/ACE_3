@@ -142,18 +142,19 @@ int16_t MemoryController_Word_At_Address(MemoryController* self, int16_t addr)
 
 void MemoryController_Set_Word_At_Address(MemoryController* self, int16_t addr, int16_t word)
 {
-	__Set_Word_At_Ptr(self, __Ptr_For_Address(self, addr), word);
 	_info("Setting %d = %d (real addr: %p)",addr,word, __Ptr_For_Address(self,addr));
+	__Set_Word_At_Ptr(self, __Ptr_For_Address(self, addr), word);
 }
 
 void MemoryController_Clear_Memory(MemoryController* self)
 {
-	memset((void*)__memory, 0x0, TOTAL_MEM);
 	_info("Clearing memory...",NULL);
+	memset((void*)__memory, 0x0, TOTAL_MEM);
 }
 
 void MemoryController_Load_Memory_From_Ptr(MemoryController* self, void* ptr, size_t size)
 {
+	_info("Loading memory from %p | size: %lu", ptr, size);
 	if (size >MAX_PROG_SIZE)
 		_err("Trying to load a program bigger than the max allowed size. (Prog. size: %d | Max size: %d", size, MAX_PROG_SIZE);
 	MemoryController_Clear_Memory(self);
