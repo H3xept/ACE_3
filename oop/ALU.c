@@ -12,10 +12,14 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include "Object.h"
 #include "OOP.h"
 #include "../utilities/utilities.h"
 #include "ALU.h"
+
+#warning Temporary
+#define WORD_LENGTH 16
 
 /// The type string of ALU
 static const char* const 	type_string = "ALU";
@@ -55,11 +59,10 @@ const void * ALU_Class_Descriptor = &_ALU_Class_Descriptor;
 */
 static Object* _Object_Ctor(Object * self, va_list args)
 {
-	// Downcast to ALU
 	ALU* _self = (ALU*)self;
-	_warn("Class ALU does not respond to %s",__func__);
-	assert(0);
-	return NULL;
+	_self->flags.halt = 0;
+	_self->flags.overflow = 0;
+	return self;
 }
 
 /**
@@ -69,11 +72,7 @@ static Object* _Object_Ctor(Object * self, va_list args)
 */
 static Object* _Object_Dtor(Object * self)
 {
-	// Downcast to ALU
-	ALU* _self = (ALU*)self;
-	_warn("Class ALU does not respond to %s",__func__);
-	assert(0);
-	return NULL;
+	return self;
 }
 
 /**
@@ -93,7 +92,7 @@ static const char* const _Object_Type_Descriptor(Object * self)
 */
 static const char* const _Object_Descriptor(Object * self)
 {
-	return "<theALU>";
+	return "<ALU>";
 }
 
 // Private class methods for ALU
@@ -106,60 +105,95 @@ static const char* const _Object_Descriptor(Object * self)
 // ...
 
 // Public instance methods for ALU
-// ...
-
-//returns true if value given was greater than 0
-bool SKC(int16_t num){
-	return (num > 0);
-}
 
 //returns sum of two 16bit ints
-int16_t ADD(int16_t num_1, int16_t num_2, int16_t* status_reg){
-	int16_t ans = num_1 + num_2;
-	if((num_1 >> 15 == num_2 >> 15) & (num_1 >> 15 != ans >> 15)) 
-		status_reg = OR(status_reg, 0b10);
-	return ans;
+int16_t ALU_Add(ALU* self, int16_t num_1, int16_t num_2)
+{
+	int16_t ret = 0;
+	if ((num_1 > 0 && num_2 > INT16_MAX - num_1) || 
+		(num_1 < 0 && num_2 < INT16_MIN - num_1)) {
+		_warn("Overflow detected!", NULL);
+		uint16_t tnum_1 = 1+UINT16_MAX+num_1;
+		uint16_t tnum_2 = 1+UINT16_MAX+num_2;
+		ret = 0 | (tnum_2+tnum_1);
+		self->flags.overflow = 1;
+	}
+	else{
+		self->flags.overflow = 0;
+		ret = num_1+num_2;
+	}
+	return ret;
 }
 
 //returns product of two 16bit ints
 //DETECTING OVERFLOW? ALSO SIZE OF PRODUCT TOO BIG?(I think this works...)
-int16_t MUL(int16_t num_1, int16_t num_2, int16_t* status_reg){
-	int16_t ans = num_1 * num_2;
-	if(((num_1 >> 15 == num_2 >> 15) & (num_1 >> 15 != ans >> 15)) | ((num_1 >> 15 != num_2 >> 15) &  ((ans >> 15) == 0)))
-		*status_reg = OR(*status_reg, 0b10);
-	return ans;
+int16_t ALU_Multiply(ALU* self, int16_t num_1, int16_t num_2)
+{
+	unsigned int overflow = 0;
+	int16_t ret = 0;
+
+	if (num_1 > 0)
+	{
+		if (num_2 > 0 && num_1 > INT16_MAX/num_2){
+			overflow = 1;
+		} else if(num_1 < INT16_MIN/num_2) {
+			overflow = 1;
+		}
+	} else {
+		if (num_2 > 0 && num_2 < INT16_MIN/num_1) {
+			overflow = 1;
+		} else if (num_1 != 0 && num_2 < INT16_MAX/num_1) {
+			overflow = 1;
+		}
+	} self->flags.overflow = overflow;
+
+	if (overflow) {
+		_warn("Overflow detected!", NULL);
+		uint16_t tnum_1 = 1+UINT16_MAX+num_1;
+		uint16_t tnum_2 = 1+UINT16_MAX+num_2;
+		ret = 0 | tnum_2*tnum_1;
+	} else {
+		ret = num_1*num_2;
+	}
+	return ret;
 }
 
 //returns result of first argument divided by second argument
-int16_t DIV(int16_t num_1, int16_t num_2){
-	return num_1 / num_2;
+int16_t ALU_Divide(ALU* self, int16_t num_1, int16_t num_2)
+{
+	if (num_2 == 0) 
+		_err("Division by zero! Aborting...", NULL);
+	if (num_1 == INT16_MIN && num_2 == -1) {
+		_warn("Overflow detected!", NULL);
+		self->flags.overflow = 1;
+		return num_1;
+	} self->flags.overflow = 0;
+	return num_1/num_2;
 }
 
 //bitwise AND of two 16bit ints 
-int16_t AND(int16_t num_1, int16_t num_2){
+int16_t ALU_Bitwise_And(int16_t num_1, int16_t num_2)
+{
 	return num_1 & num_2;
 }
 
 //bitwise OR of two 16bit ints 
-int16_t OR(int16_t num_1, int16_t num_2){
+int16_t ALU_Bitwise_Or(ALU* self, int16_t num_1, int16_t num_2)
+{
 	return num_1 | num_2;
 }
 
-int16_t NOT(int16_t num){
+int16_t ALU_Bitwise_Not(ALU* self, int16_t num)
+{
 	return ~num;
 }
 
-//logical left-shift on argument 1 (argument 2 specifies displacement)
-int16_t SHL(int16_t num_1, int16_t num_2){
+int16_t ALU_Shift_Left_Logical(ALU* self, int16_t num_1, int16_t num_2)
+{
 	return num_1 << num_2;
 }
 
-//logical right-shift on argument 1 (argument 2 specifies displacement)
-int16_t SHR(int16_t num_1, int16_t num_2){
-	return num_1 >> num_2;
+int16_t ALU_Shift_Right_Logical(ALU* self, int16_t num_1, int16_t num_2)
+{
+	return (num_1 >> num_2) & ((int)(pow(2,16-num_2)));
 }
-
-
-
-
-
