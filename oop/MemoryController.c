@@ -35,13 +35,15 @@ static Object* 			 	_Object_Ctor(Object * self, va_list args);
 static Object* 			 	_Object_Dtor(Object * self);
 static const char* const 	_Object_Type_Descriptor(Object * _self);
 static const char* const 	_Object_Descriptor(Object * self);
+static unsigned int 		_Object_Equals(Object* self, Object* obj);
 
 /// Function binding for virtual methods table
 static struct ObjectVTbl 	vtbl = {
 								&_Object_Ctor,
 								&_Object_Dtor,
 								&_Object_Type_Descriptor,
-								&_Object_Descriptor
+								&_Object_Descriptor,
+								&_Object_Equals
 							};
 
 /// Class descriptor structure to instantiate MemoryController
@@ -106,6 +108,11 @@ static const char* const _Object_Descriptor(Object * self)
 	return "<MemoryController>";
 }
 
+static unsigned int _Object_Equals(Object* self, Object* obj)
+{
+	return Object_Equals(self,obj);
+}
+
 // Private class methods for MemoryController
 // ...
 
@@ -147,9 +154,8 @@ void MemoryController_Clear_Memory(MemoryController* self)
 
 void MemoryController_Load_Memory_From_Ptr(MemoryController* self, void* ptr, size_t size)
 {
-	if (size >MAX_PROG_SIZE) {
-		_err("Trying to load a program bigger than the max allowed size. (Prog. size: %d | Max size: %d",size, MAX_PROG_SIZE);
-	}
+	if (size >MAX_PROG_SIZE)
+		_err("Trying to load a program bigger than the max allowed size. (Prog. size: %d | Max size: %d", size, MAX_PROG_SIZE);
 	MemoryController_Clear_Memory(self);
 	memcpy((void*)__memory, ptr, size);
 }

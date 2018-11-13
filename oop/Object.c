@@ -13,13 +13,15 @@ static Object* 			 	_Object_Ctor(Object * self, va_list args);
 static Object* 			 	_Object_Dtor(Object * self);
 static const char* const 	_Object_Type_Descriptor(Object * _self);
 static const char* const 	_Object_Descriptor(Object * self);
+static unsigned int 		_Object_Equals(Object* self, Object* obj);
 // --
 
 static struct ObjectVTbl 		vtbl = {
 								&_Object_Ctor,
 								&_Object_Dtor,
 								&_Object_Type_Descriptor,
-								&_Object_Descriptor
+								&_Object_Descriptor,
+								&_Object_Equals
 							};
 
 static struct Class_Descriptor _Object_Class_Descriptor = {
@@ -48,6 +50,11 @@ static const char* const _Object_Type_Descriptor(Object * self)
 static const char* const _Object_Descriptor(Object * self)
 {
 	return "<Object>";
+}
+
+static unsigned int _Object_Equals(Object* self, Object* obj)
+{
+	return &self == &obj;
 }
 
 // VIRTUAL METHODS HANDLES (PUBLIC)
@@ -85,6 +92,14 @@ const char* const Object_Descriptor(Object * self)
 		return self->vptr->descriptor(self);
 	_err("Object descriptor not found in vtable.", NULL);
 	return NULL;
+}
+
+unsigned int Object_Equals(Object* self, Object* obj)
+{
+	assert(self && obj);
+	if (self->vptr->equals)
+		return self->vptr->equals(self,obj);
+	_err("Object equality comparator not found in vtable", NULL);
 }
 
 // NON-VIRTUAL METHODS

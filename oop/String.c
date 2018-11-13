@@ -15,13 +15,15 @@ static Object* 			 	_Object_Ctor(Object * self, va_list args);
 static Object* 			 	_Object_Dtor(Object * self);
 static const char* const 	_Object_Type_Descriptor(Object * _self);
 static const char* const 	_Object_Descriptor(Object * self);
+static unsigned int 		_Object_Equals(Object* self, Object* obj);
 // --
 
 static struct ObjectVTbl 	vtbl = {
 								&_Object_Ctor,
 								&_Object_Dtor,
 								&_Object_Type_Descriptor,
-								&_Object_Descriptor
+								&_Object_Descriptor,
+								&_Object_Equals
 							};
 
 static struct Class_Descriptor _String_Class_Descriptor = {
@@ -76,6 +78,14 @@ static const char* const _Object_Descriptor(Object * self)
 	if (!(_self->description))
 		_self->description = __Compute_Description(_self);
 	return _self->description;
+}
+
+
+static unsigned int _Object_Equals(Object* self, Object* obj)
+{
+	String* _self = (String*)self;
+	String* _obj = (String*)obj;
+	return _self->text == _obj->text;
 }
 
 // ------------- END BOILERPLATE
