@@ -195,5 +195,9 @@ int16_t ALU_Shift_Left_Logical(ALU* self, int16_t num_1, int16_t num_2)
 
 int16_t ALU_Shift_Right_Logical(ALU* self, int16_t num_1, int16_t num_2)
 {
-	return (num_1 >> num_2) & ((int)(pow(2,16-num_2)));
+	if (num_2 > 0){
+		num_1 = (num_1 >> num_2) & ((int)(pow(2,16-num_2)-1));
+	} else {
+		num_1 = (num_1 << -num_2);
+	}
 }
