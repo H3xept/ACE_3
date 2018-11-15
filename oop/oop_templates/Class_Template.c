@@ -43,6 +43,15 @@ static struct Class_Descriptor ___CLASS_NAME___Class_Descriptor = {
 };
 const void * __CLASS_NAME___Class_Descriptor = &___CLASS_NAME___Class_Descriptor;
 
+// Private fields for __CLASS_NAME__
+// ...
+
+// Private class method declarations for __CLASS_NAME__
+// ...
+
+// Private instance method declarations for __CLASS_NAME__
+// ...
+
 /// Private overrides for 'Object' virtual methods (implementation)
 
 /**
