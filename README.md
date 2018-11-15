@@ -35,12 +35,18 @@
 + `1011 / S2` Saved Register 2 (16 bits)
 + `1100 / SP` Stack Pointer (12 bits)
 + `1101 / FP` Frame Pointer (12 bits)
-+ `1110 / FR` Flag Register (2 bits)
++ `1110 / FR` Flag Register (5 bits)
 + `1111 / PR` Pseudoinstruction Register (16 bits)
 
 ## Flag Register
 + 0: Halt
 + 1: Overflow
++ 2: Input
++ 3-4: Exit codes
+
+### Exit codes
++ 0: Ok
++ 1: Segfault
 
 ## Instructions
 
@@ -68,6 +74,12 @@ Loads the contents of the given address into the given register. Can accept imme
 **Operand A:** 4 bit register address, padded with 0s. May have a 1 in the first bit.
 
 **Operand B:** 12 bit memory address, padded with 0s. If the first bit of operand A is 1, then treated as a 16 bit immediate value.
+
+---
+### `0110 / OUT` Output
+Places the contents of the output register into the output queue.
+
+**Operand:** One bit indicating whether or not to print, padded with 0s.
 
 ---
 ### `0111 / MOVE` Move
