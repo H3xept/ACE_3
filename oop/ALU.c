@@ -18,8 +18,7 @@
 #include "../utilities/utilities.h"
 #include "ALU.h"
 
-#warning Temporary
-#define WORD_LENGTH 16
+#include "./constants/arch_const.h"
 
 /// The type string of ALU
 static const char* const 	type_string = "ALU";

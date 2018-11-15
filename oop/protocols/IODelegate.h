@@ -2,14 +2,7 @@
 #define __IODELEGATE__
 
 #include <ctype.h>
-
-#warning Temporary
-#define WORD_SIZE 16
-#if WORD_SIZE == 16
-typedef int16_t word_t;
-#else
-typedef int32_t word_t;
-#endif
+#include "../constants/var_word_size.h"
 
 typedef struct {
 	word_t 	(*IODelegate_Get_Word_From_Input_Queue)(IODelegate * delegate);

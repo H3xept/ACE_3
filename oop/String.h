@@ -8,8 +8,8 @@ typedef struct _String {
 } String;
 
 // METHODS
-char* Get_Text(String* self);
-void Set_Text(String* self, char* text);
+char* String_Get_Text(String * self);
+void String_Set_Text(String* self, char* text);
 
 extern const void * String_Class_Descriptor;
 

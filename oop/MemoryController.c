@@ -20,14 +20,7 @@
 #include "../utilities/utilities.h"
 #include "MemoryController.h"
 #include "./protocols/MemoryDelegate.h"
-
-#define WORD_SIZE 16
-#define MIN_BITS_ADDRESSABLE 16
-#define ADDR_LENGTH 12
-#define WORDS_IN_MEM (int)(((pow(2,ADDR_LENGTH))*MIN_BITS_ADDRESSABLE)/WORD_SIZE)
-#define TOTAL_MEM WORD_SIZE*WORDS_IN_MEM
-// Arbitrary: we just assumed that the stack will be big enough being 1/4 of total memory.
-#define MAX_PROG_SIZE ((3.0/4.0)*TOTAL_MEM) 
+#include "./constants/arch_const.h"
 
 /// The type string of MemoryController
 static const char* const 	type_string = "MemoryController";
@@ -164,7 +157,7 @@ static void MemoryDelegate_Load_Memory_From_Ptr(struct MemoryDelegate* self, voi
 {	
 	//MemoryController* _self = (MemoryController*)self; // Explicit downcast
 	_info("Loading memory from %p | size: %lu", ptr, size);
-	if (size >MAX_PROG_SIZE)
+	if (size > MAX_PROG_SIZE)
 		_err("Trying to load a program bigger than the max allowed size. (Prog. size: %d | Max size: %d", size, MAX_PROG_SIZE);
 	MemoryDelegate_Clear_Memory(self);
 	memcpy((void*)__memory, ptr, size);

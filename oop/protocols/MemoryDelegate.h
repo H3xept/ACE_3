@@ -1,13 +1,7 @@
 #ifndef __MemoryDelegate__
 #define __MemoryDelegate__
 
-#warning Temporary
-#define WORD_SIZE 16
-#if WORD_SIZE == 16
-typedef int16_t word_t;
-#else
-typedef int32_t word_t;
-#endif
+#include "../constants/var_word_size.h"
 
 struct MemoryDelegate {
 	word_t (*MemoryDelegate_Word_At_Address)(struct MemoryDelegate * self, word_t addr) ;
