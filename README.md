@@ -30,12 +30,12 @@
 + `0101 / T1` Temporary Register 1 (16 bits)
 + `0110 / T2` Temporary Register 2 (16 bits)
 + `0111 / T3` Temporary Register 3 (16 bits)
-+ `1000 / S1` Temporary Register 4 (16 bits)
-+ `1001 / S2` Saved Register 1 (16 bits)
-+ `1010 / S3` Saved Register 2 (16 bits)
++ `1000 / T4` Temporary Register 4 (16 bits)
++ `1001 / S1` Saved Register 1 (16 bits)
++ `1010 / S2` Saved Register 2 (16 bits)
 + `1011 / S3` Saved Register 3 (16 bits)
-+ `1100 / S3` Saved Register 4 (16 bits)
-+ `1101 / S3` Saved Register 5 (16 bits)
++ `1100 / S4` Saved Register 4 (16 bits)
++ `1101 / S5` Saved Register 5 (16 bits)
 + `1110 / PR` Pseudoinstruction Register (16 bits)
 + `1111 / FR` Flag Register (5 bits)
 
@@ -48,6 +48,7 @@
 ### Exit codes
 + 0: Ok
 + 1: Segfault
++ 2: Illegal register access
 
 ## Instructions
 
@@ -77,10 +78,30 @@ Loads the contents of the given address into the given register. Can accept imme
 **Operand B:** 12 bit memory address, padded with 0s. If the first bit of operand A is 1, then treated as a 16 bit immediate value.
 
 ---
-### `0110 / OUT` Output
-Places the contents of the output register into the output queue.
+### `0100 / STORE` Store
+Loads the contents of the given register into the given address.
 
-**Operand:** One bit indicating whether or not to print, padded with 0s.
+**Operands:** One 4 bit value, one 12 bit value (from the next word in memory).
+
+**Operand A:** 4 bit register address, padded with 0s.
+
+**Operand B:** 12 bit memory address, padded with 0s.
+
+---
+### `0101 / IN` Input
+Places the next word from the input queue into the given register.
+
+**Operand:** One 4 bit register address, padded with 0s.
+
+---
+### `0110 / OUT` Output
+Places the contents of the given register into the output queue.
+
+**Operands:** One 1 bit value, one 4 bit value. indicating whether or not to print, padded with 0s.
+
+**Operand A:** 1 bit flag indicating whether or not to print, padded with 0s.
+
+**Operand B:** 4 bit register address.
 
 ---
 ### `0111 / MOVE` Move
