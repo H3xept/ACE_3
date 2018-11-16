@@ -92,12 +92,12 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 
 // NON-VIRTUAL METHODS
 
-char* Get_Text(String * self)
+char* String_Get_Text(String * self)
 {
 	return self->text;
 }
 
-void Set_Text(String * self, char* text)
+void String_Set_Text(String * self, char* text)
 {
 	if (self->text)
 		free(self->text);
@@ -116,7 +116,7 @@ static void __Invalidate_Description(String* self)
 
 static char* __Compute_Description(String* self)
 {
-	return make_description(DESCRIPTOR_PREFIX, DESCRIPTOR_SUFFIX, Get_Text(self));
+	return make_description(DESCRIPTOR_PREFIX, DESCRIPTOR_SUFFIX, String_Get_Text(self));
 }
 
 // PRIVATE FUNCTIONS

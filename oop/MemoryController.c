@@ -19,14 +19,8 @@
 #include "OOP.h"
 #include "../utilities/utilities.h"
 #include "MemoryController.h"
-
-#define WORD_SIZE 16
-#define MIN_BITS_ADDRESSABLE 16
-#define ADDR_LENGTH 12
-#define WORDS_IN_MEM (int)(((pow(2,ADDR_LENGTH))*MIN_BITS_ADDRESSABLE)/WORD_SIZE)
-#define TOTAL_MEM WORD_SIZE*WORDS_IN_MEM
-// Arbitrary: we just assumed that the stack will be big enough being 1/4 of total memory.
-#define MAX_PROG_SIZE ((3.0/4.0)*TOTAL_MEM) 
+#include "./protocols/MemoryDelegate.h"
+#include "./constants/arch_const.h"
 
 /// The type string of MemoryController
 static const char* const 	type_string = "MemoryController";
@@ -54,8 +48,14 @@ static struct Class_Descriptor _MemoryController_Class_Descriptor = {
 };
 const void * MemoryController_Class_Descriptor = &_MemoryController_Class_Descriptor;
 
-// Private Fields
+// Private fields for MemoryController
 static const void* __memory;
+
+// Private class method declarations for MemoryController
+// ...
+
+// Private instance method declarations for MemoryController
+static void __Setup_Delegates(MemoryController* self);
 
 /// Private overrides for 'Object' virtual methods (implementation)
 
@@ -68,8 +68,9 @@ static const void* __memory;
 */
 static Object* _Object_Ctor(Object * self, va_list args)
 {
-	// MemoryController* _self = (MemoryController*)self;
+	MemoryController* _self = (MemoryController*)self;
 	__memory = calloc(1,TOTAL_MEM);
+	__Setup_Delegates(_self);
 	return self;
 }
 
@@ -118,6 +119,7 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 // ...
 
 // Private instance methods for MemoryController
+
 static void* __Ptr_For_Address(MemoryController* self, int16_t addr)
 {
 	static int address_mask;
@@ -135,29 +137,44 @@ static void __Set_Word_At_Ptr(MemoryController* self, int16_t* ptr, int16_t word
 // ...
 
 // Public instance methods for MemoryController
-int16_t MemoryController_Word_At_Address(MemoryController* self, int16_t addr)
-{
-	_info("Retrieving word at address %d (real addr: %p)", addr, __Ptr_For_Address(self, addr));
-	return *((int16_t*)__Ptr_For_Address(self,addr));
+static int16_t MemoryDelegate_Word_At_Address(struct MemoryDelegate* self, int16_t addr)
+{	
+	MemoryController* _self = (MemoryController*)self; // Explicit downcast
+	_info("Retrieving word at address %d (real addr: %p)", addr, __Ptr_For_Address(_self, addr));
+	return *((int16_t*)__Ptr_For_Address(_self,addr));
 }
 
-void MemoryController_Set_Word_At_Address(MemoryController* self, int16_t addr, int16_t word)
-{
-	_info("Setting %d = %d (real addr: %p)",addr,word, __Ptr_For_Address(self,addr));
-	__Set_Word_At_Ptr(self, __Ptr_For_Address(self, addr), word);
+static void MemoryDelegate_Set_Word_At_Address(struct MemoryDelegate* self, int16_t addr, int16_t word)
+{	
+	MemoryController* _self = (MemoryController*)self; // Explicit downcast
+	_info("Setting %d = %d (real addr: %p)",addr,word, __Ptr_For_Address(_self,addr));
+	__Set_Word_At_Ptr(_self, __Ptr_For_Address(_self, addr), word);
 }
 
-void MemoryController_Clear_Memory(MemoryController* self)
-{
+static void MemoryDelegate_Clear_Memory(struct MemoryDelegate* self)
+{	
+	//MemoryController* _self = (MemoryController*)self; // Explicit downcast
 	_info("Clearing memory...",NULL);
 	memset((void*)__memory, 0x0, TOTAL_MEM);
 }
 
-void MemoryController_Load_Memory_From_Ptr(MemoryController* self, void* ptr, size_t size)
-{
+static void MemoryDelegate_Load_Memory_From_Ptr(struct MemoryDelegate* self, void* ptr, size_t size)
+{	
+	//MemoryController* _self = (MemoryController*)self; // Explicit downcast
 	_info("Loading memory from %p | size: %lu", ptr, size);
-	if (size >MAX_PROG_SIZE)
+	if (size > MAX_PROG_SIZE)
 		_err("Trying to load a program bigger than the max allowed size. (Prog. size: %d | Max size: %d", size, MAX_PROG_SIZE);
-	MemoryController_Clear_Memory(self);
+	MemoryDelegate_Clear_Memory(self);
 	memcpy((void*)__memory, ptr, size);
+}
+
+static void __Setup_Delegates(MemoryController* self)
+{
+	static struct MemoryDelegate memoryDelegateVtbl = {
+		&MemoryDelegate_Word_At_Address,
+		&MemoryDelegate_Set_Word_At_Address,
+		&MemoryDelegate_Clear_Memory,
+		&MemoryDelegate_Load_Memory_From_Ptr
+	};
+	self->memoryDelegateVptr = &memoryDelegateVtbl;
 }

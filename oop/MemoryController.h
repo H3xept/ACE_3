@@ -10,8 +10,11 @@
 #ifndef __MemoryController__
 #define __MemoryController__
 
+#include "./protocols/MemoryDelegate.h"
+
 typedef struct _MemoryController {
 	Object super;
+	struct MemoryDelegate* memoryDelegateVptr;
 } MemoryController;
 
 extern const void * MemoryController_Class_Descriptor;
@@ -20,9 +23,6 @@ extern const void * MemoryController_Class_Descriptor;
 // ...
 
 // Public instance methods for MemoryController
-int16_t MemoryController_Word_At_Address(MemoryController* self, int16_t addr);
-void MemoryController_Set_Word_At_Address(MemoryController* self, int16_t addr, int16_t word);
-void MemoryController_Clear_Memory(MemoryController* self);
-void MemoryController_Load_Memory_From_Ptr(MemoryController* self, void* ptr, size_t size);
+// ...
 
 #endif

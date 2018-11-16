@@ -18,8 +18,7 @@
 #include "../utilities/utilities.h"
 #include "ALU.h"
 
-#warning Temporary - We will have a constants file
-#define WORD_LENGTH 16
+#include "./constants/arch_const.h"
 
 /// The type string of ALU
 static const char* const 	type_string = "ALU";
@@ -62,6 +61,8 @@ static Object* _Object_Ctor(Object * self, va_list args)
 	ALU* _self = (ALU*)self;
 	_self->flags.halt = 0;
 	_self->flags.overflow = 0;
+	_self->flags.input = 0;
+	_self->flags.exit_codes = 0;
 	return self;
 }
 
@@ -188,12 +189,12 @@ int16_t ALU_Bitwise_Not(ALU* self, int16_t num)
 	return ~num;
 }
 
-int16_t ALU_Shift_Left_Logical(ALU* self, int16_t num_1, int16_t num_2)
+int16_t ALU_Shift_Left_Logical(ALU* self, int16_t num_1, uint16_t num_2)
 {
-	return num_1 << num_2;
+		return num_1 << num_2;
 }
 
-int16_t ALU_Shift_Right_Logical(ALU* self, int16_t num_1, int16_t num_2)
+int16_t ALU_Shift_Right_Logical(ALU* self, int16_t num_1, uint16_t num_2)
 {
-	return (num_1 >> num_2) & ((int)(pow(2,16-num_2)));
+		return (num_1 >> num_2) & ((int)(pow(2,16-num_2)-1));
 }
