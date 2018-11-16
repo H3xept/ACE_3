@@ -48,8 +48,13 @@ static struct Class_Descriptor _MemoryController_Class_Descriptor = {
 };
 const void * MemoryController_Class_Descriptor = &_MemoryController_Class_Descriptor;
 
-// Private Fields
+// Private fields for MemoryController
 static const void* __memory;
+
+// Private class method declarations for MemoryController
+// ...
+
+// Private instance method declarations for MemoryController
 static void __Setup_Delegates(MemoryController* self);
 
 /// Private overrides for 'Object' virtual methods (implementation)
