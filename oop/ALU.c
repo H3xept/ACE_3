@@ -62,7 +62,7 @@ static Object* _Object_Ctor(Object * self, va_list args)
 	_self->flags.halt = 0;
 	_self->flags.overflow = 0;
 	_self->flags.input = 0;
-	_self->flags.exit_codes = 0;
+	_self->flags.exit_code = 0;
 	return self;
 }
 

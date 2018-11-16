@@ -8,5 +8,6 @@
 #include "MemoryController.h"
 #include "ALU.h"
 #include "IO.h"
+#include "CPU.h"
 
 #endif

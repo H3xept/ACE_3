@@ -8,7 +8,7 @@ typedef enum {
 	k_Status_Flag_Halt,
 	k_Status_Flag_Overflow,
 	k_Status_Flag_Input,
-	k_Status_Flag_Exit_Codes
+	k_Status_Flag_Exit_Code
 } k_Status_Flag;
 
 struct FlagDelegate{
