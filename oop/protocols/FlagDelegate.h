@@ -4,10 +4,16 @@
 #include <ctype.h>
 
 typedef enum {
+	k_Exit_Code_Halt
+	k_Exit_Code_Segfault,
+	k_Exit_Code_Illegal_Register_Access;
+} k_Exit_Code;
+
+typedef enum {
 	k_Status_Flag_Halt,
 	k_Status_Flag_Overflow,
 	k_Status_Flag_Input,
-	k_Status_Flag_Exit_Codes
+	k_Status_Flag_Exit_Code
 } k_Status_Flag;
 
 typedef struct {
