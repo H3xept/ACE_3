@@ -10,8 +10,11 @@
 #ifndef __IO__
 #define __IO__
 
+#include "./protocols/IODelegate.h"
+
 typedef struct _IO {
 	Object super;
+	struct IODelegate* iODelegateVptr;
 } IO;
 
 extern const void * IO_Class_Descriptor;
