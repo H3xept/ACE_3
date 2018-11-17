@@ -10,13 +10,24 @@
 #ifndef __CU__
 #define __CU__
 
+#include "./constants/registers.h"
+#include "ALU.h"
+#include "./protocols/IODelegate.h"
+#include "./protocols/FlagDelegate.h"
+#include "./protocols/MemoryDelegate.h"
+
+typedef struct {
+	uword_t opcode : 4;
+	uword_t operand : 12;
+} instruction_t;
+
 typedef struct _CU {
 	Object super;
-	const Registers * __registers;
-	const ALU * __alu;
-	const IODelegate * __ioDelegate;
-	const FlagDelegate * __flagDelegate;
-	const MemoryDelegate * __memoryDelegate;
+	Registers * __registers;
+	ALU * __alu;
+	struct IODelegate * __ioDelegate;
+	struct FlagDelegate * __flagDelegate;
+	struct MemoryDelegate * __memoryDelegate;
 } CU;
 
 extern const void * CU_Class_Descriptor;

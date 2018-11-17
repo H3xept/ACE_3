@@ -15,7 +15,7 @@
 // + `1110 / PR` Pseudoinstruction Register (16 bits)
 // + `1111 / FR` Flag Register (5 bits)
 
-##ifndef __REGISTERS__
+#ifndef __REGISTERS__
 #define __REGISTERS__
 
 #include "var_word_size.h"

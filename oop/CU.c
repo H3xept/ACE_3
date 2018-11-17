@@ -18,9 +18,9 @@
 #include "OOP.h"
 #include "../utilities/utilities.h"
 #include "CU.h"
-#include "./FlagDelegate.h"
-#include "./IODelegate.h"
-#include "./MemoryDelegate.h"
+#include "./protocols/FlagDelegate.h"
+#include "./protocols/IODelegate.h"
+#include "./protocols/MemoryDelegate.h"
 #include "ALU.h"
 #include "./constants/registers.h"
 #include "./constants/var_word_size.h"
@@ -53,16 +53,11 @@ const void * CU_Class_Descriptor = &_CU_Class_Descriptor;
 
 // Private fields for CU
 
-typedef struct {
-	uword_t opcode : 4;
-	uword_t operand : 12;
-} instruction_t;
-
 // Private class method declarations for CU
 // ...
 
 // Private instance method declarations for CU
-// ...
+static uword_t __get_register_value_by_address(CU* self, uint8_t address);
 
 /// Private overrides for 'Object' virtual methods (implementation)
 
@@ -78,11 +73,11 @@ static Object* _Object_Ctor(Object * self, va_list args)
 	// Downcast to CU
 	CU* _self = (CU*)self;
 
-	_self->__registers = (Registers*) va_arg(args, void*);
+	_self->__registers = va_arg(args, Registers*);
 	_self->__alu = (ALU*) va_arg(args, void*);
-	_self->__ioDelegate = (IODelegate*) va_arg(args, void*);
-	_self->__flagDelegate = (FlagDelegate*) va_arg(args, void*);
-	_self->__memoryDelegate = (MemoryDelegate*) va_arg(args, void*);
+	_self->__ioDelegate = (struct IODelegate*) va_arg(args, void*);
+	_self->__flagDelegate = (struct FlagDelegate*) va_arg(args, void*);
+	_self->__memoryDelegate = (struct MemoryDelegate*) va_arg(args, void*);
 
 	return self;
 }
@@ -94,8 +89,6 @@ static Object* _Object_Ctor(Object * self, va_list args)
 */
 static Object* _Object_Dtor(Object * self)
 {
-	// Downcast to CU
-	CU* _self = (CU*)self;
 	return self;
 }
 
@@ -116,20 +109,12 @@ static const char* const _Object_Type_Descriptor(Object * self)
 */
 static const char* const _Object_Descriptor(Object * self)
 {
-	// Downcast to CU
-	CU* _self = (CU*)self;
-	_warn("Class CU does not respond to %s",__func__);
-	assert(0);
-	return NULL;
+	return "<ControlUnit>";
 }
 
 static unsigned int _Object_Equals(Object* self, Object* obj)
 {
-	// Downcast to CU
-	CU* _self = (CU*)self;
-	_warn("Class CU does not respond to %s",__func__);
-	assert(0);
-	return NULL;
+	return Object_Equals(self,obj);
 }
 
 // Private class methods for CU
@@ -137,113 +122,114 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 
 // Private instance methods for CU
 static void __HALT(CU* self){
-	_info("Executing HALT instruction");
-	FlagDelegate* flagDelegate = self->__flagDelegate;
+	_info("Executing HALT instruction", NULL);
+	struct FlagDelegate* flagDelegate = self->__flagDelegate;
 	flagDelegate->FlagDelegate_Set_Flag(flagDelegate, k_Status_Flag_Exit_Code, k_Exit_Code_Halt);
 	flagDelegate->FlagDelegate_Set_Flag(flagDelegate, k_Status_Flag_Halt, 1);
 }
 
 static void __JUMP(CU* self, uword_t operand){
-	_info("Executing JUMP instruction");
+	_info("Executing JUMP instruction", NULL);
 	Registers* registers = self->__registers;
 	operand--;
 	registers->PC = operand;
 }
 
 static void __SKC(CU* self, uword_t operand){
-	_info("Executing SKC instruction");
-	Registers* registers = self->__registers;
+	_info("Executing SKC instruction", NULL);
+	Registers * registers = self->__registers;
 	if(__get_register_value_by_address(self, (uint8_t)operand) > 0){
 		registers->PC++;
 	}
 }
 
 static void __LOAD(CU* self, uword_t operand){
-	_info("Executing LOAD instruction");
+	_info("Executing LOAD instruction", NULL);
 	Registers* registers = self->__registers;
-	MemoryDelegate* memoryDelegate = self->__memoryDelegate;
+	struct MemoryDelegate* memoryDelegate = self->__memoryDelegate;
 	uword_t operand2 = memoryDelegate->MemoryDelegate_Word_At_Address(memoryDelegate, ++(registers->PC));
 	
 }
 
 static void __STORE(CU* self, uword_t operand){
-	_info("Executing STORE instruction");
+	_info("Executing STORE instruction", NULL);
 	
 }
 
 static void __IN(CU* self, uword_t operand){
-	_info("Executing IN instruction");
+	_info("Executing IN instruction", NULL);
 	
 }
 
 static void __OUT(CU* self, uword_t operand){
-	_info("Executing OUT instruction");
+	_info("Executing OUT instruction", NULL);
 	
 }
 
 static void __MOVE(CU* self, uword_t operand){
-	_info("Executing MOVE instruction");
+	_info("Executing MOVE instruction", NULL);
 	
 }
 
 static void __ADD(CU* self, uword_t operand){
-	_info("Executing ADD instruction");
+	_info("Executing ADD instruction", NULL);
 	
 }
 
 static void __MUL(CU* self, uword_t operand){
-	_info("Executing MUL instruction");
+	_info("Executing MUL instruction", NULL);
 	
 }
 
 static void __DIV(CU* self, uword_t operand){
-	_info("Executing DIV instruction");
+	_info("Executing DIV instruction", NULL);
 	
 }
 
 static void __AND(CU* self, uword_t operand){
-	_info("Executing AND instruction");
+	_info("Executing AND instruction", NULL);
 	
 }
 
 static void __OR(CU* self, uword_t operand){
-	_info("Executing OR instruction");
+	_info("Executing OR instruction", NULL);
 	
 }
 
 static void __NOT(CU* self, uword_t operand){
-	_info("Executing NOT instruction");
+	_info("Executing NOT instruction", NULL);
 	
 }
 
 static void __SHL(CU* self, uword_t operand){
-	_info("Executing SHL instruction");
+	_info("Executing SHL instruction", NULL);
 	
 }
 
 static void __SHR(CU* self, uword_t operand){
-	_info("Executing SHR instruction");
+	_info("Executing SHR instruction", NULL);
 	
 }
 
 static void __set_register_by_address(CU* self, uint8_t address, uword_t value){
 	_info("Setting register (Address: %d)", address);
 	Registers* registers = self->__registers;
+	uword_t mask = ((uword_t)pow(2,ADDR_LENGTH) - 1);
 	switch(address){
 		case 0:
-			registers->PC = value & pow(2,ADDR_LENGTH) - 1;
+			registers->PC = value & mask;
 			break;
 		case 1:
 			registers->IR = value;
 			break;
 		case 2:
-			registers->RA = value & pow(2,ADDR_LENGTH) - 1;
+			registers->RA = value & mask;
 			break;
 		case 3:
-			registers->SP = value & pow(2,ADDR_LENGTH) - 1;
+			registers->SP = value & mask;
 			break;
 		case 4:
-			registers->FP = value & pow(2,ADDR_LENGTH) - 1;
+			registers->FP = value & mask;
 			break;
 		case 5:
 			registers->T1 = value;
@@ -280,14 +266,14 @@ static void __set_register_by_address(CU* self, uint8_t address, uword_t value){
 			break;
 		default:
 			_warn("Illegal register access (Address: %d)", address);
-			FlagDelegate* flagDelegate = self->__flagDelegate;
+			struct FlagDelegate* flagDelegate = self->__flagDelegate;
 			flagDelegate->FlagDelegate_Set_Flag(flagDelegate, k_Status_Flag_Exit_Code, 0);
 			flagDelegate->FlagDelegate_Set_Flag(flagDelegate, k_Status_Flag_Halt, 2);
 
 	}
 }
 
-static uword_t __get_register_value_by_address(CU* self, uint8_t address){
+static uword_t __get_register_value_by_address(CU* self, uint8_t address) {
 	Registers* registers = self->__registers;
 	switch(address){
 		case 0:
@@ -324,10 +310,10 @@ static uword_t __get_register_value_by_address(CU* self, uint8_t address){
 			return registers->PC;
 		default:
 			_warn("Illegal register access (Address: %d)", address);
-			FlagDelegate* flagDelegate = self->__flagDelegate;
+			struct FlagDelegate* flagDelegate = self->__flagDelegate;
 			flagDelegate->FlagDelegate_Set_Flag(flagDelegate, k_Status_Flag_Exit_Code, k_Exit_Code_Illegal_Register_Access);
 			flagDelegate->FlagDelegate_Set_Flag(flagDelegate, k_Status_Flag_Halt, 1);
-
+			return 0;
 	}
 }
 
@@ -338,7 +324,7 @@ static uword_t __get_register_value_by_address(CU* self, uint8_t address){
 void CU_Execute_Instruction(CU* self, instruction_t instruction){
 	_info("Executing instruction (Opcode: %d, Operand: %d)", instruction.opcode, instruction.operand);
 	Registers* registers = self->__registers;
-	registers->IR = instruction.opcode << (WORD_SIZE - OPCODE_LENGTH) + instruction.operand;
+	registers->IR = (instruction.opcode << (WORD_SIZE - OPCODE_LENGTH)) + instruction.operand;
 	switch(instruction.opcode){
 		case 0:
 			__HALT(self);

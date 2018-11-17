@@ -2,6 +2,7 @@
 #define __UTILITIES__ 
 #define __DEBUG__
 #include "colors.h"
+#include <stdint.h>
 #include "../oop/constants/var_word_size.h"
 
 #define _warn(S,...) 	y_printf("[WARNING] ",NULL); \

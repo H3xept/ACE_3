@@ -4,9 +4,9 @@
 #include <ctype.h>
 
 typedef enum {
-	k_Exit_Code_Halt
+	k_Exit_Code_Halt,
 	k_Exit_Code_Segfault,
-	k_Exit_Code_Illegal_Register_Access;
+	k_Exit_Code_Illegal_Register_Access
 } k_Exit_Code;
 
 typedef enum {
@@ -16,8 +16,8 @@ typedef enum {
 	k_Status_Flag_Exit_Code
 } k_Status_Flag;
 
-typedef struct {
-	void 	(*FlagDelegate_Set_Flag)(FlagDelegate * delegate, k_Status_Flag flag, uint8_t value);
-} FlagDelegate;
+struct FlagDelegate {
+	void 	(*FlagDelegate_Set_Flag)(const struct FlagDelegate * delegate, k_Status_Flag flag, uint8_t value);
+};
 
 #endif
