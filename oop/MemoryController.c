@@ -120,15 +120,15 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 
 // Private instance methods for MemoryController
 
-static void* __Ptr_For_Address(MemoryController* self, int16_t addr)
+static void* __Ptr_For_Address(MemoryController* self, uword_t addr)
 {
 	static int address_mask;
 	if (!address_mask) 
-		address_mask= pow(2, ADDR_LENGTH);
-	return ((int16_t*)__memory) + (addr & address_mask);
+		address_mask = pow(2, ADDR_LENGTH);
+	return ((uword_t*)__memory) + (addr & address_mask);
 }
 
-static void __Set_Word_At_Ptr(MemoryController* self, int16_t* ptr, int16_t word)
+static void __Set_Word_At_Ptr(MemoryController* self, uword_t* ptr, uword_t word)
 {
 	*ptr = word;
 }
@@ -137,14 +137,14 @@ static void __Set_Word_At_Ptr(MemoryController* self, int16_t* ptr, int16_t word
 // ...
 
 // Public instance methods for MemoryController
-static int16_t MemoryDelegate_Word_At_Address(struct MemoryDelegate* self, int16_t addr)
+static uword_t MemoryDelegate_Word_At_Address(struct MemoryDelegate* self, uword_t addr)
 {	
 	MemoryController* _self = (MemoryController*)self; // Explicit downcast
 	_info("Retrieving word at address %d (real addr: %p)", addr, __Ptr_For_Address(_self, addr));
-	return *((int16_t*)__Ptr_For_Address(_self,addr));
+	return *((uword_t*)__Ptr_For_Address(_self,addr));
 }
 
-static void MemoryDelegate_Set_Word_At_Address(struct MemoryDelegate* self, int16_t addr, int16_t word)
+static void MemoryDelegate_Set_Word_At_Address(struct MemoryDelegate* self, uword_t addr, uword_t word)
 {	
 	MemoryController* _self = (MemoryController*)self; // Explicit downcast
 	_info("Setting %d = %d (real addr: %p)",addr,word, __Ptr_For_Address(_self,addr));
