@@ -65,7 +65,7 @@ static Object* _Object_Ctor(Object * self, va_list args)
 {
 	Queue* _self = (Queue*)self;
 	_self->cap = 200;
-	_self->Q = calloc(self->cap, sizeof(word_t);
+	_self->Q = calloc(_self->cap, sizeof(word_t));
 	_self->front = 0;
 	_self->rear = 0;
 	_self->els = 0;
@@ -79,7 +79,6 @@ static Object* _Object_Ctor(Object * self, va_list args)
 */
 static Object* _Object_Dtor(Object * self)
 {
-	free(Q);
 	return self;
 }
 
@@ -129,19 +128,19 @@ void Queue_Enqueue(Queue* self, word_t element){
 	self->els++;
 }
 
-void Queue_Dequeue(Queue* self){
+word_t Queue_Dequeue(Queue* self){
 	if(Queue_Is_Empty(self)){
 		_err("the queue was empty WHY U DO THIS??????", NULL);
 		return 0;
 	} else {
-		word_t rval = *(Q + front);
-		front = (front+1);
+		word_t rval = *(self->Q + self->front);
+		self->front = (self->front+1);
 		return rval;
 	}
 }
 
-word_t Queue_Front(){
-	if(queue_Is_Empty){
+word_t Queue_Front(Queue* self){
+	if(Queue_Is_Empty(self)){
 		_err("the queue was empty WHY U DO THIS??????", NULL);
 		return 0;
 	} else {
@@ -150,10 +149,10 @@ word_t Queue_Front(){
 	
 }
 
-int Queue_Size(){
-	return (self->rear - self->front);
+word_t Queue_Size(Queue* self){
+	return self->rear - self->front;
 }
 
-bool Queue_Is_Empty(){
-	return (self->front == self->rear);
+uint16_t Queue_Is_Empty(Queue* self){
+	return self->front == self->rear;
 }

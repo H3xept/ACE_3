@@ -25,10 +25,10 @@ extern const void * Queue_Class_Descriptor;
 // ...
 
 // Public instance methods for Queue
-void Queue_Enqueue(Queue* self, int element);
+void Queue_Enqueue(Queue* self, word_t element);
 word_t Queue_Dequeue(Queue* self);
 word_t Queue_Front(Queue* self);
 word_t Queue_Size(Queue* self);
-bool Queue_Is_Empty(Queue* self);
+uint16_t Queue_Is_Empty(Queue* self);
 
 #endif
