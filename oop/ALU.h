@@ -26,7 +26,7 @@ extern const void * ALU_Class_Descriptor;
 int16_t ALU_Add(ALU* self, int16_t num_1, int16_t num_2);
 int16_t ALU_Multiply(ALU* self, int16_t num_1, int16_t num_2);
 int16_t ALU_Divide(ALU* self, int16_t num_1, int16_t num_2);
-int16_t ALU_Bitwise_And(int16_t num_1, int16_t num_2);
+int16_t ALU_Bitwise_And(ALU* self, int16_t num_1, int16_t num_2);
 int16_t ALU_Bitwise_Or(ALU* self, int16_t num_1, int16_t num_2);
 int16_t ALU_Bitwise_Not(ALU* self, int16_t num);
 int16_t ALU_Shift_Left_Logical(ALU* self, int16_t num_1, uint16_t num_2);
