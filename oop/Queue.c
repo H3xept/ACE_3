@@ -46,14 +46,6 @@ const void * Queue_Class_Descriptor = &_Queue_Class_Descriptor;
 
 // Private fields for Queue
 	
-	typedef struct _Queue{
-	int cap = 200;
-	word_t* Q = calloc(cap, sizeof(word_t);
-	int front = 0;
-	int rear = 0;
-	int els = 0;
-} Qfields;
-
 // Private class method declarations for Queue
 // ...
 
