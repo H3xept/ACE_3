@@ -66,6 +66,7 @@ static Object* _Object_Ctor(Object * self, va_list args)
 	// Downcast to IO
 	IO* _self = (IO*)self;
 	__Setup_Delegates(_self);
+	
 	return self;
 }
 
@@ -109,26 +110,28 @@ static const char* const _Object_Descriptor(Object * self)
 
 static word_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate)
 {
-	/*
-		dequeue --> return first word | null if empty
-	*/
-	#warning Implement
-	return 0;
+	static Queue* in_q;
+	if(Queue_Is_Empty(in_q)){
+		#warning unfinished
+		//ask for input
+	}
+	word_t rtn = Queue_Dequeue(in_q);
+	//set flag to Queue_Is_Empty(in_q) using flag delegate
+	return rtn;
 }
 
 static void IODelegate_Put_Word_To_Output_Queue(struct IODelegate * delegate, word_t word, uint8_t print)
 {
-	/*
-		
-	*/
-	#warning Implement
+	static Queue* out_q;
+	Queue_Enqueue(out_q, word);
+	#warning idk
 }
 
 static void __Setup_Delegates(IO* self)
 {
 	static struct IODelegate ioDelegateVtbl = {
 		&IODelegate_Get_Word_From_Input_Queue,
-		&IODelegate_Put_Word_To_Output_Queue
+		&IODelegate_Put_Word_To_Output_Queue,
 	};
 	self->iODelegateVptr = &ioDelegateVtbl;
 }
