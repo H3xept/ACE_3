@@ -61,7 +61,6 @@ const void * CPU_Class_Descriptor = &_CPU_Class_Descriptor;
 
 // Private instance method declarations for CPU
 static void __Fetch_Execute_Cycle(CPU* self);
-static inline void __Setup_Delegates(CPU* self);
 static inline void __CPU_Init_Registers(CPU* self);
 static CU* __Construct_Control_Unit(CPU* self, ...);
 static void __Setup_Delegates(CPU* self);
@@ -92,6 +91,8 @@ static Object* _Object_Ctor(Object * self, va_list args)
 	_self->__memoryController = alloc_init(MemoryController_Class_Descriptor);
 	_self->__iOController = alloc_init(IO_Class_Descriptor);
 
+	__Setup_Delegates(_self);
+	
 	return self;
 }
 
@@ -206,7 +207,7 @@ static uword_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate
 static void IODelegate_Put_Word_To_Output_Queue(struct IODelegate * delegate, uword_t word, uint8_t print)
 {
 	_info("%s Received delegate call -> %s",__FILE__, __func__);
-	struct IODelegate* _delegate = ((CPU*)delegate)->__iOController->memoryDelegateVptr; // Explicit downcast
+	struct IODelegate* _delegate = ((CPU*)delegate)->__iOController->iODelegateVptr; // Explicit downcast
 	_delegate->IODelegate_Put_Word_To_Output_Queue(_delegate, word, print);
 }
 // ---

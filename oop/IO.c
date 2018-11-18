@@ -109,7 +109,7 @@ static const char* const _Object_Descriptor(Object * self)
 
 // Private instance methods for IO
 
-static word_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate)
+static uword_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate)
 {
 	IO* self = (IO*)delegate;
 	if(Queue_Is_Empty(self->in_q)){
@@ -121,7 +121,7 @@ static word_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate)
 	return rtn;
 }
 
-static void IODelegate_Put_Word_To_Output_Queue(struct IODelegate * delegate, word_t word, uint8_t print)
+static void IODelegate_Put_Word_To_Output_Queue(struct IODelegate * delegate, uword_t word, uint8_t print)
 {
 	IO* self = (IO*)delegate;
 	Queue_Enqueue(self->out_q, word);
