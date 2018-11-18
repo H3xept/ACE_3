@@ -21,12 +21,12 @@
 
 typedef struct _CPU {
 	Object super;
-	const ALU* __alu;
-	const CU* __controlUnit;
-	const Registers* __registers;
-	const Flag_Register* __flagRegister;
-	const MemoryController* __memoryController;
-	const IO* __iOController;
+	ALU* __alu;
+	CU* __controlUnit;
+	Registers* __registers;
+	Flag_Register* __flagRegister;
+	MemoryController* __memoryController;
+	IO* __iOController;
 	struct FlagDelegate flagDelegateVptr;
 	struct MemoryDelegate memoryDelegateVptr;
 	struct IODelegate iODelegateVptr;
