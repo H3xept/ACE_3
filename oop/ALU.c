@@ -111,11 +111,11 @@ static const char* const _Object_Descriptor(Object * self)
 word_t ALU_Add(ALU* self, word_t num_1, word_t num_2)
 {
 	word_t ret = 0;
-	if ((num_1 > 0 && num_2 > INT16_MAX - num_1) || 
-		(num_1 < 0 && num_2 < INT16_MIN - num_1)) {
+	if ((num_1 > 0 && num_2 > WORD_MAX - num_1) || 
+		(num_1 < 0 && num_2 < WORD_MIN - num_1)) {
 		_warn("Overflow detected!", NULL);
-		uword_t tnum_1 = 1+UINT16_MAX+num_1;
-		uword_t tnum_2 = 1+UINT16_MAX+num_2;
+		uword_t tnum_1 = 1+UWORD_MAX+num_1;
+		uword_t tnum_2 = 1+UWORD_MAX+num_2;
 		ret = 0 | (tnum_2+tnum_1);
 		self->flags.overflow = 1;
 	}
@@ -135,23 +135,23 @@ word_t ALU_Multiply(ALU* self, word_t num_1, word_t num_2)
 
 	if (num_1 > 0)
 	{
-		if (num_2 > 0 && num_1 > INT16_MAX/num_2){
+		if (num_2 > 0 && num_1 > WORD_MAX/num_2){
 			overflow = 1;
-		} else if(num_1 < INT16_MIN/num_2) {
+		} else if(num_1 < WORD_MIN/num_2) {
 			overflow = 1;
 		}
 	} else {
-		if (num_2 > 0 && num_2 < INT16_MIN/num_1) {
+		if (num_2 > 0 && num_2 < WORD_MIN/num_1) {
 			overflow = 1;
-		} else if (num_1 != 0 && num_2 < INT16_MAX/num_1) {
+		} else if (num_1 != 0 && num_2 < WORD_MAX/num_1) {
 			overflow = 1;
 		}
 	} self->flags.overflow = overflow;
 
 	if (overflow) {
 		_warn("Overflow detected!", NULL);
-		uword_t tnum_1 = 1+UINT16_MAX+num_1;
-		uword_t tnum_2 = 1+UINT16_MAX+num_2;
+		uword_t tnum_1 = 1+UWORD_MAX+num_1;
+		uword_t tnum_2 = 1+UWORD_MAX+num_2;
 		ret = 0 | tnum_2*tnum_1;
 	} else {
 		ret = num_1*num_2;
@@ -164,7 +164,7 @@ word_t ALU_Divide(ALU* self, word_t num_1, word_t num_2)
 {
 	if (num_2 == 0) 
 		_err("Division by zero! Aborting...", NULL);
-	if (num_1 == INT16_MIN && num_2 == -1) {
+	if (num_1 == WORD_MIN && num_2 == -1) {
 		_warn("Overflow detected!", NULL);
 		self->flags.overflow = 1;
 		return num_1;

@@ -14,7 +14,10 @@
 #include <stdio.h>
 #include "Object.h"
 #include "OOP.h"
+#include "./protocols/IODelegate.h"
 #include "../utilities/utilities.h"
+#include "./constants/var_word_size.h"
+#include "Queue.h"
 #include "IO.h"
 
 /// The type string of IO
@@ -41,6 +44,15 @@ static struct Class_Descriptor _IO_Class_Descriptor = {
 };
 const void * IO_Class_Descriptor = &_IO_Class_Descriptor;
 
+// Private fields for IO
+// ...
+
+// Private class method declarations for IO
+// ...
+
+// Private instance method declarations for IO
+static void __Setup_Delegates(IO* self);
+
 /// Private overrides for 'Object' virtual methods (implementation)
 
 /**
@@ -54,9 +66,9 @@ static Object* _Object_Ctor(Object * self, va_list args)
 {
 	// Downcast to IO
 	IO* _self = (IO*)self;
-	_warn("Class IO does not respond to %s",__func__);
-	assert(0);
-	return NULL;
+	__Setup_Delegates(_self);
+	
+	return self;
 }
 
 /**
@@ -66,11 +78,10 @@ static Object* _Object_Ctor(Object * self, va_list args)
 */
 static Object* _Object_Dtor(Object * self)
 {
-	// Downcast to IO
-	IO* _self = (IO*)self;
-	_warn("Class IO does not respond to %s",__func__);
-	assert(0);
-	return NULL;
+	/* 	
+		empty in/out queue
+	*/
+	return self;
 }
 
 /**
@@ -90,18 +101,41 @@ static const char* const _Object_Type_Descriptor(Object * self)
 */
 static const char* const _Object_Descriptor(Object * self)
 {
-	// Downcast to IO
-	IO* _self = (IO*)self;
-	_warn("Class IO does not respond to %s",__func__);
-	assert(0);
-	return NULL;
+	return "<IO>";
 }
 
 // Private class methods for IO
 // ...
 
 // Private instance methods for IO
-// ...
+
+static word_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate)
+{
+	IO* self = (IO*)delegate;
+	if(Queue_Is_Empty(self->in_q)){
+		#warning unfinished
+		//ask for input
+	}
+	word_t rtn = Queue_Dequeue(self->in_q);
+	//set flag to Queue_Is_Empty(in_q) using flag delegate
+	return rtn;
+}
+
+static void IODelegate_Put_Word_To_Output_Queue(struct IODelegate * delegate, word_t word, uint8_t print)
+{
+	IO* self = (IO*)delegate;
+	Queue_Enqueue(self->out_q, word);
+	#warning idk
+}
+
+static void __Setup_Delegates(IO* self)
+{
+	static struct IODelegate ioDelegateVtbl = {
+		&IODelegate_Get_Word_From_Input_Queue,
+		&IODelegate_Put_Word_To_Output_Queue,
+	};
+	self->iODelegateVptr = &ioDelegateVtbl;
+}
 
 // Public class methods for IO
 // ...

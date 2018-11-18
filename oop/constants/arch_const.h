@@ -10,5 +10,4 @@
 #define TOTAL_MEM WORD_SIZE*WORDS_IN_MEM
 // Arbitrary: we just assumed that the stack will be big enough being 1/4 of total memory.
 #define MAX_PROG_SIZE ((3.0/4.0)*TOTAL_MEM) 
-
 #endif

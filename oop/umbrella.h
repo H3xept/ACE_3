@@ -10,5 +10,6 @@
 #include "IO.h"
 #include "CPU.h"
 #include "CU.h"
+#include "Queue.h"
 
 #endif
