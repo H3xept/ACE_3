@@ -15,6 +15,8 @@
 typedef struct _IO {
 	Object super;
 	struct IODelegate* iODelegateVptr;
+	Queue* in_q;
+	Queue* out_q;
 } IO;
 
 extern const void * IO_Class_Descriptor;

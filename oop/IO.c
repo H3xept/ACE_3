@@ -110,20 +110,20 @@ static const char* const _Object_Descriptor(Object * self)
 
 static word_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate)
 {
-	static Queue* in_q;
-	if(Queue_Is_Empty(in_q)){
+	IO* self = (IO*)delegate;
+	if(Queue_Is_Empty(self->in_q)){
 		#warning unfinished
 		//ask for input
 	}
-	word_t rtn = Queue_Dequeue(in_q);
+	word_t rtn = Queue_Dequeue(self->in_q);
 	//set flag to Queue_Is_Empty(in_q) using flag delegate
 	return rtn;
 }
 
 static void IODelegate_Put_Word_To_Output_Queue(struct IODelegate * delegate, word_t word, uint8_t print)
 {
-	static Queue* out_q;
-	Queue_Enqueue(out_q, word);
+	IO* self = (IO*)delegate;
+	Queue_Enqueue(self->out_q, word);
 	#warning idk
 }
 
