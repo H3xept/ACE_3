@@ -19,6 +19,7 @@
 #include "ALU.h"
 
 #include "./constants/arch_const.h"
+#include "./constants/var_word_size.h"
 
 /// The type string of ALU
 static const char* const 	type_string = "ALU";
@@ -108,14 +109,14 @@ static const char* const _Object_Descriptor(Object * self)
 // Public instance methods for ALU
 
 //returns sum of two 16bit ints
-int16_t ALU_Add(ALU* self, int16_t num_1, int16_t num_2)
+word_t ALU_Add(ALU* self, word_t num_1, word_t num_2)
 {
-	int16_t ret = 0;
+	word_t ret = 0;
 	if ((num_1 > 0 && num_2 > INT16_MAX - num_1) || 
 		(num_1 < 0 && num_2 < INT16_MIN - num_1)) {
 		_warn("Overflow detected!", NULL);
-		uint16_t tnum_1 = 1+UINT16_MAX+num_1;
-		uint16_t tnum_2 = 1+UINT16_MAX+num_2;
+		uword_t tnum_1 = 1+UINT16_MAX+num_1;
+		uword_t tnum_2 = 1+UINT16_MAX+num_2;
 		ret = 0 | (tnum_2+tnum_1);
 		self->flags.overflow = 1;
 	}
@@ -128,10 +129,10 @@ int16_t ALU_Add(ALU* self, int16_t num_1, int16_t num_2)
 
 //returns product of two 16bit ints
 //DETECTING OVERFLOW? ALSO SIZE OF PRODUCT TOO BIG?(I think this works...)
-int16_t ALU_Multiply(ALU* self, int16_t num_1, int16_t num_2)
+word_t ALU_Multiply(ALU* self, word_t num_1, word_t num_2)
 {
 	unsigned int overflow = 0;
-	int16_t ret = 0;
+	word_t ret = 0;
 
 	if (num_1 > 0)
 	{
@@ -150,8 +151,8 @@ int16_t ALU_Multiply(ALU* self, int16_t num_1, int16_t num_2)
 
 	if (overflow) {
 		_warn("Overflow detected!", NULL);
-		uint16_t tnum_1 = 1+UINT16_MAX+num_1;
-		uint16_t tnum_2 = 1+UINT16_MAX+num_2;
+		uword_t tnum_1 = 1+UINT16_MAX+num_1;
+		uword_t tnum_2 = 1+UINT16_MAX+num_2;
 		ret = 0 | tnum_2*tnum_1;
 	} else {
 		ret = num_1*num_2;
@@ -160,7 +161,7 @@ int16_t ALU_Multiply(ALU* self, int16_t num_1, int16_t num_2)
 }
 
 //returns result of first argument divided by second argument
-int16_t ALU_Divide(ALU* self, int16_t num_1, int16_t num_2)
+word_t ALU_Divide(ALU* self, word_t num_1, word_t num_2)
 {
 	if (num_2 == 0) 
 		_err("Division by zero! Aborting...", NULL);
@@ -173,28 +174,28 @@ int16_t ALU_Divide(ALU* self, int16_t num_1, int16_t num_2)
 }
 
 //bitwise AND of two 16bit ints 
-int16_t ALU_Bitwise_And(int16_t num_1, int16_t num_2)
+word_t ALU_Bitwise_And(word_t num_1, word_t num_2)
 {
 	return num_1 & num_2;
 }
 
 //bitwise OR of two 16bit ints 
-int16_t ALU_Bitwise_Or(ALU* self, int16_t num_1, int16_t num_2)
+word_t ALU_Bitwise_Or(ALU* self, word_t num_1, word_t num_2)
 {
 	return num_1 | num_2;
 }
 
-int16_t ALU_Bitwise_Not(ALU* self, int16_t num)
+word_t ALU_Bitwise_Not(ALU* self, word_t num)
 {
 	return ~num;
 }
 
-int16_t ALU_Shift_Left_Logical(ALU* self, int16_t num_1, uint16_t num_2)
+word_t ALU_Shift_Left_Logical(ALU* self, word_t num_1, uword_t num_2)
 {
 	return num_1 << num_2;
 }
 
-int16_t ALU_Shift_Right_Logical(ALU* self, int16_t num_1, uint16_t num_2)
+word_t ALU_Shift_Right_Logical(ALU* self, word_t num_1, uword_t num_2)
 {
 	return (num_1 >> num_2) & ((int)(pow(2,16-num_2)-1));
 }
