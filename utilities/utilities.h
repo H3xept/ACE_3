@@ -2,6 +2,8 @@
 #define __UTILITIES__ 
 #define __DEBUG__
 #include "colors.h"
+#include <stdint.h>
+#include "../oop/constants/var_word_size.h"
 
 #define _warn(S,...) 	y_printf("[WARNING] ",NULL); \
 						y_printf(S, __VA_ARGS__); \
@@ -22,4 +24,8 @@
 
 #define MIN(X,Y) (X < Y) ? X : Y
 #define MAX(X,Y) (X > Y) ? X : Y
+
+word_t unsigned_to_signed(uword_t word);
+uword_t signed_to_unsigned(word_t word);
+
 #endif

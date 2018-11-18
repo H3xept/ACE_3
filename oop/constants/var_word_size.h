@@ -2,6 +2,7 @@
 #define __VAR_WORD_SIZE__
 
 #include "arch_const.h"
+#include <ctype.h>
 
 #if WORD_SIZE == 16
 typedef int16_t word_t;

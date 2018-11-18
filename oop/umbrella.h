@@ -9,5 +9,6 @@
 #include "ALU.h"
 #include "IO.h"
 #include "CPU.h"
+#include "CU.h"
 
 #endif
