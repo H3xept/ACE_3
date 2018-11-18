@@ -24,12 +24,12 @@ typedef struct _CPU {
 	ALU* __alu;
 	CU* __controlUnit;
 	Registers* __registers;
-	Flag_Register* __flagRegister;
+	FlagRegister* __flagRegister;
 	MemoryController* __memoryController;
 	IO* __iOController;
-	struct FlagDelegate flagDelegateVptr;
-	struct MemoryDelegate memoryDelegateVptr;
-	struct IODelegate iODelegateVptr;
+	struct FlagDelegate* flagDelegateVptr;
+	struct MemoryDelegate* memoryDelegateVptr;
+	struct IODelegate* iODelegateVptr;
 } CPU;
 
 extern const void * CPU_Class_Descriptor;

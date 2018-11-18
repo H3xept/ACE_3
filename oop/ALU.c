@@ -17,7 +17,6 @@
 #include "OOP.h"
 #include "../utilities/utilities.h"
 #include "ALU.h"
-
 #include "./constants/arch_const.h"
 #include "./constants/var_word_size.h"
 

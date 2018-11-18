@@ -455,4 +455,5 @@ void CU_Execute_Instruction(CU* self, instruction_t instruction){
 		case 15:
 			__SHR(self, instruction.operand);
 	}
+	self->__registers->PC++;
 }

@@ -11,6 +11,7 @@
 #define __ALU__
 
 #include "./constants/flag_register.h"
+#include "./constants/var_word_size.h"
 
 typedef struct _ALU {
 	Object super;

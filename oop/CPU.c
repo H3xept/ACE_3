@@ -18,6 +18,8 @@
 #include "CPU.h"
 #include "ALU.h"
 #include "CU.h"
+#include <math.h>
+#include "./constants/var_word_size.h"
 #include "../utilities/utilities.h"
 #include "./constants/registers.h"
 #include "./constants/flag_register.h"
@@ -58,11 +60,13 @@ const void * CPU_Class_Descriptor = &_CPU_Class_Descriptor;
 // ...
 
 // Private instance method declarations for CPU
-
 static void __Fetch_Execute_Cycle(CPU* self);
 static inline void __Setup_Delegates(CPU* self);
 static inline void __CPU_Init_Registers(CPU* self);
 static CU* __Construct_Control_Unit(CPU* self, ...);
+static void __Setup_Delegates(CPU* self);
+static inline void __CPU_Init_Flag_Register(CPU* self);
+
 /// Private overrides for 'Object' virtual methods (implementation)
 
 /**
@@ -77,16 +81,16 @@ static Object* _Object_Ctor(Object * self, va_list args)
 	// Downcast to CPU
 	CPU* _self = (CPU*)self;
 
-	self->__registers = malloc(sizeof(Registers));
-	self->__flagRegister = malloc(sizeof(Flag_Register));
+	_self->__registers = malloc(sizeof(Registers));
+	_self->__flagRegister = malloc(sizeof(FlagRegister));
 	__CPU_Init_Registers(_self);
 	__CPU_Init_Flag_Register(_self);
 
-	self->__alu = alloc_init(ALU_Class_Descriptor);
-	self->__controlUnit = __Construct_Control_Unit(self,self->__registers,self->__alu,_self,_self,_self);
+	_self->__alu = alloc_init(ALU_Class_Descriptor);
+	_self->__controlUnit = __Construct_Control_Unit(_self,_self->__registers,_self->__alu,_self,_self,_self);
 
-	self->__memoryController = alloc_init(MemoryController_Class_Descriptor);
-	self->__iOController = alloc_init(IO_Class_Descriptor);
+	_self->__memoryController = alloc_init(MemoryController_Class_Descriptor);
+	_self->__iOController = alloc_init(IO_Class_Descriptor);
 
 	return self;
 }
@@ -162,48 +166,48 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 // Private instance methods for CPU
 
 // MemoryDelegate ADAPTOR
-static int16_t MemoryDelegate_Word_At_Address(struct MemoryDelegate* self, int16_t addr)
+static uword_t MemoryDelegate_Word_At_Address(struct MemoryDelegate* self, uword_t addr)
 {	
 	_info("%s Received delegate call -> %s",__FILE__, __func__);
-	MemoryDelegate* delegate = ((CPU*)self)->__memoryController->memoryDelegateVptr; // Explicit downcast
+	struct MemoryDelegate* delegate = ((CPU*)self)->__memoryController->memoryDelegateVptr; // Explicit downcast
 	return delegate->MemoryDelegate_Word_At_Address(delegate, addr);
 }
 
-static void MemoryDelegate_Set_Word_At_Address(struct MemoryDelegate* self, int16_t addr, int16_t word)
+static void MemoryDelegate_Set_Word_At_Address(struct MemoryDelegate* self, uword_t addr, uword_t word)
 {	
 	_info("%s Received delegate call -> %s",__FILE__, __func__);
-	MemoryDelegate* delegate = ((CPU*)self)->__memoryController->memoryDelegateVptr; // Explicit downcast
+	struct MemoryDelegate* delegate = ((CPU*)self)->__memoryController->memoryDelegateVptr; // Explicit downcast
 	delegate->MemoryDelegate_Set_Word_At_Address(delegate, addr, word);
 }
 
 static void MemoryDelegate_Clear_Memory(struct MemoryDelegate* self)
 {	
 	_info("%s Received delegate call -> %s",__FILE__, __func__);
-	MemoryDelegate* delegate = ((CPU*)self)->__memoryController->memoryDelegateVptr; // Explicit downcast
+	struct MemoryDelegate* delegate = ((CPU*)self)->__memoryController->memoryDelegateVptr; // Explicit downcast
 	delegate->MemoryDelegate_Clear_Memory(delegate);
 }
 
 static void MemoryDelegate_Load_Memory_From_Ptr(struct MemoryDelegate* self, void* ptr, size_t size)
 {	
 	_info("%s Received delegate call -> %s",__FILE__, __func__);
-	MemoryDelegate* delegate = ((CPU*)self)->__memoryController->memoryDelegateVptr; // Explicit downcast
+	struct MemoryDelegate* delegate = ((CPU*)self)->__memoryController->memoryDelegateVptr; // Explicit downcast
 	delegate->MemoryDelegate_Load_Memory_From_Ptr(delegate, ptr, size);
 }
 // ---
 
 // IODelegate ADAPTOR
-static word_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate)
+static uword_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate)
 {
 	_info("%s Received delegate call -> %s",__FILE__, __func__);
-	IODelegate* delegate = ((CPU*)self)->__iOController->iODelegateVptr; // Explicit downcast
-	return delegate->IODelegate_Get_Word_From_Input_Queue(delegate);
+	struct IODelegate* _delegate = ((CPU*)delegate)->__iOController->iODelegateVptr; // Explicit downcast
+	return _delegate->IODelegate_Get_Word_From_Input_Queue(_delegate);
 }
 
-static void IODelegate_Put_Word_To_Output_Queue(struct IODelegate * delegate, word_t word, uint8_t print)
+static void IODelegate_Put_Word_To_Output_Queue(struct IODelegate * delegate, uword_t word, uint8_t print)
 {
 	_info("%s Received delegate call -> %s",__FILE__, __func__);
-	IODelegate* delegate = ((CPU*)self)->__iOController->memoryDelegateVptr; // Explicit downcast
-	delegate->IODelegate_Put_Word_To_Output_Queue(delegate, word, print);
+	struct IODelegate* _delegate = ((CPU*)delegate)->__iOController->memoryDelegateVptr; // Explicit downcast
+	_delegate->IODelegate_Put_Word_To_Output_Queue(_delegate, word, print);
 }
 // ---
 
@@ -215,16 +219,16 @@ static void FlagDelegate_Set_Flag(struct FlagDelegate * delegate, k_Status_Flag 
 	switch(flag)
 	{
 		case k_Status_Flag_Halt:
-			self->__flagRegister->halt = value & 0b1;
+			self->__flagRegister->halt = value & 1;
 			break;
 		case k_Status_Flag_Overflow:
-			self->__flagRegister->overflow = value & 0b1;
+			self->__flagRegister->overflow = value & 1;
 			break;
 		case k_Status_Flag_Input:
-			self->__flagRegister->input = value & 0b1;
+			self->__flagRegister->input = value & 1;
 			break;
-		case k_Status_Flag_Exit_Codes:
-			self->__flagRegister->exit_code = value & 0b11;
+		case k_Status_Flag_Exit_Code:
+			self->__flagRegister->exit_code = value & 3;
 			break;
 		default:
 			_err("The requested flag does not exist: %d",flag);
@@ -235,7 +239,7 @@ static uword_t FlagDelegate_Get_Flags_As_Word(struct FlagDelegate * delegate)
 {
 	_info("%s Received delegate call -> %s",__FILE__, __func__);
 	CPU* self = (CPU*)delegate; // Explicit Cast
-	Flag_Register* reg = self->__flagRegister;
+	FlagRegister* reg = self->__flagRegister;
 	return 0 | reg->halt | reg->overflow | reg->input | reg->exit_code;
 }
 
@@ -243,7 +247,7 @@ static uint8_t FlagDelegate_Read_Flag(struct FlagDelegate * delegate, k_Status_F
 {
 	_info("%s Received delegate call -> %s",__FILE__, __func__);
 	CPU* self = (CPU*)delegate; // Explicit Cast
-	Flag_Register* reg = self->__flagRegister;
+	FlagRegister* reg = self->__flagRegister;
 	switch(flag)
 	{
 		case k_Status_Flag_Halt:
@@ -252,7 +256,7 @@ static uint8_t FlagDelegate_Read_Flag(struct FlagDelegate * delegate, k_Status_F
 			return (uint8_t)reg->overflow;
 		case k_Status_Flag_Input:
 			return (uint8_t)reg->input;
-		case k_Status_Flag_Exit_Codes:
+		case k_Status_Flag_Exit_Code:
 			return (uint8_t)reg->exit_code;
 		default:
 			_err("The requested flag does not exist: %d",flag);
@@ -270,52 +274,52 @@ static void __Setup_Delegates(CPU* self)
 	};
 	self->memoryDelegateVptr = &memoryDelegateVtbl;
 
-	static struct FlagDelegate flagDelegateVtbl = {
+	static struct IODelegate iODelegateVtbl = {
 		&IODelegate_Get_Word_From_Input_Queue,
 		&IODelegate_Put_Word_To_Output_Queue
-	}
-	self->flagDelegateVptr = &flagDelegateVtbl;
+	};
+	self->iODelegateVptr = &iODelegateVtbl;
 
-	static struct FlagDelegate iODelegateVtbl = {
+	static struct FlagDelegate flagDelegateVtbl = {
 		&FlagDelegate_Set_Flag,
 		&FlagDelegate_Get_Flags_As_Word,
 		&FlagDelegate_Read_Flag
-	}
-	self->iODelegateVptr = &iODelegateVtbl;
+	};
+	self->flagDelegateVptr = &flagDelegateVtbl;
 }
 
 static inline void __CPU_Init_Registers(CPU* self)
 {
-	self->PC = 0;
-	self->IR = 0;
-	self->RA = 0;
-	self->SP = 0;
-	self->FP = 0;
-	self->T1 = 0;
-	self->T2 = 0;
-	self->T3 = 0;
-	self->T4 = 0;
-	self->S1 = 0;
-	self->S2 = 0;
-	self->S3 = 0;
-	self->S4 = 0;
-	self->S5 = 0;
-	self->PR = 0;
+	self->__registers->PC = 0;
+	self->__registers->IR = 0;
+	self->__registers->RA = 0;
+	self->__registers->SP = 0;
+	self->__registers->FP = 0;
+	self->__registers->T1 = 0;
+	self->__registers->T2 = 0;
+	self->__registers->T3 = 0;
+	self->__registers->T4 = 0;
+	self->__registers->S1 = 0;
+	self->__registers->S2 = 0;
+	self->__registers->S3 = 0;
+	self->__registers->S4 = 0;
+	self->__registers->S5 = 0;
+	self->__registers->PR = 0;
 }
 
 static inline void __CPU_Init_Flag_Register(CPU* self) 
 {
-	self->halt = 0;
-	self->overflow = 0;
-	self->input = 0;
-	self->exit_code = 0;
+	self->__flagRegister->halt = 0;
+	self->__flagRegister->overflow = 0;
+	self->__flagRegister->input = 0;
+	self->__flagRegister->exit_code = 0;
 }
 
 static CU* __Construct_Control_Unit(CPU* self, ...)
 {	
 	va_list args;
 	va_start(args,self);
-	CPU* ret = alloc_init(CU_Class_Descriptor, args);
+	CU* ret = alloc_init(CU_Class_Descriptor, args);
 	va_end(args);
 	return ret;
 }
@@ -323,11 +327,14 @@ static CU* __Construct_Control_Unit(CPU* self, ...)
 #warning Temporary
 static void __Fetch_Execute_Cycle(CPU* self)
 {	
-	MemoryDelegate* delegate = (MemoryDelegate*)self->__memoryController;
+	struct MemoryDelegate* delegate = (struct MemoryDelegate*)(self->__memoryController);
+	instruction_t instruction;
 	while(!(self->__flagRegister->halt))
 	{
 		uword_t pc_word = delegate->MemoryDelegate_Word_At_Address(delegate,self->__registers->PC);
-		CU_Execute_Function(self->__controlUnit);
+		instruction.operand = pc_word&((uword_t)pow(2,WORD_SIZE - OPCODE_LENGTH)-1);
+		instruction.opcode = pc_word>>(WORD_SIZE - OPCODE_LENGTH);
+		CU_Execute_Instruction(self->__controlUnit, instruction);
 	}
 }
 
