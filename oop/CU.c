@@ -166,11 +166,11 @@ static void __LOAD(CU* self, uword_t operand){
 	struct MemoryDelegate* memoryDelegate = self->__memoryDelegate;
 	uword_t operand2 = memoryDelegate->MemoryDelegate_Word_At_Address(memoryDelegate, ++(registers->PC));
 	if((operand >> REGISTER_ADDR_LENGTH) > 0){
-		__set_register_with_address(self,(uint8_t) (operand & (pow(2, REGISTER_ADDR_LENGTH) - 1)), operand2);
+		__set_register_with_address(self,(uint8_t) (operand & ((uword_t)(pow(2, REGISTER_ADDR_LENGTH) - 1))), operand2);
 	}
 	else{
-		uword_t wordToBeWritten = memoryDelegate->MemoryDelegate_Word_At_Address(memoryDelegate, operand2 & (pow(2, ADDR_LENGTH) - 1));
-		__set_register_with_address(self,(uint8_t) (operand & (pow(2, REGISTER_ADDR_LENGTH) - 1)), wordToBeWritten);
+		uword_t wordToBeWritten = memoryDelegate->MemoryDelegate_Word_At_Address(memoryDelegate, operand2 & ((uword_t)pow(2, ADDR_LENGTH) - 1));
+		__set_register_with_address(self,(uint8_t) (operand & ((uword_t)(pow(2, REGISTER_ADDR_LENGTH) - 1))), wordToBeWritten);
 	}
 }
 
@@ -179,117 +179,117 @@ static void __STORE(CU* self, uword_t operand){
 	Registers* registers = self->__registers;
 	struct MemoryDelegate* memoryDelegate = self->__memoryDelegate;
 	uword_t address = memoryDelegate->MemoryDelegate_Word_At_Address(memoryDelegate, ++(registers->PC));
-	uword_t wordToBeWritten = __get_register_value_with_address(self,(uint8_t) (operand & (pow(2, REGISTER_ADDR_LENGTH) - 1)));
-	memoryDelegate->MemoryDelegate_Set_Word_At_Address(memoryDelegate, address & (pow(2, ADDR_LENGTH) - 1), wordToBeWritten);
+	uword_t wordToBeWritten = __get_register_value_with_address(self,(uint8_t) (operand & ((uword_t)(pow(2, REGISTER_ADDR_LENGTH) - 1))));
+	memoryDelegate->MemoryDelegate_Set_Word_At_Address(memoryDelegate, address & ((uword_t)pow(2, ADDR_LENGTH) - 1), wordToBeWritten);
 }
 
 static void __IN(CU* self, uword_t operand){
 	_info("Executing IN instruction", NULL);
-	IODelegate* ioDelegate = self->__ioDelegate;
-	uint8_t address = (uint8_t) (operand & (pow(2, REGISTER_ADDR_LENGTH) - 1));
+	struct IODelegate* ioDelegate = self->__ioDelegate;
+	uint8_t address = (uint8_t) (operand & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	__set_register_with_address(self, address, ioDelegate->IODelegate_Get_Word_From_Input_Queue(ioDelegate));
 }
 
 static void __OUT(CU* self, uword_t operand){
 	_info("Executing OUT instruction", NULL);
-	IODelegate* ioDelegate = self->__ioDelegate;
-	uint8_t address = (uint8_t) (operand & (pow(2, REGISTER_ADDR_LENGTH) - 1));
+	struct IODelegate* ioDelegate = self->__ioDelegate;
+	uint8_t address = (uint8_t) (operand & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	ioDelegate->IODelegate_Put_Word_To_Output_Queue(ioDelegate, __get_register_value_with_address(self, address), (operand >> REGISTER_ADDR_LENGTH) > 0);
 }
 
 
 static void __MOVE(CU* self, uword_t operand){
 	_info("Executing MOVE instruction", NULL);
-	uint8_t address1 = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & (pow(2, REGISTER_ADDR_LENGTH) - 1));
-	uint8_t address2 = (uint8_t) (operand & (pow(2, REGISTER_ADDR_LENGTH) - 1));
+	uint8_t address1 = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
+	uint8_t address2 = (uint8_t) (operand & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	__set_register_with_address(self, address1, __get_register_value_with_address(self, address2));
 }
 
 static void __ADD(CU* self, uword_t operand){
 	_info("Executing ADD instruction", NULL);
 	ALU* alu = self->__alu;
-	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & (pow(2, REGISTER_ADDR_LENGTH) - 1));
+	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	uword_t value1Unsigned = __get_register_value_with_address(self, address);
-	uword_t value2Unsigned = __get_register_value_with_address(self, (uint8_t) (operand & (pow(2, REGISTER_ADDR_LENGTH) - 1)));
+	uword_t value2Unsigned = __get_register_value_with_address(self, (uint8_t) (operand & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1)));
 
-	word_t result = alu->ALU_Add(alu, unsigned_to_signed(value1Unsigned), unsigned_to_signed(value2Unsigned));
-	__set_register_with_address(self, address1, signed_to_unsigned(result));
+	word_t result = ALU_Add(alu, unsigned_to_signed(value1Unsigned), unsigned_to_signed(value2Unsigned));
+	__set_register_with_address(self, address, signed_to_unsigned(result));
 }
 
 static void __MUL(CU* self, uword_t operand){
 	_info("Executing MUL instruction", NULL);
 	ALU* alu = self->__alu;
-	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & (pow(2, REGISTER_ADDR_LENGTH) - 1));
+	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	uword_t value1Unsigned = __get_register_value_with_address(self, address);
-	uword_t value2Unsigned = __get_register_value_with_address(self, (uint8_t) (operand & (pow(2, REGISTER_ADDR_LENGTH) - 1)));
+	uword_t value2Unsigned = __get_register_value_with_address(self, (uint8_t) (operand & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1)));
 
-	word_t result = alu->ALU_Multiply(alu, unsigned_to_signed(value1Unsigned), unsigned_to_signed(value2Unsigned));
-	__set_register_with_address(self, address1, signed_to_unsigned(result));
+	word_t result = ALU_Multiply(alu, unsigned_to_signed(value1Unsigned), unsigned_to_signed(value2Unsigned));
+	__set_register_with_address(self, address, signed_to_unsigned(result));
 }
 
 static void __DIV(CU* self, uword_t operand){
 	_info("Executing DIV instruction", NULL);
 	ALU* alu = self->__alu;
-	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & (pow(2, REGISTER_ADDR_LENGTH) - 1));
+	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	uword_t value1Unsigned = __get_register_value_with_address(self, address);
-	uword_t value2Unsigned = __get_register_value_with_address(self, (uint8_t) (operand & (pow(2, REGISTER_ADDR_LENGTH) - 1)));
+	uword_t value2Unsigned = __get_register_value_with_address(self, (uint8_t) (operand & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1)));
 
-	word_t result = alu->ALU_Divide(alu, unsigned_to_signed(value1Unsigned), unsigned_to_signed(value2Unsigned));
-	__set_register_with_address(self, address1, signed_to_unsigned(result));
+	word_t result = ALU_Divide(alu, unsigned_to_signed(value1Unsigned), unsigned_to_signed(value2Unsigned));
+	__set_register_with_address(self, address, signed_to_unsigned(result));
 }
 
 static void __AND(CU* self, uword_t operand){
 	_info("Executing AND instruction", NULL);
 	ALU* alu = self->__alu;
-	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & (pow(2, REGISTER_ADDR_LENGTH) - 1));
+	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	uword_t value1Unsigned = __get_register_value_with_address(self, address);
-	uword_t value2Unsigned = __get_register_value_with_address(self, (uint8_t) (operand & (pow(2, REGISTER_ADDR_LENGTH) - 1)));
+	uword_t value2Unsigned = __get_register_value_with_address(self, (uint8_t) (operand & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1)));
 
-	word_t result = alu->ALU_Bitwise_And(alu, unsigned_to_signed(value1Unsigned), unsigned_to_signed(value2Unsigned));
-	__set_register_with_address(self, address1, signed_to_unsigned(result));
+	word_t result = ALU_Bitwise_And(alu, unsigned_to_signed(value1Unsigned), unsigned_to_signed(value2Unsigned));
+	__set_register_with_address(self, address, signed_to_unsigned(result));
 }
 
 static void __OR(CU* self, uword_t operand){
 	_info("Executing OR instruction", NULL);
 	ALU* alu = self->__alu;
-	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & (pow(2, REGISTER_ADDR_LENGTH) - 1));
+	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	uword_t value1Unsigned = __get_register_value_with_address(self, address);
-	uword_t value2Unsigned = __get_register_value_with_address(self, (uint8_t) (operand & (pow(2, REGISTER_ADDR_LENGTH) - 1)));
+	uword_t value2Unsigned = __get_register_value_with_address(self, (uint8_t) (operand & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1)));
 
-	word_t result = alu->ALU_Bitwise_Or(alu, unsigned_to_signed(value1Unsigned), unsigned_to_signed(value2Unsigned));
-	__set_register_with_address(self, address1, signed_to_unsigned(result));
+	word_t result = ALU_Bitwise_Or(alu, unsigned_to_signed(value1Unsigned), unsigned_to_signed(value2Unsigned));
+	__set_register_with_address(self, address, signed_to_unsigned(result));
 }
 
 static void __NOT(CU* self, uword_t operand){
 	_info("Executing NOT instruction", NULL);
 	ALU* alu = self->__alu;
-	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & (pow(2, REGISTER_ADDR_LENGTH) - 1));
+	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	uword_t valueUnsigned = __get_register_value_with_address(self, address);
 
-	word_t result = alu->ALU_Bitwise_Not(alu, unsigned_to_signed(valueUnsigned));
+	word_t result = ALU_Bitwise_Not(alu, unsigned_to_signed(valueUnsigned));
 	__set_register_with_address(self, address, signed_to_unsigned(result));
 }
 
 static void __SHL(CU* self, uword_t operand){
 	_info("Executing SHL instruction", NULL);
 	ALU* alu = self->__alu;
-	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & (pow(2, REGISTER_ADDR_LENGTH) - 1));
+	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	uword_t value1Unsigned = __get_register_value_with_address(self, address);
-	uword_t value2Unsigned = __get_register_value_with_address(self, (uint8_t) (operand & (pow(2, REGISTER_ADDR_LENGTH) - 1)));
+	uword_t value2Unsigned = __get_register_value_with_address(self, (uint8_t) (operand & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1)));
 
-	word_t result = alu->ALU_Shift_Left_Logical(alu, unsigned_to_signed(value1Unsigned), value2Unsigned);
-	__set_register_with_address(self, address1, signed_to_unsigned(result));
+	word_t result = ALU_Shift_Left_Logical(alu, unsigned_to_signed(value1Unsigned), value2Unsigned);
+	__set_register_with_address(self, address, signed_to_unsigned(result));
 }
 
 static void __SHR(CU* self, uword_t operand){
 	_info("Executing SHR instruction", NULL);
 	ALU* alu = self->__alu;
-	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & (pow(2, REGISTER_ADDR_LENGTH) - 1));
+	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	uword_t value1Unsigned = __get_register_value_with_address(self, address);
-	uword_t value2Unsigned = __get_register_value_with_address(self, (uint8_t) (operand & (pow(2, REGISTER_ADDR_LENGTH) - 1)));
+	uword_t value2Unsigned = __get_register_value_with_address(self, (uint8_t) (operand & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1)));
 
-	word_t result = alu->ALU_Shift_Right_Logical(alu, unsigned_to_signed(value1Unsigned), value2Unsigned);
-	__set_register_with_address(self, address1, signed_to_unsigned(result));
+	word_t result = ALU_Shift_Right_Logical(alu, unsigned_to_signed(value1Unsigned), value2Unsigned);
+	__set_register_with_address(self, address, signed_to_unsigned(result));
 }
 
 static void __set_register_with_address(CU* self, uint8_t address, uword_t value){

@@ -23,13 +23,13 @@ extern const void * ALU_Class_Descriptor;
 // ...
 
 // Public instance methods for ALU
-int16_t ALU_Add(ALU* self, int16_t num_1, int16_t num_2);
-int16_t ALU_Multiply(ALU* self, int16_t num_1, int16_t num_2);
-int16_t ALU_Divide(ALU* self, int16_t num_1, int16_t num_2);
-int16_t ALU_Bitwise_And(int16_t num_1, int16_t num_2);
-int16_t ALU_Bitwise_Or(ALU* self, int16_t num_1, int16_t num_2);
-int16_t ALU_Bitwise_Not(ALU* self, int16_t num);
-int16_t ALU_Shift_Left_Logical(ALU* self, int16_t num_1, uint16_t num_2);
-int16_t ALU_Shift_Right_Logical(ALU* self, int16_t num_1, uint16_t num_2);
+word_t ALU_Add(ALU* self, word_t num_1, word_t num_2);
+word_t ALU_Multiply(ALU* self, word_t num_1, word_t num_2);
+word_t ALU_Divide(ALU* self, word_t num_1, word_t num_2);
+word_t ALU_Bitwise_And(ALU* self, word_t num_1, word_t num_2);
+word_t ALU_Bitwise_Or(ALU* self, word_t num_1, word_t num_2);
+word_t ALU_Bitwise_Not(ALU* self, word_t num);
+word_t ALU_Shift_Left_Logical(ALU* self, word_t num_1, uword_t num_2);
+word_t ALU_Shift_Right_Logical(ALU* self, word_t num_1, uword_t num_2);
 
 #endif

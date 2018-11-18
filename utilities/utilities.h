@@ -25,7 +25,7 @@
 #define MIN(X,Y) (X < Y) ? X : Y
 #define MAX(X,Y) (X > Y) ? X : Y
 
-inline word_t unsigned_to_signed(uword_t word);
-inline uword_t signed_to_unsigned(word_t word);
+word_t unsigned_to_signed(uword_t word);
+uword_t signed_to_unsigned(word_t word);
 
 #endif

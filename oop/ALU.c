@@ -174,7 +174,7 @@ word_t ALU_Divide(ALU* self, word_t num_1, word_t num_2)
 }
 
 //bitwise AND of two 16bit ints 
-word_t ALU_Bitwise_And(word_t num_1, word_t num_2)
+word_t ALU_Bitwise_And(ALU* self, word_t num_1, word_t num_2)
 {
 	return num_1 & num_2;
 }
