@@ -17,6 +17,7 @@
 #include "./protocols/IODelegate.h"
 #include "../utilities/utilities.h"
 #include "./constants/var_word_size.h"
+#include "Queue.h"
 #include "IO.h"
 
 /// The type string of IO

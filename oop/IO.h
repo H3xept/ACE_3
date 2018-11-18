@@ -11,6 +11,7 @@
 #define __IO__
 
 #include "./protocols/IODelegate.h"
+#include "Queue.h"
 
 typedef struct _IO {
 	Object super;
