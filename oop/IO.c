@@ -114,6 +114,7 @@ static word_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate)
 	if(Queue_Is_Empty(self->in_q)){
 		#warning unfinished
 		//ask for input
+		Queue_Enqueue(self->in_q,5); // dummy val
 	}
 	word_t rtn = Queue_Dequeue(self->in_q);
 	//set flag to Queue_Is_Empty(in_q) using flag delegate
@@ -124,6 +125,10 @@ static void IODelegate_Put_Word_To_Output_Queue(struct IODelegate * delegate, wo
 {
 	IO* self = (IO*)delegate;
 	Queue_Enqueue(self->out_q, word);
+	if(print){
+		while(Queue_Is_Empty(self->out_q))
+			printf("this is temporary but word: %d", Queue_Dequeue(self->out_q))
+	}
 	#warning idk
 }
 
