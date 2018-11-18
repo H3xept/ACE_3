@@ -128,7 +128,7 @@ static void IODelegate_Put_Word_To_Output_Queue(struct IODelegate * delegate, wo
 	Queue_Enqueue(self->out_q, word);
 	if(print){
 		while(Queue_Is_Empty(self->out_q))
-			printf("this is temporary but word: %d", Queue_Dequeue(self->out_q))
+			printf("this is temporary but word: %d", Queue_Dequeue(self->out_q));
 	}
 	#warning idk
 }
