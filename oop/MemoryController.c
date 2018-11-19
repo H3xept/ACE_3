@@ -122,9 +122,9 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 
 static void* __Ptr_For_Address(MemoryController* self, uword_t addr)
 {
-	static int address_mask;
+	static unsigned int address_mask;
 	if (!address_mask) 
-		address_mask = pow(2, ADDR_LENGTH);
+		address_mask = pow(2, ADDR_LENGTH)-1;
 	return ((uword_t*)__memory) + (addr & address_mask);
 }
 
@@ -137,44 +137,45 @@ static void __Set_Word_At_Ptr(MemoryController* self, uword_t* ptr, uword_t word
 // ...
 
 // Public instance methods for MemoryController
-static uword_t MemoryDelegate_Word_At_Address(struct MemoryDelegate* self, uword_t addr)
+static uword_t MemoryDelegate_Word_At_Address(struct MemoryDelegate* delegate, uword_t addr)
 {	
-	MemoryController* _self = (MemoryController*)self; // Explicit downcast
+
+	MemoryController* _self = (MemoryController*)delegate->delegateObject; // Explicit downcast
 	_info("Retrieving word at address %d (real addr: %p)", addr, __Ptr_For_Address(_self, addr));
 	return *((uword_t*)__Ptr_For_Address(_self,addr));
 }
 
-static void MemoryDelegate_Set_Word_At_Address(struct MemoryDelegate* self, uword_t addr, uword_t word)
+static void MemoryDelegate_Set_Word_At_Address(struct MemoryDelegate* delegate, uword_t addr, uword_t word)
 {	
-	MemoryController* _self = (MemoryController*)self; // Explicit downcast
+	MemoryController* _self = (MemoryController*)delegate->delegateObject; // Explicit downcast
 	_info("Setting %d = %d (real addr: %p)",addr,word, __Ptr_For_Address(_self,addr));
 	__Set_Word_At_Ptr(_self, __Ptr_For_Address(_self, addr), word);
 }
 
-static void MemoryDelegate_Clear_Memory(struct MemoryDelegate* self)
+static void MemoryDelegate_Clear_Memory(struct MemoryDelegate* delegate)
 {	
-	//MemoryController* _self = (MemoryController*)self; // Explicit downcast
 	_info("Clearing memory...",NULL);
 	memset((void*)__memory, 0x0, TOTAL_MEM);
 }
 
-static void MemoryDelegate_Load_Memory_From_Ptr(struct MemoryDelegate* self, void* ptr, size_t size)
+static void MemoryDelegate_Load_Memory_From_Ptr(struct MemoryDelegate* delegate, void* ptr, size_t size)
 {	
-	//MemoryController* _self = (MemoryController*)self; // Explicit downcast
 	_info("Loading memory from %p | size: %lu", ptr, size);
 	if (size > MAX_PROG_SIZE)
 		_err("Trying to load a program bigger than the max allowed size. (Prog. size: %d | Max size: %d", size, MAX_PROG_SIZE);
-	MemoryDelegate_Clear_Memory(self);
+	MemoryDelegate_Clear_Memory(delegate);
 	memcpy((void*)__memory, ptr, size);
 }
 
 static void __Setup_Delegates(MemoryController* self)
 {
 	static struct MemoryDelegate memoryDelegateVtbl = {
+		0,
 		&MemoryDelegate_Word_At_Address,
 		&MemoryDelegate_Set_Word_At_Address,
 		&MemoryDelegate_Clear_Memory,
 		&MemoryDelegate_Load_Memory_From_Ptr
 	};
+	memoryDelegateVtbl.delegateObject = self;
 	self->memoryDelegateVptr = &memoryDelegateVtbl;
 }

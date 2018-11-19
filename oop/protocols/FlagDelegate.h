@@ -18,6 +18,7 @@ typedef enum {
 } k_Status_Flag;
 
 struct FlagDelegate{
+	void* delegateObject;
 	void 	(*FlagDelegate_Set_Flag)(struct FlagDelegate * delegate, k_Status_Flag flag, uint8_t value);
 	uword_t (*FlagDelegate_Get_Flags_As_Word)(struct FlagDelegate * delegate);
 	uint8_t (*FlagDelegate_Read_Flag)(struct FlagDelegate * delegate, k_Status_Flag flag);

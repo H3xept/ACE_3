@@ -342,9 +342,6 @@ static void __set_register_with_address(CU* self, uint8_t address, uword_t value
 		case 14:
 			registers->PR = value;
 			break;
-		case 15:
-			registers->PC = value;
-			break;
 		default:
 			_warn("Illegal register access (Address: %d)", address);
 			struct FlagDelegate* flagDelegate = self->__flagDelegate;
@@ -388,7 +385,7 @@ static uword_t __get_register_value_with_address(CU* self, uint8_t address) {
 		case 14:
 			return registers->PR;
 		case 15:
-			return registers->PC;
+			return flagDelegate->FlagDelegate_Get_Flags_As_Word(flagDelegate);
 		default:
 			_warn("Illegal register access (Address: %d)", address);
 			struct FlagDelegate* flagDelegate = self->__flagDelegate;

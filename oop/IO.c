@@ -131,9 +131,11 @@ static void IODelegate_Put_Word_To_Output_Queue(struct IODelegate * delegate, uw
 static void __Setup_Delegates(IO* self)
 {
 	static struct IODelegate ioDelegateVtbl = {
+		0,
 		&IODelegate_Get_Word_From_Input_Queue,
 		&IODelegate_Put_Word_To_Output_Queue,
 	};
+	ioDelegateVtbl.delegateObject = self;
 	self->iODelegateVptr = &ioDelegateVtbl;
 }
 

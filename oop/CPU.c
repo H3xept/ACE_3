@@ -169,32 +169,36 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 // Private instance methods for CPU
 
 // MemoryDelegate ADAPTOR
-static uword_t MemoryDelegate_Word_At_Address(struct MemoryDelegate* self, uword_t addr)
+static uword_t MemoryDelegate_Word_At_Address(struct MemoryDelegate* delegate, uword_t addr)
 {	
 	_delegCall();
-	struct MemoryDelegate* delegate = ((CPU*)self)->__memoryController->memoryDelegateVptr; // Explicit downcast
-	return delegate->MemoryDelegate_Word_At_Address(delegate, addr);
+	CPU* self = (CPU*)(delegate->delegateObject);
+	struct MemoryDelegate* adaptedDelegate = self->__memoryController->memoryDelegateVptr; // Explicit downcast
+	return adaptedDelegate->MemoryDelegate_Word_At_Address(adaptedDelegate, addr);
 }
 
-static void MemoryDelegate_Set_Word_At_Address(struct MemoryDelegate* self, uword_t addr, uword_t word)
+static void MemoryDelegate_Set_Word_At_Address(struct MemoryDelegate* delegate, uword_t addr, uword_t word)
 {	
 	_delegCall();
-	struct MemoryDelegate* delegate = ((CPU*)self)->__memoryController->memoryDelegateVptr; // Explicit downcast
-	delegate->MemoryDelegate_Set_Word_At_Address(delegate, addr, word);
+	CPU* self = (CPU*)(delegate->delegateObject);
+	struct MemoryDelegate* adaptedDelegate = self->__memoryController->memoryDelegateVptr; // Explicit downcast
+	adaptedDelegate->MemoryDelegate_Set_Word_At_Address(adaptedDelegate, addr, word);
 }
 
-static void MemoryDelegate_Clear_Memory(struct MemoryDelegate* self)
+static void MemoryDelegate_Clear_Memory(struct MemoryDelegate* delegate)
 {	
 	_delegCall();
-	struct MemoryDelegate* delegate = ((CPU*)self)->__memoryController->memoryDelegateVptr; // Explicit downcast
-	delegate->MemoryDelegate_Clear_Memory(delegate);
+	CPU* self = (CPU*)(delegate->delegateObject);
+	struct MemoryDelegate* adaptedDelegate = self->__memoryController->memoryDelegateVptr; // Explicit downcast
+	adaptedDelegate->MemoryDelegate_Clear_Memory(adaptedDelegate);
 }
 
-static void MemoryDelegate_Load_Memory_From_Ptr(struct MemoryDelegate* self, void* ptr, size_t size)
+static void MemoryDelegate_Load_Memory_From_Ptr(struct MemoryDelegate* delegate, void* ptr, size_t size)
 {	
 	_delegCall();
-	struct MemoryDelegate* delegate = ((CPU*)self)->__memoryController->memoryDelegateVptr; // Explicit downcast
-	delegate->MemoryDelegate_Load_Memory_From_Ptr(delegate, ptr, size);
+	CPU* self = (CPU*)(delegate->delegateObject);
+	struct MemoryDelegate* adaptedDelegate = self->__memoryController->memoryDelegateVptr; // Explicit downcast
+	adaptedDelegate->MemoryDelegate_Load_Memory_From_Ptr(adaptedDelegate, ptr, size);
 }
 // ---
 
@@ -202,15 +206,17 @@ static void MemoryDelegate_Load_Memory_From_Ptr(struct MemoryDelegate* self, voi
 static uword_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate)
 {
 	_delegCall();
-	struct IODelegate* _delegate = ((CPU*)delegate)->__iOController->iODelegateVptr; // Explicit downcast
-	return _delegate->IODelegate_Get_Word_From_Input_Queue(_delegate);
+	CPU* self = (CPU*)(delegate->delegateObject);
+	struct IODelegate* adaptedDelegate = self->__iOController->iODelegateVptr; // Explicit downcast
+	return adaptedDelegate->IODelegate_Get_Word_From_Input_Queue(adaptedDelegate);
 }
 
 static void IODelegate_Put_Word_To_Output_Queue(struct IODelegate * delegate, uword_t word, uint8_t print)
 {
 	_delegCall();
-	struct IODelegate* _delegate = ((CPU*)delegate)->__iOController->iODelegateVptr; // Explicit downcast
-	_delegate->IODelegate_Put_Word_To_Output_Queue(_delegate, word, print);
+	CPU* self = (CPU*)(delegate->delegateObject);
+	struct IODelegate* adaptedDelegate = self->__iOController->iODelegateVptr; // Explicit downcast
+	adaptedDelegate->IODelegate_Put_Word_To_Output_Queue(adaptedDelegate, word, print);
 }
 // ---
 
@@ -219,7 +225,7 @@ static void FlagDelegate_Set_Flag(struct FlagDelegate * delegate, k_Status_Flag 
 {
 	// _info("%s Received delegate call -> %s",__FILE__, __func__);
 	_delegCall();
-	CPU* self = (CPU*)delegate; // Explicit Cast
+	CPU* self = (CPU*)(delegate->delegateObject);
 	switch(flag)
 	{
 		case k_Status_Flag_Halt:
@@ -242,7 +248,7 @@ static void FlagDelegate_Set_Flag(struct FlagDelegate * delegate, k_Status_Flag 
 static uword_t FlagDelegate_Get_Flags_As_Word(struct FlagDelegate * delegate)
 {
 	_delegCall();
-	CPU* self = (CPU*)delegate; // Explicit Cast
+	CPU* self = (CPU*)(delegate->delegateObject);
 	FlagRegister* reg = self->__flagRegister;
 	return 0 | reg->halt | reg->overflow | reg->input | reg->exit_code;
 }
@@ -250,7 +256,7 @@ static uword_t FlagDelegate_Get_Flags_As_Word(struct FlagDelegate * delegate)
 static uint8_t FlagDelegate_Read_Flag(struct FlagDelegate * delegate, k_Status_Flag flag)
 {
 	_delegCall();
-	CPU* self = (CPU*)delegate; // Explicit Cast
+	CPU* self = (CPU*)(delegate->delegateObject);
 	FlagRegister* reg = self->__flagRegister;
 	switch(flag)
 	{
@@ -273,24 +279,30 @@ static void __Setup_Delegates(CPU* self)
 	_info("Setting up delegates for %s", __FILE__);
 
 	static struct MemoryDelegate memoryDelegateVtbl = {
+		0,
 		&MemoryDelegate_Word_At_Address,
 		&MemoryDelegate_Set_Word_At_Address,
 		&MemoryDelegate_Clear_Memory,
 		&MemoryDelegate_Load_Memory_From_Ptr
 	};
+	memoryDelegateVtbl.delegateObject = self;
 	self->memoryDelegateVptr = &memoryDelegateVtbl;
 
 	static struct IODelegate iODelegateVtbl = {
+		0,
 		&IODelegate_Get_Word_From_Input_Queue,
 		&IODelegate_Put_Word_To_Output_Queue
 	};
+	iODelegateVtbl.delegateObject = self;
 	self->iODelegateVptr = &iODelegateVtbl;
 
 	static struct FlagDelegate flagDelegateVtbl = {
+		0,
 		&FlagDelegate_Set_Flag,
 		&FlagDelegate_Get_Flags_As_Word,
 		&FlagDelegate_Read_Flag
 	};
+	flagDelegateVtbl.delegateObject = self;
 	self->flagDelegateVptr = &flagDelegateVtbl;
 }
 
@@ -324,19 +336,16 @@ static inline void __CPU_Init_Flag_Register(CPU* self)
 #warning Temporary
 void CPU_Fetch_Execute_Cycle(CPU* self)
 {	
-	struct MemoryDelegate* memoryDelegate = (struct MemoryDelegate*)(self);
-	struct FlagDelegate* flagDelegate = (struct FlagDelegate*)(self);
-
-	_info("Aft", NULL);
+	struct MemoryDelegate* memoryDelegate = (struct MemoryDelegate*)(self->memoryDelegateVptr);
+	struct FlagDelegate* flagDelegate = (struct FlagDelegate*)(self->flagDelegateVptr);
+	
 	instruction_t instruction = {0};
-	MemoryDelegate_Set_Word_At_Address(memoryDelegate,0,0b0011000000011010);
-	MemoryDelegate_Set_Word_At_Address(memoryDelegate,1,0b0000000000001111);
-	while(!FlagDelegate_Read_Flag(self,k_Status_Flag_Halt))
+
+	while(!FlagDelegate_Read_Flag(flagDelegate,k_Status_Flag_Halt))
 	{	
 		uword_t pc_word = MemoryDelegate_Word_At_Address(memoryDelegate,self->__registers->PC);
 		instruction.operand = pc_word&((uword_t)pow(2,WORD_SIZE - OPCODE_LENGTH)-1);
 		instruction.opcode = pc_word>>(WORD_SIZE - OPCODE_LENGTH);
-		_info("Opcode: %d",instruction.opcode);
 		CU_Execute_Instruction(self->__controlUnit, instruction);
 	}
 	r_printf("Value in S1: %d\n",self->__registers->S1);
