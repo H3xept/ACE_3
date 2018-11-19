@@ -139,7 +139,6 @@ static void __Set_Word_At_Ptr(MemoryController* self, uword_t* ptr, uword_t word
 // Public instance methods for MemoryController
 static uword_t MemoryDelegate_Word_At_Address(struct MemoryDelegate* delegate, uword_t addr)
 {	
-
 	MemoryController* _self = (MemoryController*)delegate->delegateObject; // Explicit downcast
 	_info("Retrieving word at address %d (real addr: %p)", addr, __Ptr_For_Address(_self, addr));
 	return *((uword_t*)__Ptr_For_Address(_self,addr));
@@ -169,6 +168,8 @@ static void MemoryDelegate_Load_Memory_From_Ptr(struct MemoryDelegate* delegate,
 
 static void __Setup_Delegates(MemoryController* self)
 {
+	_info("Setting up delegates for %s", __FILE__);
+	
 	static struct MemoryDelegate memoryDelegateVtbl = {
 		0,
 		&MemoryDelegate_Word_At_Address,

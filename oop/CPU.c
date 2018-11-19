@@ -60,7 +60,6 @@ const void * CPU_Class_Descriptor = &_CPU_Class_Descriptor;
 // ...
 
 // Private instance method declarations for CPU
-static void __Fetch_Execute_Cycle(CPU* self);
 static inline void __CPU_Init_Registers(CPU* self);
 static void __Setup_Delegates(CPU* self);
 static inline void __CPU_Init_Flag_Register(CPU* self);
@@ -93,8 +92,9 @@ static Object* _Object_Ctor(Object * self, va_list args)
 													_self->flagDelegateVptr, 
 													_self->memoryDelegateVptr);
 	_self->__memoryController = alloc_init(MemoryController_Class_Descriptor);
-	_self->__iOController = alloc_init(IO_Class_Descriptor);
-
+	_info("FlagDelegate: %p",_self->flagDelegateVptr);
+	_self->__iOController = alloc_init(IO_Class_Descriptor, _self->flagDelegateVptr);
+	_info("Done constructon",NULL);
 	return self;
 }
 
@@ -250,7 +250,8 @@ static uword_t FlagDelegate_Get_Flags_As_Word(struct FlagDelegate * delegate)
 	_delegCall();
 	CPU* self = (CPU*)(delegate->delegateObject);
 	FlagRegister* reg = self->__flagRegister;
-	return 0 | reg->halt | reg->overflow | reg->input | reg->exit_code;
+
+	return (reg->halt << 4) | (reg->overflow << 3) | (reg->input << 2) | reg->exit_code;
 }
 
 static uint8_t FlagDelegate_Read_Flag(struct FlagDelegate * delegate, k_Status_Flag flag)
@@ -341,6 +342,14 @@ void CPU_Fetch_Execute_Cycle(CPU* self)
 	
 	instruction_t instruction = {0};
 
+	uword_t arr[23] = {0x0000, 0x3019, 0x0001, 0x301a, 0x0001, 0x301b, 0x0002, 0x301c,
+						0x0006, 0x705f, 0xf05b, 0xb05a, 0x2005, 0x1001, 0x5005, 0x4059,
+						0x809a, 0x705f, 0xf05b, 0xb05a, 0x2005, 0x1001, 0x1ff7};
+	for (int i = 0; i < 23; i++)
+		MemoryDelegate_Set_Word_At_Address(memoryDelegate,4073+i,arr[i]);
+	MemoryDelegate_Set_Word_At_Address(memoryDelegate,0,0x1fea);
+
+	_info("End booting",NULL);
 	while(!FlagDelegate_Read_Flag(flagDelegate,k_Status_Flag_Halt))
 	{	
 		uword_t pc_word = MemoryDelegate_Word_At_Address(memoryDelegate,self->__registers->PC);
@@ -349,6 +358,7 @@ void CPU_Fetch_Execute_Cycle(CPU* self)
 		CU_Execute_Instruction(self->__controlUnit, instruction);
 	}
 	r_printf("Value in S1: %d\n",self->__registers->S1);
+
 }
 
 // Public class methods for CPU

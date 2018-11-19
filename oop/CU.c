@@ -139,21 +139,21 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 
 // Private instance methods for CU
 static void __HALT(CU* self){
-	_info("Executing HALT instruction", NULL);
+	_controlInfo("Executing HALT instruction", NULL);
 	struct FlagDelegate* flagDelegate = self->__flagDelegate;
 	flagDelegate->FlagDelegate_Set_Flag(flagDelegate, k_Status_Flag_Exit_Code, k_Exit_Code_Halt);
 	flagDelegate->FlagDelegate_Set_Flag(flagDelegate, k_Status_Flag_Halt, 1);
 }
 
 static void __JUMP(CU* self, uword_t operand){
-	_info("Executing JUMP instruction", NULL);
+	_controlInfo("Executing JUMP instruction", NULL);
 	Registers* registers = self->__registers;
 	operand--;
 	registers->PC = operand;
 }
 
 static void __SKC(CU* self, uword_t operand){
-	_info("Executing SKC instruction", NULL);
+	_controlInfo("Executing SKC instruction", NULL);
 	Registers * registers = self->__registers;
 	if(__get_register_value_with_address(self, (uint8_t)operand) > 0){
 		registers->PC++;
@@ -161,7 +161,7 @@ static void __SKC(CU* self, uword_t operand){
 }
 
 static void __LOAD(CU* self, uword_t operand){
-	_info("Executing LOAD instruction", NULL);
+	_controlInfo("Executing LOAD instruction", NULL);
 	Registers* registers = self->__registers;
 	struct MemoryDelegate* memoryDelegate = self->__memoryDelegate;
 	uword_t operand2 = memoryDelegate->MemoryDelegate_Word_At_Address(memoryDelegate, ++(registers->PC));
@@ -177,24 +177,24 @@ static void __LOAD(CU* self, uword_t operand){
 }
 
 static void __STORE(CU* self, uword_t operand){
-	_info("Executing STORE instruction", NULL);
-	Registers* registers = self->__registers;
+	_controlInfo("Executing STORE instruction", NULL);
 	struct MemoryDelegate* memoryDelegate = self->__memoryDelegate;
-	uword_t address = __get_register_value_with_address(self,
+	uword_t wordToBeWritten = __get_register_value_with_address(self,
 		(uint8_t) ((operand>>REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1)));
-	uword_t wordToBeWritten = __get_register_value_with_address(self,(uint8_t) (operand & ((uword_t)(pow(2, REGISTER_ADDR_LENGTH) - 1))));
+	uword_t address = __get_register_value_with_address(self,(uint8_t) (operand & ((uword_t)(pow(2, REGISTER_ADDR_LENGTH) - 1))));
+	_controlInfo("Addr: %d | Wtbr: %d", address,wordToBeWritten);
 	memoryDelegate->MemoryDelegate_Set_Word_At_Address(memoryDelegate, address & ((uword_t)pow(2, ADDR_LENGTH) - 1), wordToBeWritten);
 }
 
 static void __IN(CU* self, uword_t operand){
-	_info("Executing IN instruction", NULL);
+	_controlInfo("Executing IN instruction", NULL);
 	struct IODelegate* ioDelegate = self->__ioDelegate;
 	uint8_t address = (uint8_t) (operand & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	__set_register_with_address(self, address, ioDelegate->IODelegate_Get_Word_From_Input_Queue(ioDelegate));
 }
 
 static void __OUT(CU* self, uword_t operand){
-	_info("Executing OUT instruction", NULL);
+	_controlInfo("Executing OUT instruction", NULL);
 	struct IODelegate* ioDelegate = self->__ioDelegate;
 	uint8_t address = (uint8_t) (operand & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	ioDelegate->IODelegate_Put_Word_To_Output_Queue(ioDelegate, __get_register_value_with_address(self, address), (operand >> REGISTER_ADDR_LENGTH) > 0);
@@ -202,14 +202,14 @@ static void __OUT(CU* self, uword_t operand){
 
 
 static void __MOVE(CU* self, uword_t operand){
-	_info("Executing MOVE instruction", NULL);
+	_controlInfo("Executing MOVE instruction", NULL);
 	uint8_t address1 = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	uint8_t address2 = (uint8_t) (operand & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	__set_register_with_address(self, address1, __get_register_value_with_address(self, address2));
 }
 
 static void __ADD(CU* self, uword_t operand){
-	_info("Executing ADD instruction", NULL);
+	_controlInfo("Executing ADD instruction", NULL);
 	ALU* alu = self->__alu;
 	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	uword_t value1Unsigned = __get_register_value_with_address(self, address);
@@ -220,7 +220,7 @@ static void __ADD(CU* self, uword_t operand){
 }
 
 static void __MUL(CU* self, uword_t operand){
-	_info("Executing MUL instruction", NULL);
+	_controlInfo("Executing MUL instruction", NULL);
 	ALU* alu = self->__alu;
 	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	uword_t value1Unsigned = __get_register_value_with_address(self, address);
@@ -231,7 +231,7 @@ static void __MUL(CU* self, uword_t operand){
 }
 
 static void __DIV(CU* self, uword_t operand){
-	_info("Executing DIV instruction", NULL);
+	_controlInfo("Executing DIV instruction", NULL);
 	ALU* alu = self->__alu;
 	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	uword_t value1Unsigned = __get_register_value_with_address(self, address);
@@ -242,18 +242,17 @@ static void __DIV(CU* self, uword_t operand){
 }
 
 static void __AND(CU* self, uword_t operand){
-	_info("Executing AND instruction", NULL);
+	_controlInfo("Executing AND instruction", NULL);
 	ALU* alu = self->__alu;
 	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	uword_t value1Unsigned = __get_register_value_with_address(self, address);
 	uword_t value2Unsigned = __get_register_value_with_address(self, (uint8_t) (operand & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1)));
-
 	word_t result = ALU_Bitwise_And(alu, unsigned_to_signed(value1Unsigned), unsigned_to_signed(value2Unsigned));
 	__set_register_with_address(self, address, signed_to_unsigned(result));
 }
 
 static void __OR(CU* self, uword_t operand){
-	_info("Executing OR instruction", NULL);
+	_controlInfo("Executing OR instruction", NULL);
 	ALU* alu = self->__alu;
 	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	uword_t value1Unsigned = __get_register_value_with_address(self, address);
@@ -264,7 +263,7 @@ static void __OR(CU* self, uword_t operand){
 }
 
 static void __NOT(CU* self, uword_t operand){
-	_info("Executing NOT instruction", NULL);
+	_controlInfo("Executing NOT instruction", NULL);
 	ALU* alu = self->__alu;
 	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	uword_t valueUnsigned = __get_register_value_with_address(self, address);
@@ -274,7 +273,7 @@ static void __NOT(CU* self, uword_t operand){
 }
 
 static void __SHL(CU* self, uword_t operand){
-	_info("Executing SHL instruction", NULL);
+	_controlInfo("Executing SHL instruction", NULL);
 	ALU* alu = self->__alu;
 	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	uword_t value1Unsigned = __get_register_value_with_address(self, address);
@@ -285,18 +284,17 @@ static void __SHL(CU* self, uword_t operand){
 }
 
 static void __SHR(CU* self, uword_t operand){
-	_info("Executing SHR instruction", NULL);
+	_controlInfo("Executing SHR instruction", NULL);
 	ALU* alu = self->__alu;
 	uint8_t address = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	uword_t value1Unsigned = __get_register_value_with_address(self, address);
 	uword_t value2Unsigned = __get_register_value_with_address(self, (uint8_t) (operand & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1)));
-
 	word_t result = ALU_Shift_Right_Logical(alu, unsigned_to_signed(value1Unsigned), value2Unsigned);
 	__set_register_with_address(self, address, signed_to_unsigned(result));
 }
 
 static void __set_register_with_address(CU* self, uint8_t address, uword_t value){
-	_info("Setting register (Address: %d)", address);
+	_controlInfo("Setting register (Address: %d)", address);
 	Registers* registers = self->__registers;
 	uword_t mask = ((uword_t)pow(2,ADDR_LENGTH) - 1);
 	switch(address){
@@ -403,7 +401,7 @@ static uword_t __get_register_value_with_address(CU* self, uint8_t address) {
 
 // Public instance methods for CU
 void CU_Execute_Instruction(CU* self, instruction_t instruction){
-	_info("Executing instruction (Opcode: %d, Operand: %d)", instruction.opcode, instruction.operand);
+	_controlInfo("Executing instruction (Opcode: %x, Operand: %x)", instruction.opcode, instruction.operand);
 	Registers* registers = self->__registers;
 	registers->IR = (instruction.opcode << (WORD_SIZE - OPCODE_LENGTH)) + instruction.operand;
 	switch(instruction.opcode){

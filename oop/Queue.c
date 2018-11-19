@@ -79,6 +79,9 @@ static Object* _Object_Ctor(Object * self, va_list args)
 */
 static Object* _Object_Dtor(Object * self)
 {
+	Queue* _self = (Queue*)self;
+	if (_self->Q)
+		free(_self->Q); _self->Q = 0;
 	return self;
 }
 
@@ -130,7 +133,7 @@ void Queue_Enqueue(Queue* self, word_t element){
 
 word_t Queue_Dequeue(Queue* self){
 	if(Queue_Is_Empty(self)){
-		_err("the queue was empty WHY U DO THIS??????", NULL);
+		_err("Queue is empty, cannot dequeue.", NULL);
 		return 0;
 	} else {
 		word_t rval = *(self->Q + self->front);
@@ -141,7 +144,7 @@ word_t Queue_Dequeue(Queue* self){
 
 word_t Queue_Front(Queue* self){
 	if(Queue_Is_Empty(self)){
-		_err("the queue was empty WHY U DO THIS??????", NULL);
+		_err("Queue is empty, cannot get front element.", NULL);
 		return 0;
 	} else {
 		return self->Q[self->front];
@@ -149,10 +152,10 @@ word_t Queue_Front(Queue* self){
 	
 }
 
-word_t Queue_Size(Queue* self){
+inline word_t Queue_Size(Queue* self){
 	return self->rear - self->front;
 }
 
-uint16_t Queue_Is_Empty(Queue* self){
+inline uint16_t Queue_Is_Empty(Queue* self){
 	return self->front == self->rear;
 }
