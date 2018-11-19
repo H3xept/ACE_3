@@ -179,10 +179,9 @@ static void __LOAD(CU* self, uword_t operand){
 static void __STORE(CU* self, uword_t operand){
 	_controlInfo("Executing STORE instruction", NULL);
 	struct MemoryDelegate* memoryDelegate = self->__memoryDelegate;
-	uword_t wordToBeWritten = __get_register_value_with_address(self,
+	uword_t address = __get_register_value_with_address(self,
 		(uint8_t) ((operand>>REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1)));
-	uword_t address = __get_register_value_with_address(self,(uint8_t) (operand & ((uword_t)(pow(2, REGISTER_ADDR_LENGTH) - 1))));
-	_controlInfo("Addr: %d | Wtbr: %d", address,wordToBeWritten);
+	uword_t wordToBeWritten = __get_register_value_with_address(self,(uint8_t) (operand & ((uword_t)(pow(2, REGISTER_ADDR_LENGTH) - 1))));
 	memoryDelegate->MemoryDelegate_Set_Word_At_Address(memoryDelegate, address & ((uword_t)pow(2, ADDR_LENGTH) - 1), wordToBeWritten);
 }
 
