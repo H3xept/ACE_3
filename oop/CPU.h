@@ -38,6 +38,6 @@ extern const void * CPU_Class_Descriptor;
 // ...
 
 // Public instance methods for CPU
-// ...
+void CPU_Fetch_Execute_Cycle(CPU* self);
 
 #endif

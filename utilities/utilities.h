@@ -3,6 +3,7 @@
 #define __DEBUG__
 #include "colors.h"
 #include <stdint.h>
+#include <curses.h>
 #include "../oop/constants/var_word_size.h"
 
 #define _warn(S,...) 	y_printf("[WARNING] ",NULL); \
@@ -18,8 +19,10 @@
 #define _info(S, ...) 	g_printf("[INFO] ",NULL); \
 						g_printf(S, __VA_ARGS__); \
 						puts("");
+#define _delegCall()	b_printf("[DELEGATE] %s Received delegate call -> %s\n",__FILE__, __func__)
 #else
 #define _info(S, ...)
+#define _delegCall()
 #endif
 
 #define MIN(X,Y) (X < Y) ? X : Y

@@ -91,10 +91,10 @@ static Object* _Object_Ctor(Object * self, va_list args)
 	CU* _self = (CU*)self;
 
 	_self->__registers = va_arg(args, Registers*);
-	_self->__alu = (ALU*) va_arg(args, void*);
-	_self->__ioDelegate = (struct IODelegate*) va_arg(args, void*);
-	_self->__flagDelegate = (struct FlagDelegate*) va_arg(args, void*);
-	_self->__memoryDelegate = (struct MemoryDelegate*) va_arg(args, void*);
+	_self->__alu = va_arg(args, ALU*);
+	_self->__ioDelegate = va_arg(args, struct IODelegate*);
+	_self->__flagDelegate = va_arg(args, struct FlagDelegate*);
+	_self->__memoryDelegate = va_arg(args, struct MemoryDelegate*);
 
 	return self;
 }
@@ -455,5 +455,5 @@ void CU_Execute_Instruction(CU* self, instruction_t instruction){
 		case 15:
 			__SHR(self, instruction.operand);
 	}
-	self->__registers->PC++;
+	registers->PC++;
 }
