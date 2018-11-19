@@ -178,7 +178,9 @@ static void __STORE(CU* self, uword_t operand){
 	_info("Executing STORE instruction", NULL);
 	Registers* registers = self->__registers;
 	struct MemoryDelegate* memoryDelegate = self->__memoryDelegate;
-	uword_t address = memoryDelegate->MemoryDelegate_Word_At_Address(memoryDelegate, ++(registers->PC));
+	uword_t address = __get_register_value_with_address(self,
+		(uint8_t) memoryDelegate->MemoryDelegate_Word_At_Address(memoryDelegate,
+		++(registers->PC)) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
 	uword_t wordToBeWritten = __get_register_value_with_address(self,(uint8_t) (operand & ((uword_t)(pow(2, REGISTER_ADDR_LENGTH) - 1))));
 	memoryDelegate->MemoryDelegate_Set_Word_At_Address(memoryDelegate, address & ((uword_t)pow(2, ADDR_LENGTH) - 1), wordToBeWritten);
 }
@@ -353,6 +355,7 @@ static void __set_register_with_address(CU* self, uint8_t address, uword_t value
 
 static uword_t __get_register_value_with_address(CU* self, uint8_t address) {
 	Registers* registers = self->__registers;
+	struct FlagDelegate* flagDelegate = self->__flagDelegate;
 	switch(address){
 		case 0:
 			return registers->PC;
@@ -388,7 +391,6 @@ static uword_t __get_register_value_with_address(CU* self, uint8_t address) {
 			return flagDelegate->FlagDelegate_Get_Flags_As_Word(flagDelegate);
 		default:
 			_warn("Illegal register access (Address: %d)", address);
-			struct FlagDelegate* flagDelegate = self->__flagDelegate;
 			flagDelegate->FlagDelegate_Set_Flag(flagDelegate, k_Status_Flag_Exit_Code, k_Exit_Code_Illegal_Register_Access);
 			flagDelegate->FlagDelegate_Set_Flag(flagDelegate, k_Status_Flag_Halt, 1);
 			return 0;
