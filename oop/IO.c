@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include "Object.h"
 #include "OOP.h"
+#include "./protocols/FlagDelegate.h"
 #include "./protocols/IODelegate.h"
 #include "../utilities/utilities.h"
 #include "./constants/var_word_size.h"
@@ -66,8 +67,12 @@ static Object* _Object_Ctor(Object * self, va_list args)
 {
 	// Downcast to IO
 	IO* _self = (IO*)self;
+	_self->__flagDelegate = va_arg(args, struct FlagDelegate*);
+
 	__Setup_Delegates(_self);
-	
+
+	_self->__in_q = alloc_init(Queue_Class_Descriptor);
+	_self->__out_q = alloc_init(Queue_Class_Descriptor);
 	return self;
 }
 
@@ -78,9 +83,12 @@ static Object* _Object_Ctor(Object * self, va_list args)
 */
 static Object* _Object_Dtor(Object * self)
 {
-	/* 	
-		empty in/out queue
-	*/
+	IO* _self = (IO*)self;
+	if (_self->__in_q)
+		free(_self->__in_q); _self->__in_q = 0;
+	if (_self->__out_q)
+		free(_self->__out_q); _self->__out_q = 0;
+
 	return self;
 }
 
@@ -111,29 +119,34 @@ static const char* const _Object_Descriptor(Object * self)
 
 static uword_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate)
 {
-	IO* self = (IO*)delegate;
-	if(Queue_Is_Empty(self->in_q)){
+	IO* self = (IO*)delegate->delegateObject;
+	if(Queue_Is_Empty(self->__in_q)){
 		#warning unfinished
-		//ask for input
+		_warn("Should ask for input, adding zeros as word",NULL);
+		return 0;
 	}
-	word_t rtn = Queue_Dequeue(self->in_q);
-	//set flag to Queue_Is_Empty(in_q) using flag delegate
+	word_t rtn = Queue_Dequeue(self->__in_q);
+	self->__flagDelegate->FlagDelegate_Set_Flag(self->__flagDelegate,k_Status_Flag_Input,!Queue_Is_Empty(self->__in_q));
 	return rtn;
 }
 
 static void IODelegate_Put_Word_To_Output_Queue(struct IODelegate * delegate, uword_t word, uint8_t print)
 {
-	IO* self = (IO*)delegate;
-	Queue_Enqueue(self->out_q, word);
-	#warning idk
+	IO* self = (IO*)delegate->delegateObject;
+	Queue_Enqueue(self->__out_q, word);
+	#warning Wrapper print
 }
 
 static void __Setup_Delegates(IO* self)
 {
+	_info("Setting up delegates for %s", __FILE__);
+
 	static struct IODelegate ioDelegateVtbl = {
+		0,
 		&IODelegate_Get_Word_From_Input_Queue,
 		&IODelegate_Put_Word_To_Output_Queue,
 	};
+	ioDelegateVtbl.delegateObject = self;
 	self->iODelegateVptr = &ioDelegateVtbl;
 }
 
