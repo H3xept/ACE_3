@@ -69,23 +69,23 @@ Skips the next instruction if the contents of the given register are greater tha
 
 ---
 ### `0011 / LOAD` Load
-Loads the contents of the given address into the given register. Can accept immediate values.
+Loads the contents of the given memory address into the given register. Can accept immediate values.
 
 **Operands:** One 12 bit value, one 16 bit value (from the next word in memory).
 
 **Operand A:** 4 bit register address, padded with 0s. May have a 1 in the first bit.
 
-**Operand B:** 12 bit memory address, padded with 0s. If the first bit of operand A is 1, then treated as a 16 bit immediate value.
+**Operand B:** 4 bit register address (of register containing memory address), padded with 0s. If the padding of operand A contains 1, then treated as a 16 bit immediate value.
 
 ---
 ### `0100 / STORE` Store
-Loads the contents of the given register into the given address.
+Loads the contents of the second register into the address given in the first register.
 
-**Operands:** One 4 bit value, one 12 bit value (from the next word in memory).
+**Operands:** One 4 bit value, one 4 bit value.
 
-**Operand A:** 4 bit register address, padded with 0s.
+**Operand A:** 4 bit register address (of register containing memory address), padded with 0s.
 
-**Operand B:** 12 bit memory address, padded with 0s.
+**Operand B:** 4 bit register address.
 
 ---
 ### `0101 / IN` Input
@@ -105,7 +105,7 @@ Places the contents of the given register into the output queue.
 
 ---
 ### `0111 / MOVE` Move
-Moves values from one register to another.
+Moves values from the second register to the first.
 
 **Operands:** One 8 bit value, one 4 bit value.
 
