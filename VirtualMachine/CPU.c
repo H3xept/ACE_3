@@ -335,10 +335,15 @@ static inline void __CPU_Init_Flag_Register(CPU* self)
 	self->__flagRegister->exit_code = 0;
 }
 
+// Public class methods for CPU
+// ...
+
+// Public instance methods for CPU
 #warning Temporary
 void CPU_Fetch_Execute_Cycle(CPU* self)
 {		
 	_info("Starting FEC", NULL);
+	self->vm->cpu_mode = CPU_Mode_Running;
 
 	struct MemoryDelegate* memoryDelegate = (struct MemoryDelegate*)(self->memoryDelegateVptr);
 	struct FlagDelegate* flagDelegate = (struct FlagDelegate*)(self->flagDelegateVptr);
@@ -354,8 +359,18 @@ void CPU_Fetch_Execute_Cycle(CPU* self)
 	}
 }
 
-// Public class methods for CPU
-// ...
+// WARNING - Viable only during CPU idle stage
+void CPU_Load_Words_In_Input_Queue(CPU* self, uword_t* words, size_t word_n)
+{
+	struct FlagDelegate* flagDelegate = self->flagDelegateVptr;
 
-// Public instance methods for CPU
-// ...
+	if (self->vm->cpu_mode == CPU_Mode_Idle)
+	{
+		for (int i = 0; i < word_n; i++)
+			Queue_Enqueue(self->__iOController->__in_q,*(words+i));
+		if (word_n)
+			FlagDelegate_Set_Flag(flagDelegate,k_Status_Flag_Input,1);
+		return;
+	} 
+	_err("Direct access to the input queue is denied if not in idle stage.", NULL);
+}

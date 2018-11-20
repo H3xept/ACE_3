@@ -59,12 +59,13 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 
 // VIRTUAL METHODS HANDLES (PUBLIC)
 
-const char* const Type_Descriptor(Object * self)
+const char* const Object_Type_Descriptor(Object * self)
 {
 	assert(self);
 	if (self->vptr->type_descriptor)
-		self->vptr->type_descriptor(self);
+		return self->vptr->type_descriptor(self);
 	_err("Type descriptor not found in vtable.", NULL);
+	return NULL;
 }
 
 Object* Object_Ctor(Object * self, va_list args)
@@ -100,6 +101,7 @@ unsigned int Object_Equals(Object* self, Object* obj)
 	if (self->vptr->equals)
 		return self->vptr->equals(self,obj);
 	_err("Object equality comparator not found in vtable", NULL);
+	return 0;
 }
 
 // NON-VIRTUAL METHODS

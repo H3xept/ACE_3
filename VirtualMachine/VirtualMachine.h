@@ -13,11 +13,19 @@
 
 #include "./protocols/IOWrapperDelegate.h"
 
+// Forward declaration - Actual structure in CPU.h
 typedef struct CPU CPU;
+
+typedef enum {
+	CPU_Mode_Idle,
+	CPU_Mode_Booting,
+	CPU_Mode_Running
+}CPU_Mode;
 
 typedef struct _VirtualMachine {
 	Object super;
 	CPU* cpu;
+	CPU_Mode cpu_mode;
 	// Implements IOWrapperDelegate
 	struct IOWrapperDelegate* iOWrapperDelegateVptr;
 } VirtualMachine;
@@ -28,6 +36,6 @@ extern const void * VirtualMachine_Class_Descriptor;
 // ...
 
 // Public instance methods for VirtualMachine
-void Virtual_Machine_Run(VirtualMachine* self);
+void Virtual_Machine_Run(VirtualMachine* self, uword_t* program, size_t word_n);
 
 #endif

@@ -70,6 +70,7 @@ static Object* _Object_Ctor(Object * self, va_list args)
 	VirtualMachine* _self = (VirtualMachine*)self;
 	_self->cpu = alloc_init(CPU_Class_Descriptor, _self);
 	__Setup_Delegates(_self);
+	_self->cpu_mode = CPU_Mode_Idle;
 	return self;
 }
 
@@ -145,6 +146,7 @@ static void __Setup_Delegates(VirtualMachine* self)
 
 static void __Load_Bootloader(VirtualMachine* self)
 {
+	self->cpu_mode = CPU_Mode_Booting;
 	struct MemoryDelegate* memoryDelegate = self->cpu->memoryDelegateVptr;
 
 	uword_t bootloader[] = {0x0000, 0x3019, 0x0001, 0x301a, 0x0001, 0x301b, 0x0002, 0x301c,
@@ -154,18 +156,28 @@ static void __Load_Bootloader(VirtualMachine* self)
 
 	size_t bootloader_instr_n = sizeof(bootloader)/sizeof(uword_t);
 	for (int i = 0; i < bootloader_instr_n; i++)
-		memoryDelegate->MemoryDelegate_Set_Word_At_Address(memoryDelegate,bootloader_instr_n+i,bootloader[i]);
+		memoryDelegate->MemoryDelegate_Set_Word_At_Address(memoryDelegate,WORDS_IN_MEM-bootloader_instr_n+i,bootloader[i]);
 	memoryDelegate->MemoryDelegate_Set_Word_At_Address(memoryDelegate,0,0x1fea);
 
 	_info("Bootloader loading complete.",NULL);
+}
+
+static void __Load_Program(VirtualMachine* self, uword_t* program, size_t word_n)
+{
+	CPU_Load_Words_In_Input_Queue(self->cpu, program, word_n);
+	// for (int i = 0; i < word_n; i++)
+	// {
+	// 	_info("--> %d",*(self->cpu->__iOController->__in_q->Q+i));
+	// }
 }
 
 // Public class methods for VirtualMachine
 // ...
 
 // Public instance methods for VirtualMachine
-void Virtual_Machine_Run(VirtualMachine* self)
+void Virtual_Machine_Run(VirtualMachine* self, uword_t* program, size_t word_n)
 {
+	__Load_Program(self, program, word_n);
 	__Load_Bootloader(self);
 	CPU_Fetch_Execute_Cycle(self->cpu);
 }
