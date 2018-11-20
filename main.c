@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "./oop/umbrella.h"
-#include "./VirtualMachine/CPU.h"
 
+#include "VirtualMachine/VirtualMachine.h"
 int main(int argc, char const *argv[])
 {
-	CPU* cpu = alloc_init(CPU_Class_Descriptor);
-	CPU_Fetch_Execute_Cycle(cpu);
+	VirtualMachine* vm = alloc_init(VirtualMachine_Class_Descriptor);
+	Virtual_Machine_Run(vm);
+	return 0;
 }

@@ -15,6 +15,7 @@
 #include "../oop/umbrella.h"
 #include "./protocols/FlagDelegate.h"
 #include "./protocols/IODelegate.h"
+#include "./protocols/IOWrapperDelegate.h"
 #include "./constants/var_word_size.h"
 #include "IO.h"
 
@@ -65,6 +66,7 @@ static Object* _Object_Ctor(Object * self, va_list args)
 	// Downcast to IO
 	IO* _self = (IO*)self;
 	_self->__flagDelegate = va_arg(args, struct FlagDelegate*);
+	_self->__iOWrapperDelegate = va_arg(args, struct IOWrapperDelegate*);
 
 	__Setup_Delegates(_self);
 
@@ -116,11 +118,15 @@ static const char* const _Object_Descriptor(Object * self)
 
 static uword_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate)
 {
+	_delegCall();
 	IO* self = (IO*)delegate->delegateObject;
+	struct IOWrapperDelegate* iOWrapperDelegate = self->__iOWrapperDelegate;
+
 	if(Queue_Is_Empty(self->__in_q)){
-		#warning unfinished
-		_warn("Should ask for input, adding zeros as word",NULL);
-		return 0;
+		uword_t* new_elements = iOWrapperDelegate->IOWrapperDelegate_Input(iOWrapperDelegate);
+		uword_t n_elements = *new_elements;
+		for (int n = 0; n < n_elements; n++)
+			Queue_Enqueue(self->__in_q,*(new_elements+n));
 	}
 	word_t rtn = Queue_Dequeue(self->__in_q);
 	self->__flagDelegate->FlagDelegate_Set_Flag(self->__flagDelegate,k_Status_Flag_Input,!Queue_Is_Empty(self->__in_q));
@@ -129,9 +135,12 @@ static uword_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate
 
 static void IODelegate_Put_Word_To_Output_Queue(struct IODelegate * delegate, uword_t word, uint8_t print)
 {
+	_delegCall();
 	IO* self = (IO*)delegate->delegateObject;
+	struct IOWrapperDelegate* iOWrapperDelegate = self->__iOWrapperDelegate;
 	Queue_Enqueue(self->__out_q, word);
-	#warning Wrapper print
+	if (print)
+		iOWrapperDelegate->IOWrapperDelegate_Output(iOWrapperDelegate,self->__out_q);
 }
 
 static void __Setup_Delegates(IO* self)

@@ -19,6 +19,7 @@ typedef struct _IO {
 	Queue* __out_q;
 	struct IODelegate* iODelegateVptr;
 	struct FlagDelegate* __flagDelegate;
+	struct IOWrapperDelegate* __iOWrapperDelegate;
 } IO;
 
 extern const void * IO_Class_Descriptor;

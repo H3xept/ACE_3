@@ -24,6 +24,7 @@
 #include "./protocols/FlagDelegate.h"
 #include "./protocols/MemoryDelegate.h" // Acting as an adaptor
 #include "./protocols/IODelegate.h" // Acting as an adaptor
+#include "VirtualMachine.h"
 
 /// The type string of CPU
 static const char* const 	type_string = "CPU";
@@ -77,6 +78,10 @@ static Object* _Object_Ctor(Object * self, va_list args)
 	CPU* _self = (CPU*)self;
 	__Setup_Delegates(_self);
 
+	_self->vm = va_arg(args, VirtualMachine*);
+	assert(_self->vm);
+	#warning Delete
+
 	_self->__registers = malloc(sizeof(Registers));
 	_self->__flagRegister = malloc(sizeof(FlagRegister));
 	__CPU_Init_Registers(_self);
@@ -90,7 +95,7 @@ static Object* _Object_Ctor(Object * self, va_list args)
 													_self->flagDelegateVptr, 
 													_self->memoryDelegateVptr);
 	_self->__memoryController = alloc_init(MemoryController_Class_Descriptor);
-	_self->__iOController = alloc_init(IO_Class_Descriptor, _self->flagDelegateVptr);
+	_self->__iOController = alloc_init(IO_Class_Descriptor, _self->flagDelegateVptr, _self->vm->iOWrapperDelegateVptr);
 	return self;
 }
 
@@ -332,21 +337,13 @@ static inline void __CPU_Init_Flag_Register(CPU* self)
 
 #warning Temporary
 void CPU_Fetch_Execute_Cycle(CPU* self)
-{	
+{		
+	_info("Starting FEC", NULL);
+
 	struct MemoryDelegate* memoryDelegate = (struct MemoryDelegate*)(self->memoryDelegateVptr);
 	struct FlagDelegate* flagDelegate = (struct FlagDelegate*)(self->flagDelegateVptr);
 	
 	instruction_t instruction = {0};
-
-	uword_t arr[23] = {0x0000, 0x3019, 0x0001, 0x301a, 0x0001, 0x301b, 0x0002, 0x301c,
-						0x0006, 0x705f, 0xf05b, 0xb05a, 0x2005, 0x1001, 0x5005, 0x4095,
-						0x809a, 0x705f, 0xf05b, 0xb05a, 0x2005, 0x1001, 0x1ff7};
-
-	for (int i = 0; i < 23; i++)
-		MemoryDelegate_Set_Word_At_Address(memoryDelegate,4073+i,arr[i]);
-	MemoryDelegate_Set_Word_At_Address(memoryDelegate,0,0x1fea);
-
-	_info("End booting",NULL);
 	
 	while(!FlagDelegate_Read_Flag(flagDelegate,k_Status_Flag_Halt))
 	{	
@@ -355,8 +352,6 @@ void CPU_Fetch_Execute_Cycle(CPU* self)
 		instruction.opcode = pc_word>>(WORD_SIZE - OPCODE_LENGTH);
 		CU_Execute_Instruction(self->__controlUnit, instruction);
 	}
-	r_printf("Value in S1: %d\n",self->__registers->S1);
-
 }
 
 // Public class methods for CPU

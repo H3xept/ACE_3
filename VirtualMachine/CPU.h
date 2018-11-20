@@ -10,17 +10,18 @@
 #ifndef __CPU__
 #define __CPU__
 
-#include "CPU.h"
 #include "ALU.h"
 #include "CU.h"
 #include "./protocols/FlagDelegate.h"
 #include "./protocols/MemoryDelegate.h" // Acting as an adaptor
 #include "./protocols/IODelegate.h" // Acting as an adaptor
 #include "MemoryController.h"
+#include "VirtualMachine.h"
 #include "IO.h"
 
-typedef struct _CPU {
+struct CPU {
 	Object super;
+	VirtualMachine* vm;
 	ALU* __alu;
 	CU* __controlUnit;
 	Registers* __registers;
@@ -30,7 +31,7 @@ typedef struct _CPU {
 	struct FlagDelegate* flagDelegateVptr;
 	struct MemoryDelegate* memoryDelegateVptr;
 	struct IODelegate* iODelegateVptr;
-} CPU;
+};
 
 extern const void * CPU_Class_Descriptor;
 
