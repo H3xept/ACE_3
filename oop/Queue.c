@@ -4,7 +4,7 @@
 * Authors: Leonardo Cascianelli,Rory Brown,Ewan Skene
 * Date: 2018-11-16
 * 
-* Description: a queue of WORDSSSS
+* Description: a queue of uint16_t
 */
 
 #include <assert.h>
@@ -12,12 +12,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "./constants/var_word_size.h"
 #include "Object.h"
 #include "OOP.h"
-#include "../utilities/utilities.h"
 #include "Queue.h"
-
+#include "../utilities/utilities.h"
 /// The type string of Queue
 static const char* const 	type_string = "Queue";
 
@@ -27,7 +25,6 @@ static Object* 			 	_Object_Dtor(Object * self);
 static const char* const 	_Object_Type_Descriptor(Object * _self);
 static const char* const 	_Object_Descriptor(Object * self);
 static unsigned int 		_Object_Equals(Object* self, Object* obj);
-
 /// Function binding for virtual methods table
 static struct ObjectVTbl 	vtbl = {
 								&_Object_Ctor,
@@ -65,7 +62,7 @@ static Object* _Object_Ctor(Object * self, va_list args)
 {
 	Queue* _self = (Queue*)self;
 	_self->cap = 200;
-	_self->Q = calloc(_self->cap, sizeof(word_t));
+	_self->Q = calloc(_self->cap, sizeof(uint16_t));
 	_self->front = 0;
 	_self->rear = 0;
 	_self->els = 0;
@@ -121,9 +118,9 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 
 // Public instance methods for Queue
 
-void Queue_Enqueue(Queue* self, word_t element){
+void Queue_Enqueue(Queue* self, uint16_t element){
 	if (self->els == self->cap-1){
-		self->Q = (word_t*)realloc(self->Q, self->cap*2 * sizeof(word_t));
+		self->Q = (uint16_t*)realloc(self->Q, self->cap*2 * sizeof(uint16_t));
 		self->cap = self->cap*2;
 	}
 	self->Q[self->rear] = element;
@@ -131,18 +128,18 @@ void Queue_Enqueue(Queue* self, word_t element){
 	self->els++;
 }
 
-word_t Queue_Dequeue(Queue* self){
+uint16_t Queue_Dequeue(Queue* self){
 	if(Queue_Is_Empty(self)){
 		_err("Queue is empty, cannot dequeue.", NULL);
 		return 0;
 	} else {
-		word_t rval = *(self->Q + self->front);
+		uint16_t rval = *(self->Q + self->front);
 		self->front = (self->front+1);
 		return rval;
 	}
 }
 
-word_t Queue_Front(Queue* self){
+uint16_t Queue_Front(Queue* self){
 	if(Queue_Is_Empty(self)){
 		_err("Queue is empty, cannot get front element.", NULL);
 		return 0;
@@ -152,7 +149,7 @@ word_t Queue_Front(Queue* self){
 	
 }
 
-inline word_t Queue_Size(Queue* self){
+inline uint16_t Queue_Size(Queue* self){
 	return self->rear - self->front;
 }
 

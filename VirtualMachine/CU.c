@@ -14,10 +14,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <math.h>
-#include "Object.h"
-#include "OOP.h"
-#include "../utilities/utilities.h"
 #include "CU.h"
+#include "../oop/umbrella.h"
 #include "./protocols/FlagDelegate.h"
 #include "./protocols/IODelegate.h"
 #include "./protocols/MemoryDelegate.h"

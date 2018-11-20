@@ -5,11 +5,6 @@
 #include "Object.h"
 #include "String.h"
 #include "../utilities/utilities.h"
-#include "MemoryController.h"
-#include "ALU.h"
-#include "IO.h"
-#include "CPU.h"
-#include "CU.h"
 #include "Queue.h"
 
 #endif

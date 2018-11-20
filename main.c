@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "./oop/umbrella.h"
-#include "./oop/protocols/MemoryDelegate.h"
+#include "./VirtualMachine/CPU.h"
 
 int main(int argc, char const *argv[])
 {

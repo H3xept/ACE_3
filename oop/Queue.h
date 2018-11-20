@@ -16,7 +16,7 @@ typedef struct _Queue {
 	int front;
 	int rear;
 	int els;
-	word_t* Q;
+	uint16_t* Q;
 } Queue;
 
 extern const void * Queue_Class_Descriptor;
@@ -25,10 +25,10 @@ extern const void * Queue_Class_Descriptor;
 // ...
 
 // Public instance methods for Queue
-void Queue_Enqueue(Queue* self, word_t element);
-word_t Queue_Dequeue(Queue* self);
-word_t Queue_Front(Queue* self);
-word_t Queue_Size(Queue* self);
+void Queue_Enqueue(Queue* self, uint16_t element);
+uint16_t Queue_Dequeue(Queue* self);
+uint16_t Queue_Front(Queue* self);
+uint16_t Queue_Size(Queue* self);
 uint16_t Queue_Is_Empty(Queue* self);
 
 #endif

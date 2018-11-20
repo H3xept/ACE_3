@@ -13,13 +13,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "Object.h"
-#include "OOP.h"
-#include "../utilities/utilities.h"
-#include "ALU.h"
 #include "./constants/arch_const.h"
 #include "./constants/var_word_size.h"
-
+#include "../oop/umbrella.h"
+#include "ALU.h"
 /// The type string of ALU
 static const char* const 	type_string = "ALU";
 

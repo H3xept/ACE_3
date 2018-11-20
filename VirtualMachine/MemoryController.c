@@ -15,9 +15,7 @@
 #include <math.h>
 #include <ctype.h>
 #include <string.h>
-#include "Object.h"
-#include "OOP.h"
-#include "../utilities/utilities.h"
+#include "../oop/umbrella.h"
 #include "MemoryController.h"
 #include "./protocols/MemoryDelegate.h"
 #include "./constants/arch_const.h"

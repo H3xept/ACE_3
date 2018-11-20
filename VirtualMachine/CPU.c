@@ -4,7 +4,7 @@
 * Authors: Leonardo Cascianelli,Rory Brown,Ewan Skene
 * Date: 2018-11-16
 * 
-* Description: __DESCRIPTION__
+* Description: The CPU of the machine.
 */
 
 #include <assert.h>
@@ -13,14 +13,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include "Object.h"
-#include "OOP.h"
+#include "../oop/umbrella.h"
 #include "CPU.h"
 #include "ALU.h"
 #include "CU.h"
 #include <math.h>
 #include "./constants/var_word_size.h"
-#include "../utilities/utilities.h"
 #include "./constants/registers.h"
 #include "./constants/flag_register.h"
 #include "./protocols/FlagDelegate.h"
@@ -92,9 +90,7 @@ static Object* _Object_Ctor(Object * self, va_list args)
 													_self->flagDelegateVptr, 
 													_self->memoryDelegateVptr);
 	_self->__memoryController = alloc_init(MemoryController_Class_Descriptor);
-	_info("FlagDelegate: %p",_self->flagDelegateVptr);
 	_self->__iOController = alloc_init(IO_Class_Descriptor, _self->flagDelegateVptr);
-	_info("Done constructon",NULL);
 	return self;
 }
 
@@ -345,11 +341,13 @@ void CPU_Fetch_Execute_Cycle(CPU* self)
 	uword_t arr[23] = {0x0000, 0x3019, 0x0001, 0x301a, 0x0001, 0x301b, 0x0002, 0x301c,
 						0x0006, 0x705f, 0xf05b, 0xb05a, 0x2005, 0x1001, 0x5005, 0x4095,
 						0x809a, 0x705f, 0xf05b, 0xb05a, 0x2005, 0x1001, 0x1ff7};
+
 	for (int i = 0; i < 23; i++)
 		MemoryDelegate_Set_Word_At_Address(memoryDelegate,4073+i,arr[i]);
 	MemoryDelegate_Set_Word_At_Address(memoryDelegate,0,0x1fea);
 
 	_info("End booting",NULL);
+	
 	while(!FlagDelegate_Read_Flag(flagDelegate,k_Status_Flag_Halt))
 	{	
 		uword_t pc_word = MemoryDelegate_Word_At_Address(memoryDelegate,self->__registers->PC);

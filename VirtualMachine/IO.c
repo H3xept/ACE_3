@@ -4,7 +4,7 @@
 * Authors: Leonardo Cascianelli,Rory Brown,Ewan Skene
 * Date: 2018-11-14
 * 
-* Description: __DESCRIPTION__
+* Description: Input Output Controller
 */
 
 #include <assert.h>
@@ -12,13 +12,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "Object.h"
-#include "OOP.h"
+#include "../oop/umbrella.h"
 #include "./protocols/FlagDelegate.h"
 #include "./protocols/IODelegate.h"
-#include "../utilities/utilities.h"
 #include "./constants/var_word_size.h"
-#include "Queue.h"
 #include "IO.h"
 
 /// The type string of IO

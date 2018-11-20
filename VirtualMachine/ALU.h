@@ -12,6 +12,7 @@
 
 #include "./constants/flag_register.h"
 #include "./constants/var_word_size.h"
+#include "../oop/umbrella.h"
 
 typedef struct _ALU {
 	Object super;

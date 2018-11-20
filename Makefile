@@ -4,7 +4,7 @@ PROGRAM_NAME = test.out
 
 all: framework
 	@echo "Compiling Project"
-	$(CC) *.c $(CFLAGS) -o $(PROGRAM_NAME) *.o
+	$(CC) *.c ./VirtualMachine/*.c $(CFLAGS) -o $(PROGRAM_NAME) *.o
 	rm *.o
 
 framework:

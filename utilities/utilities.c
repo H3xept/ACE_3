@@ -1,12 +1,12 @@
 #include "utilities.h"
-#include "../oop/constants/var_word_size.h"
+#include <stdint.h>
 
-inline word_t unsigned_to_signed(uword_t word)
+inline int16_t unsigned_to_signed(uint16_t word)
 {
-	return *(word_t*) &word;
+	return *(int16_t*) &word;
 } 
 
-inline uword_t signed_to_unsigned(word_t word)
+inline uint16_t signed_to_unsigned(int16_t word)
 {
-	return *(uword_t*) &word;
+	return *(uint16_t*) &word;
 }
