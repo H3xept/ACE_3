@@ -10,8 +10,15 @@
 #ifndef __IO__
 #define __IO__
 
+#include "./protocols/IODelegate.h"
+#include "../oop/umbrella.h"
+
 typedef struct _IO {
 	Object super;
+	Queue* __in_q;
+	Queue* __out_q;
+	struct IODelegate* iODelegateVptr;
+	struct FlagDelegate* __flagDelegate;
 } IO;
 
 extern const void * IO_Class_Descriptor;
