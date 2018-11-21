@@ -20,6 +20,7 @@
 #include <math.h>
 #include "./protocols/MemoryDelegate.h"
 #include "./constants/arch_const.h"
+#define MAX_INPUT_LEN 200
 
 /// The type string of VirtualMachine
 static const char* const 	type_string = "VirtualMachine";
@@ -116,12 +117,107 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 // ...
 
 // Private instance methods for VirtualMachine
+static uword_t bin_String_To_Word(char* input,int len){
+	int dec = 0;
+	for(int i = 0; i < len; i++)
+		dec += (input[i] - '0') * pow(2,(len-1-i));	
+	return dec;
+}
 
-#warning Implement
+static uword_t hex_String_To_Word(char*input, int len){
+	int dec = 0;
+	for(int i = 0; i < len; i++){
+		if (((input[i] - '0') >= 0) && ((input[i] - '0') <= 9))
+			dec += (input[i] - '0') * pow(16,(len-1-i));
+		if (((input[i] - 'a' + 10) >= 10) && ((input[i] - 'a' + 10) <= 15))
+			dec += (input[i] - 'a' + 10) * pow(16,(len-1-i));
+		if (((input[i] - 'A' + 10) >= 10) && ((input[i] - 'A' + 10) <= 15))
+			dec += (input[i] - 'A' + 10) * pow(16,(len-1-i));
+	}
+	return dec;
+}
+
+static unsigned long long int_String_To_Word(char* input,int len){
+	int dec = 0;
+	for(int i = 0; i < len; i++)
+		dec+= (input[i] - '0') * pow(10,(len-1-i));	
+	return dec;
+}
+
+static uword_t is_Binary(char* bin,int len){
+	for(int c = 0;c < strlen(bin); c++){
+		if((bin[c]- '0') < 0 || (bin[c]- '0') > 1)
+			return 0;
+	}
+	return 1;
+}
+
+static uword_t is_Hexidecimal(char* hex,int len){
+	for(int c = 0;c < strlen(hex); c++){
+		if(!((((hex[c]- 'a') >= 0) && ((hex[c]- 'a') <= 5))
+			|| (((hex[c]- 'A') >= 0) && ((hex[c]- 'A') <= 5))
+			|| (((hex[c] - '0') >= 0) && ((hex[c] - '0') <= 9))))
+			return 0;
+	}
+	return 1;
+}
+
+static uword_t check_Only_Digits(char* string,int len){
+	for (int i = 0; i < len; i++){
+		if(((string[i] - '0') < 0) || ((string[i] - '0') > 9))
+			return 0;
+	}
+	return 1;
+}
+
+#warning initial implementation
 uword_t* IOWrapperDelegate_Input(struct IOWrapperDelegate * delegate)
 {
 	_delegCall();
-	return NULL;
+	char* word;
+	uword_t words[MAX_INPUT_LEN/WORD_SIZE];
+	char input_string[MAX_INPUT_LEN];
+	
+	fgets(input_string,MAX_INPUT_LEN-1,stdin);
+	
+	for(int i = 0; i < MAX_INPUT_LEN; i++) {
+		if(input_string[i] == '\n')
+			input_string[i] = '\0';
+	}
+		
+	int i = 1;	
+	word = strtok(input_string, " ");
+	
+	while( word != NULL ) {
+		if (strlen(word) <= WORD_SIZE+2 && word[0] == '0' && word[1] == 'b'){
+			char* bin = word+2;
+			if(!is_Binary(bin,strlen(bin)))
+				_err("invalid characters in binary input\n",NULL);
+			words[i] = bin_String_To_Word(bin,strlen(bin));
+			i++;
+		}
+		else if((strlen(word) <= (WORD_SIZE/4)+2) && word[0] == '0' && (word[1] == 'x' || word[1] == 'X')){
+			char* hex = word+2;
+			if(!is_Hexidecimal(hex,strlen(hex)))
+				_err("invalid characters in hexadecimal input\n",NULL);
+			words[i] = hex_String_To_Word(hex,strlen(hex));
+			i++;
+		}
+		else if((strlen(word) <= 10) && check_Only_Digits(word,strlen(word))){
+			long long num = int_String_To_Word(word,strlen(word));
+			if (num > UWORD_MAX)
+				_err("integer value too large\n",NULL);
+			words[i] = num;
+			i++;
+		}
+		else{
+			_err("invalid input, expected hex(0x prefix), binary(0b prefix) or unsigned integer value\n",NULL);
+		}
+		word = strtok(NULL, " ");
+	}
+	
+	words[0] = i-1;
+	return words;
 }
 
 void IOWrapperDelegate_Output(struct IOWrapperDelegate * delegate, Queue* output_queue)
