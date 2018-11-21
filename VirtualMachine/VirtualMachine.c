@@ -175,7 +175,7 @@ uword_t* IOWrapperDelegate_Input(struct IOWrapperDelegate * delegate)
 {
 	_delegCall();
 	char* word;
-	uword_t words[MAX_INPUT_LEN/WORD_SIZE];
+	uword_t* words = malloc(sizeof(uword_t) * (MAX_INPUT_LEN/WORD_SIZE));
 	char input_string[MAX_INPUT_LEN];
 	
 	fgets(input_string,MAX_INPUT_LEN-1,stdin);
