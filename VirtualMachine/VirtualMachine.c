@@ -267,10 +267,13 @@ uword_t* IOWrapperDelegate_Input(struct IOWrapperDelegate * delegate)
 	return words;
 }
 
+#warning basic hex list output only right now (temp)
 void IOWrapperDelegate_Output(struct IOWrapperDelegate * delegate, Queue* output_queue)
 {
 	_delegCall();
 	_info("Output!", NULL);
+	while(!Queue_Is_Empty(output_queue))
+		printf("%x\n", Queue_Dequeue(output_queue));
 }
 
 

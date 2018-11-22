@@ -125,7 +125,7 @@ static uword_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate
 	if(Queue_Is_Empty(self->__in_q)){
 		uword_t* new_elements = iOWrapperDelegate->IOWrapperDelegate_Input(iOWrapperDelegate);
 		uword_t n_elements = *new_elements;
-		for (int n = 0; n < n_elements; n++)
+		for (int n = 1; n <= n_elements; n++)
 			Queue_Enqueue(self->__in_q,*(new_elements+n));
 	}
 	word_t rtn = Queue_Dequeue(self->__in_q);
