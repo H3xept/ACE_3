@@ -4,7 +4,7 @@
 * Authors: Leonardo Cascianelli, Rory Brown, Ewan Skene
 * Date: 2018-11-14
 * 
-* Description: __DESCRIPTION__
+* Description: Input Output Controller
 */
 
 #ifndef __IO__

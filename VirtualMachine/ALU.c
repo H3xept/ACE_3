@@ -104,7 +104,13 @@ static const char* const _Object_Descriptor(Object * self)
 
 // Public instance methods for ALU
 
-//returns sum of two 16bit ints
+/**
+* @brief: returns sum of two 16bit ints.
+* @param self: A reference to the current instance of ALU
+* @param num_1: first number in sum
+* @param num_2: second number in sum
+* @return int16/32_t: result of addition.
+*/
 word_t ALU_Add(ALU* self, word_t num_1, word_t num_2)
 {
 	word_t ret = 0;
@@ -123,8 +129,13 @@ word_t ALU_Add(ALU* self, word_t num_1, word_t num_2)
 	return ret;
 }
 
-//returns product of two 16bit ints
-//DETECTING OVERFLOW? ALSO SIZE OF PRODUCT TOO BIG?(I think this works...)
+/**
+* @brief: returns product of two 16bit ints.
+* @param self: A reference to the current instance of ALU
+* @param num_1: first number in multiplication
+* @param num_2: second number in multiplication
+* @return int16/32_t: result of multiplication.
+*/
 word_t ALU_Multiply(ALU* self, word_t num_1, word_t num_2)
 {
 	unsigned int overflow = 0;
@@ -156,7 +167,13 @@ word_t ALU_Multiply(ALU* self, word_t num_1, word_t num_2)
 	return ret;
 }
 
-//returns result of first argument divided by second argument
+/**
+* @brief: returns result of dividing of two 16bit ints.
+* @param self: A reference to the current instance of ALU
+* @param num_1: number to be divided
+* @param num_2: divides by this argument
+* @return int16/32_t: result of division.
+*/
 word_t ALU_Divide(ALU* self, word_t num_1, word_t num_2)
 {
 	if (num_2 == 0) 
@@ -169,28 +186,61 @@ word_t ALU_Divide(ALU* self, word_t num_1, word_t num_2)
 	return num_1/num_2;
 }
 
-//bitwise AND of two 16bit ints 
+/**
+* @brief: bitwise AND of two 16bit ints.
+* @param self: A reference to the current instance of ALU
+* @param num_1: number to be anded with 2nd arg
+* @param num_2: the second argument
+* @return int16/32_t: result of ANDing.
+*/
 word_t ALU_Bitwise_And(ALU* self, word_t num_1, word_t num_2)
 {
 	return num_1 & num_2;
 }
 
-//bitwise OR of two 16bit ints 
+
+/**
+* @brief: bitwise OR of two 16bit ints.
+* @param self: A reference to the current instance of ALU
+* @param num_1: number to be anded with 2nd arg
+* @param num_2: the second argument
+* @return int16/32_t: result of ORing.
+*/
 word_t ALU_Bitwise_Or(ALU* self, word_t num_1, word_t num_2)
 {
 	return num_1 | num_2;
 }
 
+/**
+* @brief: bitwise NOT of one 16bit int.
+* @param self: A reference to the current instance of ALU
+* @param num_1: number to be anded with 2nd arg
+* @return int16/32_t: result of NOTing.
+*/
 word_t ALU_Bitwise_Not(ALU* self, word_t num)
 {
 	return ~num;
 }
 
+/**
+* @brief: logical shift left of arg1 by arg2.
+* @param self: A reference to the current instance of ALU
+* @param num_1: number shifted
+* @param num_2: places shifted
+* @return int16/32_t: result of shifting num_1 by num_2.
+*/
 word_t ALU_Shift_Left_Logical(ALU* self, word_t num_1, uword_t num_2)
 {
 	return num_1 << num_2;
 }
 
+/**
+* @brief: logical right left of arg1 by arg2.
+* @param self: A reference to the current instance of ALU
+* @param num_1: number shifted
+* @param num_2: places shifted
+* @return int16/32_t: result of shifting num_1 by num_2.
+*/
 word_t ALU_Shift_Right_Logical(ALU* self, word_t num_1, uword_t num_2)
 {
 	return (num_1 >> num_2) & ((int)(pow(2,16-num_2)-1));
