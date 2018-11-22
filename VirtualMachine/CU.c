@@ -160,7 +160,8 @@ static void __JUMP(CU* self, uword_t operand){
 static void __SKC(CU* self, uword_t operand){
 	_controlInfo("Executing SKC instruction", NULL);
 	Registers * registers = self->__registers;
-	if(__get_register_value_with_address(self, (uint8_t)operand) > 0){
+	uword_t regValue = __get_register_value_with_address(self, operand);
+	if(*(word_t*)&regValue> 0){
 		registers->PC++;
 	}
 }
@@ -170,7 +171,8 @@ static void __LOAD(CU* self, uword_t operand){
 	struct MemoryDelegate* memoryDelegate = self->__memoryDelegate;
 	
 	if((operand >> 7) & 1)
-		__set_register_with_address(self,(uint8_t)(operand >> 8), operand&((uword_t)pow(2, 7)-1));
+		__set_register_with_address(self,(uint8_t)(operand >> 8), (operand&((uword_t)pow(2, 7)-1))|
+			((operand>>6&1)*(uword_t)(pow(2,WORD_SIZE)-pow(2,7))));
 	else{
 		uword_t address = __get_register_value_with_address(self, operand & (uword_t)(pow(2, 4)-1));
 		uword_t toBeWritten = memoryDelegate->MemoryDelegate_Word_At_Address(memoryDelegate, address);

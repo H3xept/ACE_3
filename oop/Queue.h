@@ -10,6 +10,8 @@
 #ifndef __Queue__
 #define __Queue__
 
+#include <stdint.h>
+
 typedef struct _Queue {
 	Object super;
 	int cap;
