@@ -102,6 +102,12 @@ static const char* const _Object_Descriptor(Object * self)
 	return "<Queue>";
 }
 
+/**
+* @brief: Returns 0 if object is not the same instance as another.
+* @param self: A reference to the current instance of Queue.
+* @param obj: A reference to the another instance of Queue.
+* @return: unsigned int: 0 if not equal.
+*/
 static unsigned int _Object_Equals(Object* self, Object* obj)
 {
 	return Object_Equals(self,obj);
@@ -118,6 +124,11 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 
 // Public instance methods for Queue
 
+/**
+* @brief: adds a word to the queue.
+* @param self: A reference to the current instance of Queue.
+* @param element: a word element.
+*/
 void Queue_Enqueue(Queue* self, uint16_t element){
 	if (self->els == self->cap-1){
 		self->Q = (uint16_t*)realloc(self->Q, self->cap*2 * sizeof(uint16_t));
@@ -128,6 +139,11 @@ void Queue_Enqueue(Queue* self, uint16_t element){
 	self->els++;
 }
 
+/**
+* @brief: removes a word from the queue.
+* @param self: A reference to the current instance of Queue.
+* @return: word element which was removed
+*/
 uint16_t Queue_Dequeue(Queue* self){
 	if(Queue_Is_Empty(self)){
 		_err("Queue is empty, cannot dequeue.", NULL);
@@ -139,6 +155,11 @@ uint16_t Queue_Dequeue(Queue* self){
 	}
 }
 
+/**
+* @brief: checks front element of queue.
+* @param self: A reference to the current instance of Queue.
+* @return: word element at front of queue
+*/
 uint16_t Queue_Front(Queue* self){
 	if(Queue_Is_Empty(self)){
 		_err("Queue is empty, cannot get front element.", NULL);
@@ -149,10 +170,20 @@ uint16_t Queue_Front(Queue* self){
 	
 }
 
+/**
+* @brief: checks number of elements in queue.
+* @param self: A reference to the current instance of Queue.
+* @return int16_t: number of elements in queue.
+*/
 inline uint16_t Queue_Size(Queue* self){
 	return self->rear - self->front;
 }
 
+/**
+* @brief: checks if queue has no elements.
+* @param self: A reference to the current instance of Queue.
+* @return int16_t: 0 if false else >0.
+*/
 inline uint16_t Queue_Is_Empty(Queue* self){
 	return self->front == self->rear;
 }

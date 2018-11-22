@@ -1,3 +1,12 @@
+/**
+* Filename: Object.h
+* Class: Object
+* Authors: Leonardo Cascianelli, Rory Brown, Ewan Skene
+* Date: 2018-11-16
+* 
+* Description: Object superclass
+*/
+
 #ifndef __OBJECT__
 #define __OBJECT__
 

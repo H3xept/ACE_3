@@ -1,3 +1,13 @@
+/**
+* Filename: String.c
+* Class: String
+* Authors: Leonardo Cascianelli,Rory Brown,Ewan Skene
+* Date: 2018-11-16
+* 
+* Description: a String class
+*/
+
+
 #include <assert.h>
 #include <stddef.h>
 #include <string.h>
@@ -45,6 +55,13 @@ static char* __Compute_Description(String* self);
 
 // VIRTUAL METHODS (PRIVATE)
 
+/**
+* @brief: String constructor.
+* @param self: A reference to the current instance of String
+* @param args: Variadic args list as follows:
+* - type: desc
+* @return: Object* - The constructed object instance.
+*/
 static Object* _Object_Ctor(Object * self, va_list args)
 {
 	String* _self = (String*)self;
@@ -57,6 +74,11 @@ static Object* _Object_Ctor(Object * self, va_list args)
 	return self;
 }
 
+/**
+* @brief: String destructor.
+* @param self: A reference to the current instance of String
+* @return: Object* - The object to be freed.
+*/
 static Object* _Object_Dtor(Object * self)
 {
 	String* _self = (String*)self;
@@ -67,11 +89,21 @@ static Object* _Object_Dtor(Object * self)
 	return self;
 }
 
+/**
+* @brief: Returns the type of the class.
+* @param self: A reference to the current instance of String
+* @return: const char* const - The string that identifies the class.
+*/
 static const char* const _Object_Type_Descriptor(Object * self)
 {
 	return type_string;
 }
 
+/**
+* @brief: Returns the string representation of the instantiated object.
+* @param self: A reference to the current instance of String
+* @return: const char* const - The string that describes the instantiated object.
+*/
 static const char* const _Object_Descriptor(Object * self)
 {
 	String* _self = (String*)self;
@@ -80,7 +112,12 @@ static const char* const _Object_Descriptor(Object * self)
 	return _self->description;
 }
 
-
+/**
+* @brief: Returns 0 if object is not the same instance as another.
+* @param self: A reference to the current instance of String.
+* @param obj: A reference to the another instance of String.
+* @return: unsigned int: 0 if not equal.
+*/
 static unsigned int _Object_Equals(Object* self, Object* obj)
 {
 	String* _self = (String*)self;
@@ -92,11 +129,20 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 
 // NON-VIRTUAL METHODS
 
+/**
+* @brief: gets text of string.
+* @param self: A reference to the current instance of String.
+* @return char*: string's text.
+*/
 char* String_Get_Text(String * self)
 {
 	return self->text;
 }
 
+/**
+* @brief: sets text of string.
+* @param self: A reference to the current instance of String.
+*/
 void String_Set_Text(String * self, char* text)
 {
 	if (self->text)

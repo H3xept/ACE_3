@@ -1,3 +1,12 @@
+/**
+* Filename: String.h
+* Class: String
+* Authors: Leonardo Cascianelli,Rory Brown,Ewan Skene
+* Date: 2018-11-16
+* 
+* Description: a String class
+*/
+
 #ifndef __STRING__
 #define __STRING__
 

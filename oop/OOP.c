@@ -1,3 +1,12 @@
+/**
+* Filename: OOP.c
+* Authors: Leonardo Cascianelli, Rory Brown, Ewan Skene
+* Date: 2018-11-16
+* 
+* Description: OOP initialiser and deallocation.
+*/
+
+
 #include <stdarg.h>
 #include <assert.h>
 #include <stdlib.h>
