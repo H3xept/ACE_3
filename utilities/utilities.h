@@ -6,19 +6,19 @@
 #include "colors.h"
 #include <stdint.h>
 
-#define _warn(S,...) 	y_printf("[WARNING] ",NULL); \
+#define _warn(S,...) 	{ y_printf("[WARNING] ",NULL); \
 						y_printf(S, __VA_ARGS__); \
-						puts("");	
+						puts(""); }
 						
-#define _err(S, ...) 	r_printf("[ERROR] ",NULL); \
+#define _err(S, ...) 	{ r_printf("[ERROR] ",NULL); \
 						r_printf(S,__VA_ARGS__); \
 						r_printf("\n{File:%s|Line:%d|Function:%s}\n",__FILE__,__LINE__,__func__); \
-						exit(-1);
+						exit(-1); }
 
 #ifdef __CONTROL_UNIT__
-#define _controlInfo(S, ...) m_printf("[INFO] ",NULL); \
+#define _controlInfo(S, ...) { m_printf("[INFO] ",NULL); \
 						m_printf(S, __VA_ARGS__); \
-						puts("");
+						puts(""); }
 #else
 #define _controlInfo(S, ...)
 #endif 
@@ -30,9 +30,9 @@
 #endif 
 
 #ifdef __DEBUG__
-#define _info(S, ...) 	g_printf("[INFO] ",NULL); \
+#define _info(S, ...) 	{ g_printf("[INFO] ",NULL); \
 						g_printf(S, __VA_ARGS__); \
-						puts("");
+						puts(""); }
 #else
 #define _info(S, ...)
 #endif

@@ -356,7 +356,7 @@ void CPU_Fetch_Execute_Cycle(CPU* self)
 		instruction.operand = pc_word&((uword_t)pow(2,WORD_SIZE - OPCODE_LENGTH)-1);
 		instruction.opcode = pc_word>>(WORD_SIZE - OPCODE_LENGTH);
 		CU_Execute_Instruction(self->__controlUnit, instruction);
-	}
+	} _info("s4: %d",self->__registers->S4);
 }
 
 // WARNING - Viable only during CPU idle stage

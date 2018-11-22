@@ -20,6 +20,7 @@
 #include <math.h>
 #include "./protocols/MemoryDelegate.h"
 #include "./constants/arch_const.h"
+#include "Program.h"
 
 /// The type string of VirtualMachine
 static const char* const 	type_string = "VirtualMachine";
@@ -149,10 +150,7 @@ static void __Load_Bootloader(VirtualMachine* self)
 	self->cpu_mode = CPU_Mode_Booting;
 	struct MemoryDelegate* memoryDelegate = self->cpu->memoryDelegateVptr;
 
-	uword_t bootloader[] = {0x0000, 0x3019, 0x0001, 0x301a, 0x0001, 0x301b, 0x0002, 0x301c,
-						0x0006, 0x705f, 0xf05b, 0xb05a, 0x2005, 0x1001, 0x5005, 0x4095,
-						0x809a, 0x705f, 0xf05b, 0xb05a, 0x2005, 0x1001, 0x1ff7};
-
+	uword_t bootloader[] = {0x0000,0x3981,0x3a81,0x3b82,0x3c86,0x705f,0xf05b,0xb05a,0x2005,0x1001,0x5005,0x4095,0x809a,0x705f,0xf05b,0xb05a,0x2005,0x1ffc,0x1ff3,0x809a,0x7049,0x7039,0x1001};
 
 	size_t bootloader_instr_n = sizeof(bootloader)/sizeof(uword_t);
 	for (int i = 0; i < bootloader_instr_n; i++)
@@ -162,22 +160,27 @@ static void __Load_Bootloader(VirtualMachine* self)
 	_info("Bootloader loading complete.",NULL);
 }
 
-static void __Load_Program(VirtualMachine* self, uword_t* program, size_t word_n)
+static void __Load_Program(VirtualMachine* self, Program* program)
 {
-	CPU_Load_Words_In_Input_Queue(self->cpu, program, word_n);
-	// for (int i = 0; i < word_n; i++)
-	// {
-	// 	_info("--> %d",*(self->cpu->__iOController->__in_q->Q+i));
-	// }
+	CPU_Load_Words_In_Input_Queue(self->cpu, program->source, program->size);
+	for (int i = 0; i < program->size; i++)
+	{
+		_info("--> %x",*(self->cpu->__iOController->__in_q->Q+i));
+	}
 }
 
 // Public class methods for VirtualMachine
 // ...
 
 // Public instance methods for VirtualMachine
-void Virtual_Machine_Run(VirtualMachine* self, uword_t* program, size_t word_n)
-{
-	__Load_Program(self, program, word_n);
+void Virtual_Machine_Run(VirtualMachine* self, Program* program)
+{	
+	if (!program)
+	{
+		_err("Must specify a program to run.", NULL);
+	}
+
+	__Load_Program(self, program);
 	__Load_Bootloader(self);
 	CPU_Fetch_Execute_Cycle(self->cpu);
 }

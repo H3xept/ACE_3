@@ -160,17 +160,14 @@ static void __SKC(CU* self, uword_t operand){
 
 static void __LOAD(CU* self, uword_t operand){
 	_controlInfo("Executing LOAD instruction", NULL);
-	Registers* registers = self->__registers;
 	struct MemoryDelegate* memoryDelegate = self->__memoryDelegate;
-	uword_t operand2 = memoryDelegate->MemoryDelegate_Word_At_Address(memoryDelegate, ++(registers->PC));
-	if((operand >> REGISTER_ADDR_LENGTH) > 0){
-		__set_register_with_address(self,(uint8_t) (operand & ((uword_t)(pow(2, REGISTER_ADDR_LENGTH) - 1))), operand2);
-	}
+	
+	if((operand >> 7) & 1)
+		__set_register_with_address(self,(uint8_t)(operand >> 8), operand&((uword_t)pow(2, 7)-1));
 	else{
-		uword_t wordToBeWritten = memoryDelegate->MemoryDelegate_Word_At_Address(memoryDelegate,
-			__get_register_value_with_address(self,
-			(uint8_t) ((operand2 & ((uword_t)(pow(2, REGISTER_ADDR_LENGTH) - 1)))) & ((uword_t)pow(2, ADDR_LENGTH) - 1)));
-		__set_register_with_address(self,(uint8_t) (operand & ((uword_t)(pow(2, REGISTER_ADDR_LENGTH) - 1))), wordToBeWritten);
+		uword_t address = __get_register_value_with_address(self, operand & (uword_t)(pow(2, 4)-1));
+		uword_t toBeWritten = memoryDelegate->MemoryDelegate_Word_At_Address(memoryDelegate, address);
+		__set_register_with_address(self,(uint8_t)(operand >> 8), toBeWritten);
 	}
 }
 

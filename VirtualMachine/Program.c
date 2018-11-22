@@ -67,7 +67,6 @@ uword_t __To_Big_Endian(uword_t word);
 */
 static Object* _Object_Ctor(Object * self, va_list args)
 {
-	_warn("Direct allocation not contemplated. Use class methods to construct.", NULL);
 	return self;
 }
 
@@ -134,7 +133,7 @@ uword_t __To_Big_Endian(uword_t word)
 	#if WORD_SIZE == 16
 	return ((word << 8) | (word >> 8));
 	#else 
-	return ((word << 24) | ((word << 8) & 0x00ff0000) | ((word >> 8) & 0x0000ff00) | (word >> 24)) 
+	return ((word << 24) | ((word << 8) & 0x00ff0000) | ((word >> 8) & 0x0000ff00) | (word >> 24)); 
 	#endif	
 }
 
@@ -163,7 +162,7 @@ Program* Program_With_File(char* filename)
 		c++;
 	}
 
-	buffer = realloc(buffer, c);
+	buffer = realloc(buffer, c*sizeof(uword_t));
 
 	rt->source = buffer;
 	rt->size = c;

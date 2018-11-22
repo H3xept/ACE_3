@@ -12,6 +12,7 @@
 
 
 #include "./protocols/IOWrapperDelegate.h"
+#include "Program.h"
 
 // Forward declaration - Actual structure in CPU.h
 typedef struct CPU CPU;
@@ -36,6 +37,6 @@ extern const void * VirtualMachine_Class_Descriptor;
 // ...
 
 // Public instance methods for VirtualMachine
-void Virtual_Machine_Run(VirtualMachine* self, uword_t* program, size_t word_n);
+void Virtual_Machine_Run(VirtualMachine* self, Program* program);
 
 #endif
