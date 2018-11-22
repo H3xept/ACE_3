@@ -121,13 +121,22 @@ int index_of(char* str, char** arr, size_t size)
 static uword_t handle_JUMP(char** labels, uword_t* addresses, size_t size)
 {
 	char* fst = sstrtok(NULL," ");
-	require_label(fst);
-	int index = index_of(fst, labels, size);
-	if (index == -1)
-	{
-		_err("Label not found!", NULL);
+	uword_t addr = 0;
+	if (is_label(fst)) {
+		int index = index_of(fst, labels, size);
+		if (index == -1)
+		{
+			_err("Label not found!", NULL);
+		}
+		addr = addresses[index];
+	} else {
+		addr = (uword_t)strtol(fst, NULL, 0);
+		if (addr > 4095)
+		{
+			_err("Immediate out of bounds for jump: %d (MAX: 4095)", addr);
+		}
 	}
-	return 0x1000 | addresses[index];
+	return 0x1000 | addr;
 }
 
 static uword_t handle_SKC()
@@ -137,22 +146,6 @@ static uword_t handle_SKC()
 	return 0x2000 | reg_to_int(fst);
 }
 
-/*
-
-
-else if (!is_label(snd)){
-		uword_t integUnsigned = strtol(snd, NULL, 0);
-		word_t integ = integUnsigned;
-		if(integUnsigned > 63){
-			integ = (word_t)(integUnsigned - 0xffff);
-		}
-		if (integ < -64) {
-			_err("Immediate out of bounds!", NULL);
-		}
-		snd_int = integ;
-	}
-
-	*/
 static uword_t handle_LOAD()
 {
 	char* fst = sstrtok(NULL, " ");
@@ -445,6 +438,14 @@ unsigned int is_in_list_s(char* str, char** list, size_t list_size) // Is in lis
 	} return 0;
 }
 
+unsigned int is_comment_or_whitespace(char* str)
+{
+	trim(str);
+	if (*str == '\0' || *str == '#')
+		return 1;
+	return 0;
+}
+
 int main(int argc, char const *argv[])
 {
 	//char* operators[] = {"halt","jump","skc","load","store","in","out","move","add","mul","div","and","or","not","shl","shr"};
@@ -519,7 +520,11 @@ int main(int argc, char const *argv[])
 				if (num > 32768 || num < -32769)
 				{_err("Immediate number out of bounds: %d (MAX 32768 | MIN -32769)",num);}
 				words[address_n++] = num;
-			} continue;
+			} if (!is_comment_or_whitespace(line)){
+				if (*(line+strlen(line)-1) == ':')
+					continue;
+				_err("%s is not an operator of this arch.--", line);
+			}
 		}
 		operator = sstrtok(line, " ");
 		uword_t* loadlwords;

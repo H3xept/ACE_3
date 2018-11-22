@@ -9,7 +9,5 @@ int main(int argc, char const *argv[])
 	Program* program = Program_With_File("out3");
 	VirtualMachine* vm = alloc_init(VirtualMachine_Class_Descriptor);
 	Virtual_Machine_Run(vm, program);
-	printf("2!\n");
-	Virtual_Machine_Run(vm, program);
 	return 0;
 }

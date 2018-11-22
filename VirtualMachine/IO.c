@@ -124,9 +124,11 @@ static uword_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate
 
 	if(Queue_Is_Empty(self->__in_q)){
 		uword_t* new_elements = iOWrapperDelegate->IOWrapperDelegate_Input(iOWrapperDelegate);
-		uword_t n_elements = *new_elements;
-		for (int n = 0; n < n_elements; n++)
+		uword_t n_elements = *new_elements; // 0th element contains the lenght of the list
+		for (int n = 1; n < n_elements+1; n++){
 			Queue_Enqueue(self->__in_q,*(new_elements+n));
+			self->__flagDelegate->FlagDelegate_Set_Flag(self->__flagDelegate,k_Status_Flag_Input,1);
+		}
 	}
 	word_t rtn = Queue_Dequeue(self->__in_q);
 	self->__flagDelegate->FlagDelegate_Set_Flag(self->__flagDelegate,k_Status_Flag_Input,!Queue_Is_Empty(self->__in_q));

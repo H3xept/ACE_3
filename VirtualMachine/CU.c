@@ -146,8 +146,15 @@ static void __HALT(CU* self){
 static void __JUMP(CU* self, uword_t operand){
 	_controlInfo("Executing JUMP instruction", NULL);
 	Registers* registers = self->__registers;
-	operand--;
-	registers->PC = operand;
+	
+	if (operand == (uword_t)pow(2,ADDR_LENGTH)-1){ // Jump $ra
+		registers->PC = registers->RA;
+	}
+	else{
+		registers->RA = registers->PC;
+		operand--;
+		registers->PC = operand;	
+	}
 }
 
 static void __SKC(CU* self, uword_t operand){

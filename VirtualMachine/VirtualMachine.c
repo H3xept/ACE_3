@@ -21,6 +21,9 @@
 #include "./protocols/MemoryDelegate.h"
 #include "./constants/arch_const.h"
 #include "Program.h"
+#include <errno.h>
+
+#define MAX_INPUT_LEN 200
 
 /// The type string of VirtualMachine
 static const char* const 	type_string = "VirtualMachine";
@@ -69,8 +72,8 @@ static void __Load_Bootloader(VirtualMachine* self);
 static Object* _Object_Ctor(Object * self, va_list args)
 {
 	VirtualMachine* _self = (VirtualMachine*)self;
-	_self->cpu = alloc_init(CPU_Class_Descriptor, _self);
 	__Setup_Delegates(_self);
+	_self->cpu = alloc_init(CPU_Class_Descriptor, _self);
 	_self->cpu_mode = CPU_Mode_Idle;
 	return self;
 }
@@ -118,17 +121,67 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 
 // Private instance methods for VirtualMachine
 
-#warning Implement
 uword_t* IOWrapperDelegate_Input(struct IOWrapperDelegate * delegate)
 {
 	_delegCall();
-	return NULL;
+	char* word;
+	int i = 1;	
+	long int signed_word;
+	uword_t* words = malloc(sizeof(word_t) * (MAX_INPUT_LEN/WORD_SIZE));
+	char input_string[MAX_INPUT_LEN];
+
+	uword_t max_accepted = (uword_t)pow(2, WORD_SIZE-1)-1;
+	word_t min_accepted = (word_t)(pow(2, WORD_SIZE-1)*-1);
+
+	printf("VirtualMachine~$ ");
+	
+	if (!strcmp("\n",fgets(input_string,MAX_INPUT_LEN-1,stdin)))
+	{
+		_warn("Input required.",NULL);
+		return IOWrapperDelegate_Input(delegate);
+	}
+
+	input_string[strlen(input_string)-1] = input_string[strlen(input_string)-1] == '\n' ? '\0' : 
+	input_string[strlen(input_string)-1];
+		
+	word = strtok(input_string, " ");
+	
+	while( word != NULL ) {
+		errno = 0;
+		if (*word == '0' && *(word+1)=='b'){
+			word += 2;
+			signed_word = strtol(word, NULL, 2);
+		}
+		else
+			signed_word = strtol(word, NULL, 0);
+
+		if (errno){
+			_warn("Please insert a number in decimal, binary(0b prefix) or hex(0x prefix).",NULL);
+			return IOWrapperDelegate_Input(delegate);
+		}
+
+		if (signed_word > max_accepted || signed_word < min_accepted)
+		{
+			_warn("Immediate out of bounds %d (MAX %d | MIN %d).", signed_word, max_accepted, min_accepted);
+			return IOWrapperDelegate_Input(delegate);
+		}
+		words[i++] = signed_word;
+		word = strtok(NULL, " ");
+	}
+	
+	words[0] = i-1;
+	return words;
 }
 
 void IOWrapperDelegate_Output(struct IOWrapperDelegate * delegate, Queue* output_queue)
 {
 	_delegCall();
-	_info("Output!", NULL);
+	word_t word;
+	while (!Queue_Is_Empty(output_queue))
+	{
+		word = Queue_Dequeue(output_queue);
+		printf("%d ",word);
+	}puts("");
 }
 
 
@@ -136,13 +189,13 @@ static void __Setup_Delegates(VirtualMachine* self)
 {
 	_info("Setting up delegates for %s", __FILE__);
 
-	static struct IOWrapperDelegate iOWrapperDelegate = {
+	static struct IOWrapperDelegate iOWrapperDelegateVtbl = {
 		0,
 		&IOWrapperDelegate_Input,
 		&IOWrapperDelegate_Output,
 	};
-	iOWrapperDelegate.delegateObject = self;
-	self->iOWrapperDelegateVptr = &iOWrapperDelegate;
+	iOWrapperDelegateVtbl.delegateObject = self;
+	self->iOWrapperDelegateVptr = &iOWrapperDelegateVtbl;
 }
 
 static void __Load_Bootloader(VirtualMachine* self)
