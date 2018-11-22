@@ -21,7 +21,7 @@ typedef struct _Program {
 extern const void * Program_Class_Descriptor;
 
 // Public class methods for Program
-Program* Program_With_File(char* filename);
+Program* Program_With_File(const char* filename);
 Program* Program_With_Buffer(uword_t* buffer, size_t len);
 
 // Public instance methods for Program

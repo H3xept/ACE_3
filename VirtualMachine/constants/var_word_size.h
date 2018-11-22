@@ -2,7 +2,7 @@
 #define __VAR_WORD_SIZE__
 
 #include "arch_const.h"
-#include <ctype.h>
+#include <stdint.h>
 
 #if WORD_SIZE == 16
 
@@ -17,6 +17,5 @@ typedef uint32_t uword_t;
 #define WORD_MAX 2147483647
 #define WORD_MIN -2147483648
 #define UWORD_MAX 4294967295
-#warning CHANGE
 #endif
 #endif
