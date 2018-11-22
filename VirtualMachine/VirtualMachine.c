@@ -163,10 +163,6 @@ static void __Load_Bootloader(VirtualMachine* self)
 static void __Load_Program(VirtualMachine* self, Program* program)
 {
 	CPU_Load_Words_In_Input_Queue(self->cpu, program->source, program->size);
-	for (int i = 0; i < program->size; i++)
-	{
-		_info("--> %x",*(self->cpu->__iOController->__in_q->Q+i));
-	}
 }
 
 // Public class methods for VirtualMachine

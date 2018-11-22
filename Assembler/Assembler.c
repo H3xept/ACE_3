@@ -137,6 +137,22 @@ static uword_t handle_SKC()
 	return 0x2000 | reg_to_int(fst);
 }
 
+/*
+
+
+else if (!is_label(snd)){
+		uword_t integUnsigned = strtol(snd, NULL, 0);
+		word_t integ = integUnsigned;
+		if(integUnsigned > 63){
+			integ = (word_t)(integUnsigned - 0xffff);
+		}
+		if (integ < -64) {
+			_err("Immediate out of bounds!", NULL);
+		}
+		snd_int = integ;
+	}
+
+	*/
 static uword_t handle_LOAD()
 {
 	char* fst = sstrtok(NULL, " ");
@@ -148,12 +164,8 @@ static uword_t handle_LOAD()
 	{
 		snd_int = reg_to_int(snd);
 	}else if (!is_label(snd)){
-		uword_t integUnsigned = strtol(snd, NULL, 0);
-		word_t integ = integUnsigned;
-		if(integUnsigned > 63){
-			integ = (word_t)(integUnsigned - 0xffff);
-		}
-		if (integ < -64) {
+		word_t integ = strtol(snd, NULL, 0);
+		if (integ < -64 || integ > 63) {
 			_err("Immediate out of bounds!", NULL);
 		}
 		snd_int = integ;
@@ -335,6 +347,7 @@ static uword_t* handle_LOADL(char** labels, uword_t* addresses, size_t size)
 		}
 		return ret;
 	}
+	return 0;
 }
 
 static size_t file_lines(char* file_name)
@@ -365,7 +378,7 @@ static char** get_lines(char* file_name)
 	}
 	char* buffer = calloc(1, sizeof(char)*100);
 	int i = 0;
-	while(fgets(buffer, sizeof(char)*100, file))	{
+	while(fgets(buffer, sizeof(char)*100, file)){
 		strcpy(*(rt+i),buffer);
 		i++;
 	}
@@ -376,6 +389,7 @@ static char** get_lines(char* file_name)
 unsigned int is_instruction(char* str)
 {
 	char* s = sstrtok(str, " ");
+	// printf("string->%s->[",str);
 	switch(str_to_int(s))
 	{
 		case 658: //halt 
@@ -395,8 +409,10 @@ unsigned int is_instruction(char* str)
 		case 510: //shl
 		case 522: //shr
 		case 808: // loadl
+			// printf("1]\n");
 			return 1;
 		default:
+			// printf("0]\n");
 			return 0;
 	}
 }
@@ -404,7 +420,6 @@ unsigned int is_instruction(char* str)
 char* trim(char* str)
 {
 	while (*str == ' ' || *str == '\t' || *str == '\n') str++;
-	int c = 0;
 	while (*(str+strlen(str)-1) == ' ' 
 		|| *(str+strlen(str)-1) == '\t' 
 		|| *(str+strlen(str)-1) == '\n') 
@@ -437,10 +452,10 @@ int main(int argc, char const *argv[])
 	if (argc < 3)
 		_err("Too few args. Use %s <file_name> <output_file_name>",argv[0]);
 	
-	char* file_name = argv[1];
-	char* output_file_name = argv[2];
+	const char* file_name = argv[1];
+	const char* output_file_name = argv[2];
 
-	char** lines = get_lines(file_name);
+	char** lines = get_lines((char*)file_name);
 
 	char** labels = malloc(sizeof(char*)*200);
 	uword_t* addresses = malloc(sizeof(uword_t)*200);
@@ -448,7 +463,7 @@ int main(int argc, char const *argv[])
 	size_t inserted = 0;
 	uword_t address_n = 1;
 
-	int lines_number = file_lines(file_name);
+	int lines_number = file_lines((char*)file_name);
 	for (int i = 0; i < lines_number; i++)
 	{	
 		char* line = calloc(100,sizeof(char));

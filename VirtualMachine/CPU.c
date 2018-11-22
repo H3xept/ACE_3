@@ -79,8 +79,6 @@ static Object* _Object_Ctor(Object * self, va_list args)
 	__Setup_Delegates(_self);
 
 	_self->vm = va_arg(args, VirtualMachine*);
-	assert(_self->vm);
-	#warning Delete
 
 	_self->__registers = malloc(sizeof(Registers));
 	_self->__flagRegister = malloc(sizeof(FlagRegister));
@@ -339,17 +337,17 @@ static inline void __CPU_Init_Flag_Register(CPU* self)
 // ...
 
 // Public instance methods for CPU
-#warning Temporary
+
 void CPU_Fetch_Execute_Cycle(CPU* self)
 {		
 	_info("Starting FEC", NULL);
-	self->vm->cpu_mode = CPU_Mode_Running;
 
 	struct MemoryDelegate* memoryDelegate = (struct MemoryDelegate*)(self->memoryDelegateVptr);
 	struct FlagDelegate* flagDelegate = (struct FlagDelegate*)(self->flagDelegateVptr);
 	
 	instruction_t instruction = {0};
-	
+
+	self->vm->cpu_mode = CPU_Mode_Running;
 	while(!FlagDelegate_Read_Flag(flagDelegate,k_Status_Flag_Halt))
 	{	
 		uword_t pc_word = MemoryDelegate_Word_At_Address(memoryDelegate,self->__registers->PC);
@@ -357,6 +355,10 @@ void CPU_Fetch_Execute_Cycle(CPU* self)
 		instruction.opcode = pc_word>>(WORD_SIZE - OPCODE_LENGTH);
 		CU_Execute_Instruction(self->__controlUnit, instruction);
 	} _info("s4: %d",self->__registers->S4);
+	self->vm->cpu_mode = CPU_Mode_Idle;
+
+	__CPU_Init_Registers(self);
+	__CPU_Init_Flag_Register(self);
 }
 
 // WARNING - Viable only during CPU idle stage
