@@ -6,6 +6,12 @@
 #include "Object.h"
 #include "../utilities/utilities.h"
 
+/**
+* @brief: initialises an object.
+* @param class_descriptor: name to identify class
+* @param ...: other initialisation parameters (optional/class dependant)
+* @return: pointer to initialised object.
+*/
 void * alloc_init(const struct Class_Descriptor* descriptor, ...)
 {
 	assert(descriptor);
@@ -23,6 +29,10 @@ void * alloc_init(const struct Class_Descriptor* descriptor, ...)
 	return ret;
 }
 
+/**
+* @brief: frees the memory holding an instance of an object
+* @param ptr: pointer to object instance
+*/
 void dealloc(void * ptr)
 {
 	assert(ptr);

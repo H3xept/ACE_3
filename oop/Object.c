@@ -32,26 +32,55 @@ const void * Object_Class_Descriptor = &_Object_Class_Descriptor;
 
 // VIRTUAL METHODS (PRIVATE)
 
+
+/**
+* @brief: Object constructor.
+* @param self: A reference to the current instance of Object
+* @param args: Variadic args list as follows:
+* - type: desc
+* @return: Object* - The constructed object instance.
+*/
 static Object* _Object_Ctor(Object * self, va_list args)
 {
 	return self;
 }
 
+/**
+* @brief: Object destructor.
+* @param self: A reference to the current instance of Object
+* @return: Object* - The object to be freed.
+*/
 static Object* _Object_Dtor(Object * self)
 {
 	return self;
 }
 
+/**
+* @brief: Returns the type of the class.
+* @param self: A reference to the current instance of Object
+* @return: const char* const - The string that identifies the class.
+*/
 static const char* const _Object_Type_Descriptor(Object * self)
 {
 	return type_string;
 }
 
+/**
+* @brief: Returns the string representation of the instantiated object.
+* @param self: A reference to the current instance of Object
+* @return: const char* const - The string that describes the instantiated object.
+*/
 static const char* const _Object_Descriptor(Object * self)
 {
 	return "<Object>";
 }
 
+/**
+* @brief: Returns 0 if object is not the same instance as another.
+* @param self: A reference to the current instance of object
+* @param obj: A reference to the another instance of object
+* @return: unsigned int: 0 if not equal.
+*/
 static unsigned int _Object_Equals(Object* self, Object* obj)
 {
 	return &self == &obj;
@@ -68,6 +97,14 @@ const char* const Object_Type_Descriptor(Object * self)
 	return NULL;
 }
 
+
+/**
+* @brief: Object constructor.
+* @param self: A reference to the current instance of Object
+* @param args: Variadic args list as follows:
+* - type: desc
+* @return: Object* - The constructed object instance.
+*/
 Object* Object_Ctor(Object * self, va_list args)
 {
 	assert(self);
@@ -77,6 +114,11 @@ Object* Object_Ctor(Object * self, va_list args)
 	return NULL;
 }
 
+/**
+* @brief: Object destructor.
+* @param self: A reference to the current instance of Object
+* @return: Object* - The object to be freed.
+*/
 Object* Object_Dtor(Object * self)
 {
 	assert(self);
@@ -86,6 +128,11 @@ Object* Object_Dtor(Object * self)
 	return NULL;
 }
 
+/**
+* @brief: Returns the type of the class.
+* @param self: A reference to the current instance of Object
+* @return: const char* const - The string that identifies the class.
+*/
 const char* const Object_Descriptor(Object * self)
 {
 	assert(self);
@@ -95,6 +142,12 @@ const char* const Object_Descriptor(Object * self)
 	return NULL;
 }
 
+/**
+* @brief: Returns 0 if object is not the same instance as another.
+* @param self: A reference to the current instance of object
+* @param obj: A reference to the another instance of object
+* @return: unsigned int: 0 if not equal.
+*/
 unsigned int Object_Equals(Object* self, Object* obj)
 {
 	assert(self && obj);
