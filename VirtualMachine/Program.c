@@ -143,7 +143,7 @@ uword_t __To_Big_Endian(uword_t word)
 // Public class methods for Program
 Program* Program_With_File(const char* filename)
 {
-	FILE* file = fopen(filename,"r");
+	FILE* file = fopen(filename,"rb");
 	uword_t word;
 	Program* rt = alloc_init(Program_Class_Descriptor);
 	uword_t* buffer = calloc(MAX_PROG_SIZE/WORD_SIZE, sizeof(uword_t));

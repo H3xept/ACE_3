@@ -9,13 +9,20 @@
 #include <math.h>
 
 #define k_HELP_STRING "Help:\n\
--d (or --default): Load default program in memory\n\
--c (or --console): Load a program from stdin in memory\n\
--f (or --file) <filename> : Load a program from a file\n"
+Usage: ... <disassembler_flag> <print_flag> <build_flag>\
+disassembler_flag:\
+	-s (or --static): Disassemble statically\n\
+	-d (or --dynamic): Disassemble dynamically\n\
+print_flag:\
+	-p (or --print): Print contents of memory after execution\n\
+build_flag:\
+	-d (or --default): Load default program in memory\n\
+	-c (or --console): Load a program from stdin in memory\n\
+	-f (or --file) <filename> : Load a program from a file\n"
 
 #define k_ONE_MORE_WORDS_OUT_BOUNDARIES "One or more words out of boundaries (MAX: %d)"
 #define k_NOT_ENOUGH_PARAMS "Not enough arguments. \
-Usage: %s <flag> <additional_parameters>.\n\
+Usage: %s <disassembler_flag> <print_flag> <build_flag>.\n\
 Type 'help' for the list of available commands."
 
 #define k_PRE_INPUT "Input accepted in decimal and hex:\n"
@@ -63,7 +70,7 @@ uint16_t* input_words(void)
 	return ret;
 }
 
-Program* handle_flag(const char* flag, int argc, char const *argv[])
+Program* handle_build_flag(const char* flag, int argc, char const *argv[])
 {
 	va_list args;
 	Program* program = NULL;
@@ -84,7 +91,7 @@ Program* handle_flag(const char* flag, int argc, char const *argv[])
 
 	} else if (!strcmp(flag, "-f") || !strcmp(flag, "--file")) {
 
-		if (argc < 3) {
+		if (argc < 2) {
 			_err("Filepath required. Usage ... %s <filepath>", flag);
 		} filename = argv[0];
 		program = Program_With_File(filename);
@@ -95,7 +102,7 @@ Program* handle_flag(const char* flag, int argc, char const *argv[])
 		exit(0);
 
 	} else {
-		_err("Flag %s not recognised. Please use 'help' for the list of available commands.", NULL);
+		return NULL;
 	}
 
 	return program;
@@ -103,13 +110,16 @@ Program* handle_flag(const char* flag, int argc, char const *argv[])
 
 int main(int argc, char const *argv[])
 {
-	if (argc < 2)
+	Program* program;
+	VirtualMachine* vm;
+
+	if (argc < 4)
 	{
 		_err(k_NOT_ENOUGH_PARAMS, argv[0]);
 	}
-	
-	Program* program = handle_flag(argv[1], argc, argv+2);
-	VirtualMachine* vm = alloc_init(VirtualMachine_Class_Descriptor);
+
+	program = handle_build_flag(argv[1], argc, argv+2);
+	vm = alloc_init(VirtualMachine_Class_Descriptor);
 	Virtual_Machine_Run(vm, program);
 	return 0;
 }
