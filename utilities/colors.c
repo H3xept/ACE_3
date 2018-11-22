@@ -1,3 +1,11 @@
+/**
+* Filename: colors.c
+* Authors: Leonardo Cascianelli,Rory Brown,Ewan Skene
+* Date: 2018-11-16
+* 
+* Description: function to print in custom colours
+*/
+
 #include <stdarg.h>
 #include <stdio.h>
 #include "colors.h"

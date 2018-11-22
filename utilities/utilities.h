@@ -1,3 +1,12 @@
+/**
+* Filename: utilities.h
+* Authors: Leonardo Cascianelli,Rory Brown,Ewan Skene
+* Date: 2018-11-16
+* 
+* Description: utility macros
+*/
+
+
 #ifndef __UTILITIES__
 #define __UTILITIES__ 
 #define __DEBUG__
