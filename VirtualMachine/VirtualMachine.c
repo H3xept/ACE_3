@@ -108,6 +108,12 @@ static const char* const _Object_Descriptor(Object * self)
 	return "<VirtualMachine>";
 }
 
+/**
+* @brief: check if an object equals another.
+* @param self: A reference to the current instance of VirtualMachine.
+* @param obj: A reference to another instance of VirtualMachine. 
+* @return: unsigned int - 0 if false.
+*/
 static unsigned int _Object_Equals(Object* self, Object* obj)
 {
 	return Object_Equals(self,obj);
@@ -117,6 +123,13 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 // ...
 
 // Private instance methods for VirtualMachine
+
+/**
+* @brief: converts string of 1s and 0s to unsigned integer.
+* @param char* input: string to convert.
+* @param int len: length of string.
+* @return: unsigned int - binary unsigned integer value of string.
+*/
 static uword_t bin_String_To_Word(char* input,int len){
 	int dec = 0;
 	for(int i = 0; i < len; i++)
@@ -124,6 +137,12 @@ static uword_t bin_String_To_Word(char* input,int len){
 	return dec;
 }
 
+/**
+* @brief: converts string of chars in range 1-9 or a-f/A-F to unsigned integer.
+* @param char* input: string to convert.
+* @param int len: length of string.
+* @return: unsigned int - hexidecimal unsiigned integer value.
+*/
 static uword_t hex_String_To_Word(char*input, int len){
 	int dec = 0;
 	for(int i = 0; i < len; i++){
@@ -137,6 +156,12 @@ static uword_t hex_String_To_Word(char*input, int len){
 	return dec;
 }
 
+/**
+* @brief: converts string of chars in range 1-9 to unsigned integer.
+* @param char* input: string to convert.
+* @param int len: length of string.
+* @return: unsigned int - unsigned integer value.
+*/
 static unsigned long long int_String_To_Word(char* input,int len){
 	int dec = 0;
 	for(int i = 0; i < len; i++)
@@ -144,6 +169,12 @@ static unsigned long long int_String_To_Word(char* input,int len){
 	return dec;
 }
 
+/**
+* @brief: checks if a string contains only 1s and 0s.
+* @param char* input: string to check.
+* @param int len: length of string.
+* @return: unsigned int - 1 if true, else 0.
+*/
 static uword_t is_Binary(char* bin,int len){
 	for(int c = 0;c < strlen(bin); c++){
 		if((bin[c]- '0') < 0 || (bin[c]- '0') > 1)
@@ -152,6 +183,12 @@ static uword_t is_Binary(char* bin,int len){
 	return 1;
 }
 
+/**
+* @brief: checks if a string contains only characters a/A - f/F and 0-9 inclusive.
+* @param char* input: string to check.
+* @param int: length of string.
+* @return: unsigned int - 1 if true, else 0.
+*/
 static uword_t is_Hexidecimal(char* hex,int len){
 	for(int c = 0;c < strlen(hex); c++){
 		if(!((((hex[c]- 'a') >= 0) && ((hex[c]- 'a') <= 5))
@@ -162,6 +199,12 @@ static uword_t is_Hexidecimal(char* hex,int len){
 	return 1;
 }
 
+/**
+* @brief: checks if a string contains only numerical characters.
+* @param char* input: string to check.
+* @param int len: length of string.
+* @return: unsigned int - 1 if true, else 0.
+*/
 static uword_t check_Only_Digits(char* string,int len){
 	for (int i = 0; i < len; i++){
 		if(((string[i] - '0') < 0) || ((string[i] - '0') > 9))
@@ -170,7 +213,11 @@ static uword_t check_Only_Digits(char* string,int len){
 	return 1;
 }
 
-#warning initial implementation
+/**
+* @brief: can recieve multiple words of data as strings of hex, binary or decimal format seperated by spaces.
+* @param delegate: implementer of the IOWrapperDelegate 
+* @return: array of unsigned words (first array element tells the number of elements)
+*/
 uword_t* IOWrapperDelegate_Input(struct IOWrapperDelegate * delegate)
 {
 	_delegCall();

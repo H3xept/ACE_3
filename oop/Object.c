@@ -1,3 +1,12 @@
+/**
+* Filename: Object.c
+* Class: Object
+* Authors: Leonardo Cascianelli,Rory Brown,Ewan Skene
+* Date: 2018-11-20
+* 
+* Description: the superclass for all objects
+*/
+
 #include <assert.h>
 #include <stddef.h>
 #include <stdarg.h>
@@ -52,6 +61,11 @@ static const char* const _Object_Descriptor(Object * self)
 	return "<Object>";
 }
 
+/**
+* @brief: check object equals another.
+* @param self: A reference to the current instance of Object
+* @return: unsigned int - 0 if false.
+*/
 static unsigned int _Object_Equals(Object* self, Object* obj)
 {
 	return &self == &obj;
