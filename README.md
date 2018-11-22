@@ -1,4 +1,7 @@
 # ACE3
+### Note
+Any references to 'padding' refer to the act of filling in the bits to the left of a value.
+
 ## Spec
 16 Operators, 16 Registers
 
@@ -55,136 +58,307 @@
 ### `0000 / HALT` Halt
 Halts the program.
 
+#### Example
+`halt` -> `0x0000`
+
 ---
 ### `0001 / JUMP` Jump
-Jumps to the given address.
+Jumps to the given address/label, or $ra if the address is 0xfff.
 
-**Operand:** 12 bit address.
+#### Assembly
+**Operand:** The label to jump to. If the value 0xfff is given instead of a label, then will jump to the value of $ra.
+
+#### Machine Code
+**Operand:** 12 bit address to jump to. If the address is given as 0xfff, then will jump to the value of $ra.
+
+#### Examples
+`jump loop` -> `0x10a1`
+`jump 0xfff` -> `0x1fff`
 
 ---
 ### `0010 / SKC` Skip on Condition
 Skips the next instruction if the contents of the given register are greater than 0.
 
-**Operand:** One 4 bit register address, padded with 0s.
+#### Assembly
+**Operand:** A register to test conditionally If the register contains a value greater than 0, the next instruction will be skipped.
+
+#### Machine Code
+**Operand:** A 4 bit register address, padded with 0s.
+
+#### Examples
+`skc $t1` -> `0x2005`
+`skc $s4` -> `0x200c`
 
 ---
 ### `0011 / LOAD` Load
-Loads the contents of the given memory address into the given register. Can accept immediate values.
+Loads into the first register either the value of the memory address contained in the second register, or an immediate value.
 
-**Operands:** One 12 bit value, one 16 bit value (from the next word in memory).
+#### Assembly
+**Operands:** Two registers / One register and a signed 7 bit immediate value.
 
-**Operand A:** 4 bit register address, padded with 0s. May have a 1 in the first bit.
+**Operand A:** A register to load the value into.
 
-**Operand B:** 4 bit register address (of register containing memory address), padded with 0s. If the padding of operand A contains 1, then treated as a 16 bit immediate value.
+**Operand B:** A register containing the memory address to load from, or an immediate value that is representable with 7 bit two's complement.
+
+#### Machine Code
+**Operands:** One 4 bit value, one 1 bit value, one 7 bit value.
+
+**Operand A:** 4 bit register address.
+
+**Operand B:** A single bit indicating if the following operand should be interpreted as a 0-padded register address or a signed 7 bit immediate.
+
+**Operand C:** 4 bit register address (of register containing memory address), padded with 0s. If operand B is 1, then the operand is treated as a 7 bit signed immediate value.
+
+#### Examples
+`load $s1 $t3` -> `0x3907`
+`load $t4 12` -> `0x388c`
+`load $s3 0xf` -> `0x3b8f`
+`load $s5 -4` -> `0x3dfc`
 
 ---
 ### `0100 / STORE` Store
-Loads the contents of the second register into the address given in the first register.
+Loads the contents of the second register into the memory address given in the first register.
 
-**Operands:** One 4 bit value, one 4 bit value.
+#### Assembly
+**Operands:** Two registers.
+
+**Operand A:** A register containing the memory address to store the value of the second register in.
+
+**Operand B:** A register containing the value to be stored in the address given in the first register.
+
+#### Machine Code
+**Operands:** One 8 bit value, one 4 bit value.
 
 **Operand A:** 4 bit register address (of register containing memory address), padded with 0s.
 
-**Operand B:** 4 bit register address.
+**Operand B:** 4 bit register address containing value to be written to memory.
+
+#### Examples
+`store $t1 $t2` -> `0x4056`
+`store $fp $sp` -> `0x4043`
 
 ---
 ### `0101 / IN` Input
-Places the next word from the input queue into the given register.
+Places the next word from the input queue into the given register. If there is nothing in the input queue, the machine will prompt the user to input space-separated input values.
 
-**Operand:** One 4 bit register address, padded with 0s.
+#### Assembly
+**Operand:** The register to place the input value in.
+
+#### Machine Code
+**Operand:** One 4 bit register address to store the input value, padded with 0s.
+
+#### Examples
+`in $s1` -> `0x5009`
+`in $t3` -> `0x5007`
 
 ---
 ### `0110 / OUT` Output
-Places the contents of the given register into the output queue.
+Places the contents of the given register into the output queue. If the second operand is 1, then the output queue will be flushed and printed to the console.
 
-**Operands:** One 1 bit value, one 4 bit value. indicating whether or not to print, padded with 0s.
+#### Assembly
+**Operands:** One register, one single bit.
+
+**Operand A:** A register to place the value of into the output queue.
+
+**Operand B:** 1 bit flag indicating whether or not to print, padded with 0s.
+
+#### Machine Code
+**Operands:** One 8 bit value, one 4 bit value.
 
 **Operand A:** 1 bit flag indicating whether or not to print, padded with 0s.
 
-**Operand B:** 4 bit register address.
+**Operand B:** 4 bit register address to place the value of into the output queue.
+
+#### Examples
+`out $s1 0` -> `0x6009`
+`out $t3 1` -> `0x6017`
 
 ---
 ### `0111 / MOVE` Move
-Moves values from the second register to the first.
+Moves a value from the second register to the first.
 
+#### Assembly
+**Operands:** Two registers.
+
+**Operand A:** The register to move the value into.
+
+**Operand B:** The register to move the value from.
+
+#### Machine Code
 **Operands:** One 8 bit value, one 4 bit value.
 
-**Operand A:** 4 bit register address, padded with 0s.
+**Operand A:** 4 bit register address to move the value into, padded with 0s.
 
-**Operand B:** 4 bit register address.
+**Operand B:** 4 bit register address to move the value from.
+
+#### Examples
+`move $t2 $t1` -> `0x7065`
+`move $s1 $s4` -> `0x709c`
 
 ---
 ### `1000 / ADD` Add
-Adds the values of two registers, storing the result in the first register.
+Adds the values of two registers, storing the result in the first register. Sets the overflow flag to 1 if an overflow occurs, and 0 otherwise. 
 
+#### Assembly
+**Operands:** Two registers.
+
+**Operand A:** The register for the add to be applied to.
+
+**Operand B:** The register containing the value to be added to the value of the first register.
+
+#### Machine Code
 **Operands:** One 8 bit value, one 4 bit value.
 
-**Operand A:** 4 bit register address, padded with 0s.
+**Operand A:** 4 bit register address for the add to be applied to, padded with 0s.
 
-**Operand B:** 4 bit register address.
+**Operand B:** 4 bit register address containing the value to be added to the value of the first register.
+
+#### Examples
+`add $t1 $t1` -> `0x8055`
+`add $sp $s1` -> `0x8039`
 
 ---
 ### `1001 / MUL` Multiply
-Multiplies the values of two registers, storing the result in the first register.
+Multiplies the values of two registers, storing the result in the first register. Sets the overflow flag to 1 if an overflow occurs, and 0 otherwise. 
 
+#### Assembly
+**Operands:** Two registers.
+
+**Operand A:** The register for the multiply to be applied to.
+
+**Operand B:** The register containing the value that the value of the first register will be multiplied by.
+
+#### Machine Code
 **Operands:** One 8 bit value, one 4 bit value.
 
-**Operand A:** 4 bit register address, padded with 0s.
+**Operand A:** 4 bit register address for the multiply to be applied to, padded with 0s.
 
-**Operand B:** 4 bit register address.
+**Operand B:** 4 bit register address containing the value that the value of the first register will be multiplied by.
+
+#### Examples
+`mul $t4 $t1` -> `0x9085`
+`mul $s2 $s2` -> `0x90aa`
 
 ---
 ### `1010 / DIV` Divide
-Divides the value of the first register by the value of the second register, rounding down, storing the result in the first register.
+Divides the value of the first register by the value of the second register, rounding down, storing the result in the first register. Sets the overflow flag to 1 if an overflow occurs, and 0 otherwise. If a divide by zero occurs, the virtual machine will exit with an error.
 
+#### Assembly
+**Operands:** Two registers.
+
+**Operand A:** The register for the divide to be applied to.
+
+**Operand B:** The register containing the value that the value of the first register will be divided by.
+
+#### Machine Code
 **Operands:** One 8 bit value, one 4 bit value.
 
-**Operand A:** 4 bit register address, padded with 0s.
+**Operand A:** 4 bit register address for the divide to be applied to, padded with 0s.
 
-**Operand B:** 4 bit register address.
+**Operand B:** 4 bit register address containing the value that the value of the first register will be divided by.
+
+#### Examples
+`div $t3 $t2` -> `0xa076`
+`div $s5 $s2` -> `0xa0da`
 
 ---
 ### `1011 / AND` And
 Ands each bit of two registers, storing the result in the first register.
 
+#### Assembly
+**Operands:** Two registers.
+
+**Operand A:** The register for the and to be applied to.
+
+**Operand B:** The register containing the value that will be anded with the value of the first register.
+
+#### Machine Code
 **Operands:** One 8 bit value, one 4 bit value.
 
-**Operand A:** 4 bit register address, padded with 0s.
+**Operand A:** 4 bit register address for the and to be applied to, padded with 0s.
 
-**Operand B:** 4 bit register address.
+**Operand B:** 4 bit register address containing the value that will be anded with the value of the first register.
+
+#### Examples
+`and $t1 $s3` -> `0xb05b`
+`and $s1 $s2` -> `0xb09a`
 
 ---
 ### `1100 / OR` Or
 Ors each bit of two registers, storing the result in the first register.
 
+#### Assembly
+**Operands:** Two registers.
+
+**Operand A:** The register for the or to be applied to.
+
+**Operand B:** The register containing the value that will be or'd with the value of the first register.
+
+#### Machine Code
 **Operands:** One 8 bit value, one 4 bit value.
 
-**Operand A:** 4 bit register address, padded with 0s.
+**Operand A:** 4 bit register address for the or to be applied to, padded with 0s.
 
-**Operand B:** 4 bit register address.
+**Operand B:** 4 bit register address containing the value that will be or'd with the value of the first register.
+
+#### Examples
+`or $s1 $s2` -> `0xc09a`
+`or $s4 $t1` -> `0xc0c5`
 
 ---
 ### `1101 / NOT` Not
 Inverts each bit of a given register.
 
-**Operand:** 4 bit register address, padded with 0s.
+#### Assembly
+**Operand:** The register for the not to be applied to.
+
+#### Machine Code
+**Operand:** 4 bit register address for the not to be applied to, padded with 0s.
+
+#### Examples
+`not $t4` -> `0xd008`
+`not $s3` -> `0xd00b`
 
 ---
 ### `1110 / SHL` Shift Left
 Shifts the first register left by a number of bits equal to the value in the second register, storing the result in the first register.
 
+#### Assembly
+**Operands:** Two registers.
+
+**Operand A:** The register for the shift to be applied to.
+
+**Operand B:** The register containing the value that the value of the first register will be shifted by.
+
+#### Machine Code
 **Operands:** One 8 bit value, one 4 bit value.
 
-**Operand A:** 4 bit register address, padded with 0s.
+**Operand A:** 4 bit register address for the shift to be applied to, padded with 0s.
 
-**Operand B:** 4 bit register address.
+**Operand B:** 4 bit register address containing the value that the value of the first register will be shifted by.
+
+#### Examples
+`shl $t1 $s4` -> `0xe05c`
+`shl $s2 $t2` -> `0xe0a6`
 
 ---
 ### `1111 / SHR` Shift Right
 Shifts the first register right by a number of bits equal to the value in the second register, storing the result in the first register.
 
+#### Assembly
+**Operands:** Two registers.
+
+**Operand A:** The register for the shift to be applied to.
+
+**Operand B:** The register containing the value that the value of the first register will be shifted by.
+
+#### Machine Code
 **Operands:** One 8 bit value, one 4 bit value.
 
-**Operand A:** 4 bit register address, padded with 0s.
+**Operand A:** 4 bit register address for the shift to be applied to, padded with 0s.
 
-**Operand B:** 4 bit register address.
+**Operand B:** 4 bit register address containing the value that the value of the first register will be shifted by.
+
+#### Examples
+`shr $s1 $t1` -> `0xe095`
+`shr $s5 $t4` -> `0xe0d8`
