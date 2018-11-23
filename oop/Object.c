@@ -87,7 +87,11 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 }
 
 // VIRTUAL METHODS HANDLES (PUBLIC)
-
+/**
+* @brief: Returns the type of the class.
+* @param self: A reference to the current instance of Object
+* @return: const char* const - The string that identifies the class.
+*/
 const char* const Object_Type_Descriptor(Object * self)
 {
 	assert(self);
