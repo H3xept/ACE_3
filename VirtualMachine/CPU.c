@@ -168,6 +168,12 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 // Private instance methods for CPU
 
 // MemoryDelegate ADAPTOR
+/**
+* @brief: retrieves word at address.
+* @param IODelegate: A reference to the implementer of this method
+* @param addr: memory address to fetch from
+* @return uint16/32 word at the specified address.
+*/
 static uword_t MemoryDelegate_Word_At_Address(struct MemoryDelegate* delegate, uword_t addr)
 {	
 	_delegCall();
@@ -176,6 +182,13 @@ static uword_t MemoryDelegate_Word_At_Address(struct MemoryDelegate* delegate, u
 	return adaptedDelegate->MemoryDelegate_Word_At_Address(adaptedDelegate, addr);
 }
 
+/**
+* @brief: sets word at address.
+* @param IODelegate: A reference to the implementer of this method
+* @param addr: memory address to set word
+* @param word: value to set
+* @return uint16/32 word at the specified address.
+*/
 static void MemoryDelegate_Set_Word_At_Address(struct MemoryDelegate* delegate, uword_t addr, uword_t word)
 {	
 	_delegCall();
@@ -184,6 +197,10 @@ static void MemoryDelegate_Set_Word_At_Address(struct MemoryDelegate* delegate, 
 	adaptedDelegate->MemoryDelegate_Set_Word_At_Address(adaptedDelegate, addr, word);
 }
 
+/**
+* @brief: sets all memory values to 0.
+* @param IODelegate: A reference to the implementer of this method
+*/
 static void MemoryDelegate_Clear_Memory(struct MemoryDelegate* delegate)
 {	
 	_delegCall();
@@ -192,6 +209,13 @@ static void MemoryDelegate_Clear_Memory(struct MemoryDelegate* delegate)
 	adaptedDelegate->MemoryDelegate_Clear_Memory(adaptedDelegate);
 }
 
+
+/**
+* @brief: loads memory from location ptr.
+* @param self: A reference to the current instance of Memorycontroller
+* @param ptr: location to get words from
+* @param size: number of words to be loaded to memory
+*/
 static void MemoryDelegate_Load_Memory_From_Ptr(struct MemoryDelegate* delegate, void* ptr, size_t size)
 {	
 	_delegCall();
@@ -202,6 +226,11 @@ static void MemoryDelegate_Load_Memory_From_Ptr(struct MemoryDelegate* delegate,
 // ---
 
 // IODelegate ADAPTOR
+/**
+* @brief: Returns a word from the input queue.
+* @param IODelegate: A reference to the implementer of this method
+* @return: uword_t - first word from the input queue.
+*/
 static uword_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate)
 {
 	_delegCall();
@@ -210,6 +239,12 @@ static uword_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate
 	return adaptedDelegate->IODelegate_Get_Word_From_Input_Queue(adaptedDelegate);
 }
 
+/**
+* @brief: puts a word onto the input queue.
+* @param IODelegate: A reference to the implementer of this method
+* @param word: value to add to the rear of the queue
+* @param print: if 1 print to screen
+*/
 static void IODelegate_Put_Word_To_Output_Queue(struct IODelegate * delegate, uword_t word, uint8_t print)
 {
 	_delegCall();
@@ -220,6 +255,12 @@ static void IODelegate_Put_Word_To_Output_Queue(struct IODelegate * delegate, uw
 // ---
 
 // FlagDelegate 
+/**
+* @brief: sets a flag to specified value.
+* @param FlagDelegate: A reference to the implementer of this method
+* @param flag: flag to set
+* @param value: value to be set
+*/
 static void FlagDelegate_Set_Flag(struct FlagDelegate * delegate, k_Status_Flag flag, uint8_t value)
 {
 	// _info("%s Received delegate call -> %s",__FILE__, __func__);
@@ -244,6 +285,11 @@ static void FlagDelegate_Set_Flag(struct FlagDelegate * delegate, k_Status_Flag 
 	}
 }
 
+/**
+* @brief: returns word representing flag values.
+* @param FlagDelegate: A reference to the implementer of this method
+* @return the word representation of the flags
+*/
 static uword_t FlagDelegate_Get_Flags_As_Word(struct FlagDelegate * delegate)
 {
 	_delegCall();
@@ -253,6 +299,12 @@ static uword_t FlagDelegate_Get_Flags_As_Word(struct FlagDelegate * delegate)
 	return (reg->halt << 4) | (reg->overflow << 3) | (reg->input << 2) | reg->exit_code;
 }
 
+/**
+* @brief: returns value of specified flag.
+* @param FlagDelegate: A reference to the implementer of this method
+* @param flag: name of flag to read
+* @return uint8_t: value of flag 
+*/
 static uint8_t FlagDelegate_Read_Flag(struct FlagDelegate * delegate, k_Status_Flag flag)
 {
 	_delegCall();
@@ -306,6 +358,7 @@ static void __Setup_Delegates(CPU* self)
 	self->flagDelegateVptr = &flagDelegateVtbl;
 }
 
+///initialises registers to 0
 static inline void __CPU_Init_Registers(CPU* self)
 {
 	self->__registers->PC = 0;
@@ -325,6 +378,7 @@ static inline void __CPU_Init_Registers(CPU* self)
 	self->__registers->PR = 0;
 }
 
+///initialises flags to 0
 static inline void __CPU_Init_Flag_Register(CPU* self) 
 {
 	self->__flagRegister->halt = 0;

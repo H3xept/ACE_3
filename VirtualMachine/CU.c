@@ -104,6 +104,7 @@ static Object* _Object_Ctor(Object * self, va_list args)
 */
 static Object* _Object_Dtor(Object * self)
 {
+	#warning this needs the stuff
 	return self;
 }
 
