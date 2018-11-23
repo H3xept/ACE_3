@@ -433,6 +433,7 @@ halt
 # This is also a comment!
 ```
 
+---
 ## Full Progam Example
 Here is a sample program that takes a user inputted number and displays it in binary:
 
