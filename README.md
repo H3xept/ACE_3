@@ -59,7 +59,7 @@ Any references to 'padding' refer to the act of filling in the bits to the left 
 Halts the program.
 
 #### _Example_
-`halt` -> `0x0000`
+`halt` → `0x0000`
 
 ---
 ### `0001 / JUMP` Jump
@@ -72,9 +72,9 @@ Jumps to the given address/label, or $ra if the address is 0xfff.
 **Operand:** 12 bit address to jump to. If the address is given as 0xfff, then will jump to the value of $ra.
 
 #### _Examples_
-`jump loop` -> `0x10a1`
+`jump loop` → `0x10a1`
 
-`jump 0xfff` -> `0x1fff`
+`jump 0xfff` → `0x1fff`
 
 ---
 ### `0010 / SKC` Skip on Condition
@@ -87,9 +87,9 @@ Skips the next instruction if the contents of the given register are greater tha
 **Operand:** A 4 bit register address, padded with 0s.
 
 #### _Examples_
-`skc $t1` -> `0x2005`
+`skc $t1` → `0x2005`
 
-`skc $s4` -> `0x200c`
+`skc $s4` → `0x200c`
 
 ---
 ### `0011 / LOAD` Load
@@ -112,13 +112,13 @@ Loads into the first register either the value of the memory address contained i
 **Operand C:** 4 bit register address (of register containing memory address), padded with 0s. If operand B is 1, then the operand is treated as a 7 bit signed immediate value.
 
 #### _Examples_
-`load $s1 $t3` -> `0x3907`
+`load $s1 $t3` → `0x3907`
 
-`load $t4 12` -> `0x388c`
+`load $t4 12` → `0x388c`
 
-`load $s3 0xf` -> `0x3b8f`
+`load $s3 0xf` → `0x3b8f`
 
-`load $s5 -4` -> `0x3dfc`
+`load $s5 -4` → `0x3dfc`
 
 ---
 ### `0100 / STORE` Store
@@ -139,9 +139,9 @@ Loads the contents of the second register into the memory address given in the f
 **Operand B:** 4 bit register address containing value to be written to memory.
 
 #### _Examples_
-`store $t1 $t2` -> `0x4056`
+`store $t1 $t2` → `0x4056`
 
-`store $fp $sp` -> `0x4043`
+`store $fp $sp` → `0x4043`
 
 ---
 ### `0101 / IN` Input
@@ -154,9 +154,9 @@ Places the next word from the input queue into the given register. If there is n
 **Operand:** One 4 bit register address to store the input value, padded with 0s.
 
 #### _Examples_
-`in $s1` -> `0x5009`
+`in $s1` → `0x5009`
 
-`in $t3` -> `0x5007`
+`in $t3` → `0x5007`
 
 ---
 ### `0110 / OUT` Output
@@ -177,9 +177,9 @@ Places the contents of the given register into the output queue. If the second o
 **Operand B:** 4 bit register address to place the value of into the output queue.
 
 #### _Examples_
-`out $s1 0` -> `0x6009`
+`out $s1 0` → `0x6009`
 
-`out $t3 1` -> `0x6017`
+`out $t3 1` → `0x6017`
 
 ---
 ### `0111 / MOVE` Move
@@ -200,9 +200,9 @@ Moves a value from the second register to the first.
 **Operand B:** 4 bit register address to move the value from.
 
 #### _Examples_
-`move $t2 $t1` -> `0x7065`
+`move $t2 $t1` → `0x7065`
 
-`move $s1 $s4` -> `0x709c`
+`move $s1 $s4` → `0x709c`
 
 ---
 ### `1000 / ADD` Add
@@ -223,9 +223,9 @@ Adds the values of two registers, storing the result in the first register. Sets
 **Operand B:** 4 bit register address containing the value to be added to the value of the first register.
 
 #### _Examples_
-`add $t1 $t1` -> `0x8055`
+`add $t1 $t1` → `0x8055`
 
-`add $sp $s1` -> `0x8039`
+`add $sp $s1` → `0x8039`
 
 ---
 ### `1001 / MUL` Multiply
@@ -246,9 +246,9 @@ Multiplies the values of two registers, storing the result in the first register
 **Operand B:** 4 bit register address containing the value that the value of the first register will be multiplied by.
 
 #### _Examples_
-`mul $t4 $t1` -> `0x9085`
+`mul $t4 $t1` → `0x9085`
 
-`mul $s2 $s2` -> `0x90aa`
+`mul $s2 $s2` → `0x90aa`
 
 ---
 ### `1010 / DIV` Divide
@@ -269,9 +269,9 @@ Divides the value of the first register by the value of the second register, rou
 **Operand B:** 4 bit register address containing the value that the value of the first register will be divided by.
 
 #### _Examples_
-`div $t3 $t2` -> `0xa076`
+`div $t3 $t2` → `0xa076`
 
-`div $s5 $s2` -> `0xa0da`
+`div $s5 $s2` → `0xa0da`
 
 ---
 ### `1011 / AND` And
@@ -292,9 +292,9 @@ Ands each bit of two registers, storing the result in the first register.
 **Operand B:** 4 bit register address containing the value that will be anded with the value of the first register.
 
 #### _Examples_
-`and $t1 $s3` -> `0xb05b`
+`and $t1 $s3` → `0xb05b`
 
-`and $s1 $s2` -> `0xb09a`
+`and $s1 $s2` → `0xb09a`
 
 ---
 ### `1100 / OR` Or
@@ -315,9 +315,9 @@ Ors each bit of two registers, storing the result in the first register.
 **Operand B:** 4 bit register address containing the value that will be or'd with the value of the first register.
 
 #### _Examples_
-`or $s1 $s2` -> `0xc09a`
+`or $s1 $s2` → `0xc09a`
 
-`or $s4 $t1` -> `0xc0c5`
+`or $s4 $t1` → `0xc0c5`
 
 ---
 ### `1101 / NOT` Not
@@ -330,9 +330,9 @@ Inverts each bit of a given register.
 **Operand:** 4 bit register address for the not to be applied to, padded with 0s.
 
 #### _Examples_
-`not $t4` -> `0xd008`
+`not $t4` → `0xd008`
 
-`not $s3` -> `0xd00b`
+`not $s3` → `0xd00b`
 
 ---
 ### `1110 / SHL` Shift Left
@@ -353,9 +353,9 @@ Shifts the first register left by a number of bits equal to the value in the sec
 **Operand B:** 4 bit register address containing the value that the value of the first register will be shifted by.
 
 #### _Examples_
-`shl $t1 $s4` -> `0xe05c`
+`shl $t1 $s4` → `0xe05c`
 
-`shl $s2 $t2` -> `0xe0a6`
+`shl $s2 $t2` → `0xe0a6`
 
 ---
 ### `1111 / SHR` Shift Right
@@ -376,6 +376,6 @@ Shifts the first register right by a number of bits equal to the value in the se
 **Operand B:** 4 bit register address containing the value that the value of the first register will be shifted by.
 
 #### _Examples_
-`shr $s1 $t1` -> `0xe095`
+`shr $s1 $t1` → `0xe095`
 
-`shr $s5 $t4` -> `0xe0d8`
+`shr $s5 $t4` → `0xe0d8`
