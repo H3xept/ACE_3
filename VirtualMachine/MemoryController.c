@@ -108,6 +108,12 @@ static const char* const _Object_Descriptor(Object * self)
 	return "<MemoryController>";
 }
 
+/**
+* @brief: Returns 0 if object is not the same instance as another.
+* @param self: A reference to the current instance of Memorycontroller
+* @param obj: A reference to the another instance of Memorycontroller
+* @return: unsigned int: 0 if not equal.
+*/
 static unsigned int _Object_Equals(Object* self, Object* obj)
 {
 	return Object_Equals(self,obj);
@@ -117,7 +123,12 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 // ...
 
 // Private instance methods for MemoryController
-
+/**
+* @brief: gets a pointer for a value at the specified address.
+* @param self: A reference to the current instance of Memorycontroller
+* @param addr: int16/32_t containing address
+* @return: pointer to the word at the address
+*/
 static void* __Ptr_For_Address(MemoryController* self, uword_t addr)
 {
 	static unsigned int address_mask;
@@ -126,6 +137,12 @@ static void* __Ptr_For_Address(MemoryController* self, uword_t addr)
 	return ((uword_t*)__memory) + (addr & address_mask);
 }
 
+/**
+* @brief: sets word value at address of ptr.
+* @param self: A reference to the current instance of Memorycontroller
+* @param ptr: location to set word
+* @param word: value to place at address ptr
+*/
 static void __Set_Word_At_Ptr(MemoryController* self, uword_t* ptr, uword_t word)
 {
 	*ptr = word;
@@ -135,6 +152,12 @@ static void __Set_Word_At_Ptr(MemoryController* self, uword_t* ptr, uword_t word
 // ...
 
 // Public instance methods for MemoryController
+/**
+* @brief: gets word at the specified address.
+* @param self: A reference to the current instance of Memorycontroller
+* @param addr: int16/32_t containing address
+* @return: value stored at the address
+*/
 static uword_t MemoryDelegate_Word_At_Address(struct MemoryDelegate* delegate, uword_t addr)
 {	
 	MemoryController* _self = (MemoryController*)delegate->delegateObject; // Explicit downcast
@@ -142,6 +165,11 @@ static uword_t MemoryDelegate_Word_At_Address(struct MemoryDelegate* delegate, u
 	return *((uword_t*)__Ptr_For_Address(_self,addr));
 }
 
+/**
+* @brief: sets word at the specified address.
+* @param self: A reference to the current instance of Memorycontroller
+* @param addr: int16/32_t containing address
+*/
 static void MemoryDelegate_Set_Word_At_Address(struct MemoryDelegate* delegate, uword_t addr, uword_t word)
 {	
 	MemoryController* _self = (MemoryController*)delegate->delegateObject; // Explicit downcast
@@ -149,12 +177,22 @@ static void MemoryDelegate_Set_Word_At_Address(struct MemoryDelegate* delegate, 
 	__Set_Word_At_Ptr(_self, __Ptr_For_Address(_self, addr), word);
 }
 
+/**
+* @brief: sets all memory values to 0.
+* @param self: A reference to the current instance of Memorycontroller
+*/
 static void MemoryDelegate_Clear_Memory(struct MemoryDelegate* delegate)
 {	
 	_info("Clearing memory...",NULL);
 	memset((void*)__memory, 0x0, TOTAL_MEM);
 }
 
+/**
+* @brief: loads memory from location ptr.
+* @param self: A reference to the current instance of Memorycontroller
+* @param ptr: location to get words from
+* @param size: number of words to be loaded to memory
+*/
 static void MemoryDelegate_Load_Memory_From_Ptr(struct MemoryDelegate* delegate, void* ptr, size_t size)
 {	
 	_info("Loading memory from %p | size: %lu", ptr, size);
