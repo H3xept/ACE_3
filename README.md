@@ -145,7 +145,7 @@ Loads the contents of the second register into the memory address given in the f
 
 ---
 ### `0101 / IN` Input
-Places the next word from the input queue into the given register. If there is nothing in the input queue, the machine will prompt the user to input space-separated input values.
+Places the next word from the input queue into the given register. If there is nothing in the input queue, the machine will prompt the user to input space-separated input values. If the input queue becomes empty upon taking input, the input flag will be set to 0. Otherwise, it will be set to 1.
 
 #### _Assembly_
 **Operand:** The register to place the input value in.
@@ -389,7 +389,7 @@ The label `loop` may be used by placing `loop:` on its own line somewhere in the
 A jump to a label will cause the instruction after the label to execute next. Loading a label will place the equivalent memory address in the register.
 
 ### Jump Example
-```
+```asm
 load $t0 10
 load $t1 -1
 
@@ -408,7 +408,7 @@ This will produce an output as follows:
 `10 9 8 7 6 5 4 3 2 1`
 
 ### Load Example
-```
+```asm
 load $t1 dataSegment
 load $t2 $t1
 out $t2 1
@@ -427,7 +427,7 @@ This will produce an output as follows:
 Comments can be placed at the end of any line with a `#` symbol.
 
 ### Example
-```
+```asm
 add $t1 $t2 # This is a comment!
 halt
 # This is also a comment!
