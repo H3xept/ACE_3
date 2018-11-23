@@ -404,6 +404,7 @@ static uword_t __get_register_value_with_address(CU* self, uint8_t address) {
 // ...
 
 // Public instance methods for CU
+
 void CU_Execute_Instruction(CU* self, instruction_t instruction){
 	_controlInfo("Executing instruction (Opcode: %x, Operand: %x)", instruction.opcode, instruction.operand);
 	Registers* registers = self->__registers;

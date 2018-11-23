@@ -120,7 +120,11 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 // ...
 
 // Private instance methods for VirtualMachine
-
+/**
+* @brief: takes user input in hex, bin or decimal.
+* @param IOWrapperDelegate: A reference to the implementer of this method
+* @return array of unsigned words where first value is the number of words returned
+*/
 uword_t* IOWrapperDelegate_Input(struct IOWrapperDelegate * delegate)
 {
 	_delegCall();
@@ -173,6 +177,11 @@ uword_t* IOWrapperDelegate_Input(struct IOWrapperDelegate * delegate)
 	return words;
 }
 
+/**
+* @brief: prints contents of output queue (and empties output queue).
+* @param IOWrapperDelegate: A reference to the implementer of this method
+* @param ouput_queue: the ouput queue
+*/
 void IOWrapperDelegate_Output(struct IOWrapperDelegate * delegate, Queue* output_queue)
 {
 	_delegCall();
@@ -198,6 +207,11 @@ static void __Setup_Delegates(VirtualMachine* self)
 	self->iOWrapperDelegateVptr = &iOWrapperDelegateVtbl;
 }
 
+/**
+* @brief: prints contents of output queue (and empties output queue).
+* @param IOWrapperDelegate: A reference to the implementer of this method
+* @param ouput_queue: the ouput queue
+*/
 static void __Load_Bootloader(VirtualMachine* self)
 {
 	self->cpu_mode = CPU_Mode_Booting;
@@ -213,6 +227,11 @@ static void __Load_Bootloader(VirtualMachine* self)
 	_info("Bootloader loading complete.",NULL);
 }
 
+/**
+* @brief: loads a program into the input queue.
+* @param VitrualMachine: A reference to an instance of VirtualMachine
+* @param program: pointer to the program instructions
+*/
 static void __Load_Program(VirtualMachine* self, Program* program)
 {
 	CPU_Load_Words_In_Input_Queue(self->cpu, program->source, program->size);
