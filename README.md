@@ -63,13 +63,13 @@ Halts the program.
 
 ---
 ### `0001 / JUMP` Jump
-Jumps to the given address/label, or $ra if the address is 0xfff.
+Jumps to the given address/label, or $ra if the address is `0xfff`.
 
 #### _Assembly_
-**Operand:** The label to jump to. If the value 0xfff is given instead of a label, then will jump to the value of $ra.
+**Operand:** The label to jump to. If the value `0xfff` is given instead of a label, then will jump to the value of `$ra`.
 
 #### _Machine Code_
-**Operand:** 12 bit address to jump to. If the address is given as 0xfff, then will jump to the value of $ra.
+**Operand:** 12 bit address to jump to. If the address is given as `0xfff`, then will jump to the value of `$ra`.
 
 #### _Examples_
 `jump loop` → `0x10a1`
@@ -379,3 +379,56 @@ Shifts the first register right by a number of bits equal to the value in the se
 `shr $s1 $t1` → `0xe095`
 
 `shr $s5 $t4` → `0xe0d8`
+
+---
+## Labels
+Labels are used by referencing them in `jump` or `load` instructions, and placing them somewhere in the program with a colon.
+
+The label `loop` may be used by placing `loop:` on its own line somewhere in the program, and using `jump loop` or `load $[some register] loop`.
+
+A jump to a label will cause the instruction after the label to execute next. Loading a label will place the equivalent memory address in the register.
+
+### Jump Example
+```
+load $t0 10
+load $t1 -1
+
+loop:
+out $t0 0
+add $t0 $t1
+skc $t0
+jump loop
+
+out $t0 1
+halt
+```
+
+This will produce an output as follows:
+
+`10 9 8 7 6 5 4 3 2 1`
+
+### Load Example
+```
+load $t1 dataSegment
+load $t2 $t1
+out $t2 1
+halt
+
+dataSegment:
+100
+```
+
+This will produce an output as follows:
+
+`100`
+
+---
+## Comments
+Comments can be placed at the end of any line with a `#` symbol.
+
+### Example
+```
+add $t1 $t2 # This is a comment!
+halt
+# This is also a comment!
+```
