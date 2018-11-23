@@ -115,7 +115,11 @@ static const char* const _Object_Descriptor(Object * self)
 // ...
 
 // Private instance methods for IO
-
+/**
+* @brief: Returns a word from the input queue.
+* @param IODelegate: A reference to the implementer of this method
+* @return: uword_t - first word from the input queue.
+*/
 static uword_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate)
 {
 	_delegCall();
@@ -135,6 +139,12 @@ static uword_t IODelegate_Get_Word_From_Input_Queue(struct IODelegate * delegate
 	return rtn;
 }
 
+/**
+* @brief: puts a word onto the input queue.
+* @param IODelegate: A reference to the implementer of this method
+* @param word: value to add to the rear of the queue
+* @param print: if 1 print to screen
+*/
 static void IODelegate_Put_Word_To_Output_Queue(struct IODelegate * delegate, uword_t word, uint8_t print)
 {
 	_delegCall();
