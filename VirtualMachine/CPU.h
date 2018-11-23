@@ -4,7 +4,7 @@
 * Authors: Leonardo Cascianelli, Rory Brown, Ewan Skene
 * Date: 2018-11-16
 * 
-* Description: __DESCRIPTION__
+* Description: CPU for virtual machine
 */
 
 #ifndef __CPU__
