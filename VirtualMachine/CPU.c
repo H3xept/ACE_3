@@ -391,7 +391,10 @@ static inline void __CPU_Init_Flag_Register(CPU* self)
 // ...
 
 // Public instance methods for CPU
-
+/**
+* @brief: simulates FEC using the components of the cpu.
+* @param self: reference to the current instance of CPU
+*/
 void CPU_Fetch_Execute_Cycle(CPU* self)
 {		
 	_info("Starting FEC", NULL);
@@ -416,6 +419,11 @@ void CPU_Fetch_Execute_Cycle(CPU* self)
 }
 
 // WARNING - Viable only during CPU idle stage
+/**
+* @brief: put words into the input queue.
+* @param words: array of words to load
+* @param word_n: number of words to load
+*/
 void CPU_Load_Words_In_Input_Queue(CPU* self, uword_t* words, size_t word_n)
 {
 	struct FlagDelegate* flagDelegate = self->flagDelegateVptr;
