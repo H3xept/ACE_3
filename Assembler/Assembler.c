@@ -191,7 +191,7 @@ static uword_t handle_OUT()
 	require_register(r1);
 	char* arg2 = sstrtok(NULL, " ");
 	require_immediate(arg2);
-	return 0x6000 | (atoi(arg2) > 0)<< 4 | reg_to_int(r1);
+	return 0x6000 | (strtol(arg2,NULL,0) > 0)<< 4 | reg_to_int(r1);
 }
 
 static uword_t handle_MOVE()
@@ -520,71 +520,71 @@ int main(int argc, char const *argv[])
 				if (num > 32768 || num < -32769)
 				{_err("Immediate number out of bounds: %d (MAX 32768 | MIN -32769)",num);}
 				words[address_n++] = num;
-			} if (!is_comment_or_whitespace(line)){
+			} else if (!is_comment_or_whitespace(line)){
 				if (*(line+strlen(line)-1) == ':')
 					continue;
 				_err("%s is not an operator of this arch.--", line);
 			}
-		}
-		operator = sstrtok(line, " ");
-		uword_t* loadlwords;
-		switch(str_to_int(operator))
-		{
-			case 658: //halt 
-				words[address_n++] = handle_HALT();
-				break;
-			case 696: //jump 
-				words[address_n++] = handle_JUMP(labels, addresses, inserted);
-				break;
-			case 498: //skc
-				words[address_n++] = handle_SKC();
-				break;
-			case 640: //load
-				words[address_n++] = handle_LOAD();
-				break;
-			case 874: //store
-				words[address_n++] = handle_STORE();
-				break;
-			case 334: //in
-				words[address_n++] = handle_IN();
-				break;
-			case 544: //out
-				words[address_n++] = handle_OUT();
-				break;
-			case 686: //move
-				words[address_n++] = handle_MOVE();
-				break;
-			case 450: //add
-				words[address_n++] = handle_ADD();
-				break;
-			case 524: //mul
-				words[address_n++] = handle_MUL();
-				break;
-			case 502: //div
-				words[address_n++] = handle_DIV();
-				break;
-			case 470: //and
-				words[address_n++] = handle_AND();
-				break;
-			case 354: //or
-				words[address_n++] = handle_OR();
-				break;
-			case 530: //not
-				words[address_n++] = handle_NOT();
-				break;
-			case 510: //shl
-				words[address_n++] = handle_SHL();
-				break;
-			case 522: //shr
-				words[address_n++] = handle_SHR();
-				break;
-			case 808: // loadl
-				loadlwords = handle_LOADL(labels, addresses, inserted);
-				for (int i = 0; i < 5; i++)
-					words[address_n++] = *(loadlwords+i);
-				break;
-			default:
-				_err("%s is not an operator of this arch.", line);
+		} else{
+			operator = sstrtok(line, " ");
+			uword_t* loadlwords;
+			switch(str_to_int(operator))
+			{
+				case 658: //halt 
+					words[address_n++] = handle_HALT();
+					break;
+				case 696: //jump 
+					words[address_n++] = handle_JUMP(labels, addresses, inserted);
+					break;
+				case 498: //skc
+					words[address_n++] = handle_SKC();
+					break;
+				case 640: //load
+					words[address_n++] = handle_LOAD();
+					break;
+				case 874: //store
+					words[address_n++] = handle_STORE();
+					break;
+				case 334: //in
+					words[address_n++] = handle_IN();
+					break;
+				case 544: //out
+					words[address_n++] = handle_OUT();
+					break;
+				case 686: //move
+					words[address_n++] = handle_MOVE();
+					break;
+				case 450: //add
+					words[address_n++] = handle_ADD();
+					break;
+				case 524: //mul
+					words[address_n++] = handle_MUL();
+					break;
+				case 502: //div
+					words[address_n++] = handle_DIV();
+					break;
+				case 470: //and
+					words[address_n++] = handle_AND();
+					break;
+				case 354: //or
+					words[address_n++] = handle_OR();
+					break;
+				case 530: //not
+					words[address_n++] = handle_NOT();
+					break;
+				case 510: //shl
+					words[address_n++] = handle_SHL();
+					break;
+				case 522: //shr
+					words[address_n++] = handle_SHR();
+					break;
+				case 808: // loadl
+					loadlwords = handle_LOADL(labels, addresses, inserted);
+					for (int i = 0; i < 5; i++)
+						words[address_n++] = *(loadlwords+i);
+					break;
+				default:
+					_err("%s is not an operator of this arch.", line);}
 		}
 	}
 

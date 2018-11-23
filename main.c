@@ -7,6 +7,7 @@
 #include "VirtualMachine/VirtualMachine.h"
 #include <string.h>
 #include <math.h>
+#include "Disassembler/Disassembler.h"
 
 #define k_HELP_STRING "Help:\n\
 Usage: ... <disassembler_flag> <print_flag> <build_flag>\
@@ -110,16 +111,20 @@ Program* handle_build_flag(const char* flag, int argc, char const *argv[])
 
 int main(int argc, char const *argv[])
 {
-	Program* program;
-	VirtualMachine* vm;
+	// Program* program;
+	// VirtualMachine* vm;
 
-	if (argc < 4)
-	{
-		_err(k_NOT_ENOUGH_PARAMS, argv[0]);
-	}
+	// if (argc < 4)
+	// {
+	// 	_err(k_NOT_ENOUGH_PARAMS, argv[0]);
+	// }
 
-	program = handle_build_flag(argv[1], argc, argv+2);
-	vm = alloc_init(VirtualMachine_Class_Descriptor);
-	Virtual_Machine_Run(vm, program);
+	// program = handle_build_flag(argv[1], argc, argv+2);
+	// vm = alloc_init(VirtualMachine_Class_Descriptor);
+	// Virtual_Machine_Run(vm, program);
+	// return 0;
+	Program* p = Program_With_File("out3");
+	Disassembler* dsm = Disassembler_With_Program(p);
+	Disassembler_Statically_Disassemble(dsm);
 	return 0;
 }
