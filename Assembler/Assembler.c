@@ -191,7 +191,7 @@ static uword_t handle_OUT()
 	require_register(r1);
 	char* arg2 = sstrtok(NULL, " ");
 	require_immediate(arg2);
-	return 0x6000 | (atoi(arg2) > 0)<< 4 | reg_to_int(r1);
+	return 0x6000 | (strtol(arg2,NULL,0) > 0)<< 4 | reg_to_int(r1);
 }
 
 static uword_t handle_MOVE()

@@ -146,14 +146,18 @@ uword_t* IOWrapperDelegate_Input(struct IOWrapperDelegate * delegate)
 		
 	word = strtok(input_string, " ");
 	
-	while( word != NULL ) {
+	while( word != NULL ) 
+	{
 		errno = 0;
-		if (*word == '0' && *(word+1)=='b'){
+		if (*word == '0' && *(word+1)=='b')
+		{
 			word += 2;
 			signed_word = strtol(word, NULL, 2);
 		}
 		else
+		{
 			signed_word = strtol(word, NULL, 0);
+		}
 
 		if (errno){
 			_warn("Please insert a number in decimal, binary(0b prefix) or hex(0x prefix).",NULL);

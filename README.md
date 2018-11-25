@@ -1,7 +1,11 @@
+<<<<<<< HEAD
 # ACE3
 ### Note
 Any references to 'padding' refer to the act of filling in the bits to the left of a value.
 
+=======
+# TBTTBSQSA (The Bigger Than Tiny But Still Quite Small Architecture)
+>>>>>>> feat_disassembler
 ## Spec
 16 Operators, 16 Registers
 
