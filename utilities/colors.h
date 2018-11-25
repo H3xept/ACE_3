@@ -1,3 +1,12 @@
+/**
+* Filename: colors.h
+* Authors: Leonardo Cascianelli,Rory Brown,Ewan Skene
+* Date: 2018-11-16
+* 
+* Description: defines set of colours and colour printing macros
+*/
+
+
 #define a_RED  		"\x1B[31m"
 #define a_GREEN  	"\x1B[32m"
 #define a_YELLOW  	"\x1B[33m"

@@ -128,6 +128,12 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 }
 
 // Private class methods for Program
+/**
+* @brief: converts 16/32 bit uint to big endian format
+* @param self: current instance of CU
+* @param word: word to convert
+* @return word in big endian format
+*/
 uword_t __To_Big_Endian(uword_t word)
 {	
 	#if WORD_SIZE == 16
@@ -141,6 +147,11 @@ uword_t __To_Big_Endian(uword_t word)
 // ...
 
 // Public class methods for Program
+/**
+* @brief: reads program from file
+* @param filename: name of program file
+* @return reference to the program
+*/
 Program* Program_With_File(const char* filename)
 {
 	FILE* file = fopen(filename,"rb");
@@ -170,6 +181,11 @@ Program* Program_With_File(const char* filename)
 	return rt;
 }
 
+/**
+* @brief: reads program from buffer
+* @param buffer: reference to input buffer
+* @param number of words to read
+*/
 Program* Program_With_Buffer(uword_t* buffer, size_t len)
 {
 	Program* rt = alloc_init(Program_Class_Descriptor);

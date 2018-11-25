@@ -104,6 +104,7 @@ static Object* _Object_Ctor(Object * self, va_list args)
 */
 static Object* _Object_Dtor(Object * self)
 {
+	#warning this needs the stuff
 	return self;
 }
 
@@ -136,6 +137,10 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 // ...
 
 // Private instance methods for CU
+/**
+* @brief: instruction to stop executing program on a virtual machine
+* @param self: current instance of CU
+*/
 static void __HALT(CU* self){
 	_controlInfo("Executing HALT instruction", NULL);
 	struct FlagDelegate* flagDelegate = self->__flagDelegate;
@@ -143,6 +148,10 @@ static void __HALT(CU* self){
 	flagDelegate->FlagDelegate_Set_Flag(flagDelegate, k_Status_Flag_Halt, 1);
 }
 
+/**
+* @brief: sets program counter to given address/label
+* @param self: current instance of CU
+*/
 static void __JUMP(CU* self, uword_t operand){
 	_controlInfo("Executing JUMP instruction", NULL);
 	Registers* registers = self->__registers;
@@ -157,6 +166,11 @@ static void __JUMP(CU* self, uword_t operand){
 	}
 }
 
+/**
+* @brief: instruction skips next instruction if argument > 0
+* @param self: current instance of CU
+* @param operand: argument to check
+*/
 static void __SKC(CU* self, uword_t operand){
 	_controlInfo("Executing SKC instruction", NULL);
 	Registers * registers = self->__registers;
@@ -166,6 +180,11 @@ static void __SKC(CU* self, uword_t operand){
 	}
 }
 
+/**
+* @brief: instruction loads value from first reg into second or an immediate
+* @param self: current instance of CU
+* @param operand: 12bit operand of the instruction
+*/
 static void __LOAD(CU* self, uword_t operand){
 	_controlInfo("Executing LOAD instruction", NULL);
 	struct MemoryDelegate* memoryDelegate = self->__memoryDelegate;
@@ -180,6 +199,11 @@ static void __LOAD(CU* self, uword_t operand){
 	}
 }
 
+/**
+* @brief: instruction stores contents of one reg into the addess in another
+* @param self: current instance of CU
+* @param operand: 12bit operand of the instruction
+*/
 static void __STORE(CU* self, uword_t operand){
 	_controlInfo("Executing STORE instruction", NULL);
 	struct MemoryDelegate* memoryDelegate = self->__memoryDelegate;
@@ -189,6 +213,11 @@ static void __STORE(CU* self, uword_t operand){
 	memoryDelegate->MemoryDelegate_Set_Word_At_Address(memoryDelegate, address & ((uword_t)pow(2, ADDR_LENGTH) - 1), wordToBeWritten);
 }
 
+/**
+* @brief: instruction puts the next word in the input queue into a specified register
+* @param self: current instance of CU
+* @param operand: 12bit operand of the instruction
+*/
 static void __IN(CU* self, uword_t operand){
 	_controlInfo("Executing IN instruction", NULL);
 	struct IODelegate* ioDelegate = self->__ioDelegate;
@@ -196,6 +225,11 @@ static void __IN(CU* self, uword_t operand){
 	__set_register_with_address(self, address, ioDelegate->IODelegate_Get_Word_From_Input_Queue(ioDelegate));
 }
 
+/**
+* @brief: instruction puts the next word in the input queue into a specified register, prints if given second argument 1
+* @param self: current instance of CU
+* @param operand: 12bit operand of the instruction
+*/
 static void __OUT(CU* self, uword_t operand){
 	_controlInfo("Executing OUT instruction", NULL);
 	struct IODelegate* ioDelegate = self->__ioDelegate;
@@ -203,7 +237,11 @@ static void __OUT(CU* self, uword_t operand){
 	ioDelegate->IODelegate_Put_Word_To_Output_Queue(ioDelegate, __get_register_value_with_address(self, address), (operand >> REGISTER_ADDR_LENGTH) > 0);
 }
 
-
+/**
+* @brief: moves a value from the second specified register to the first
+* @param self: current instance of CU
+* @param operand: 12bit operand of the instruction
+*/
 static void __MOVE(CU* self, uword_t operand){
 	_controlInfo("Executing MOVE instruction", NULL);
 	uint8_t address1 = (uint8_t) ((operand >> REGISTER_ADDR_LENGTH) & ((uword_t)pow(2, REGISTER_ADDR_LENGTH) - 1));
@@ -211,6 +249,11 @@ static void __MOVE(CU* self, uword_t operand){
 	__set_register_with_address(self, address1, __get_register_value_with_address(self, address2));
 }
 
+/**
+* @brief: adds two registers and stores result in the first, sets overflow flag when appropriate
+* @param self: current instance of CU
+* @param operand: 12bit operand of the instruction
+*/
 static void __ADD(CU* self, uword_t operand){
 	_controlInfo("Executing ADD instruction", NULL);
 	ALU* alu = self->__alu;
@@ -222,6 +265,11 @@ static void __ADD(CU* self, uword_t operand){
 	__set_register_with_address(self, address, signed_to_unsigned(result));
 }
 
+/**
+* @brief: multiplies values in two registers and stores result in the first, sets overflow flag when appropriate
+* @param self: current instance of CU
+* @param operand: 12bit operand of the instruction
+*/
 static void __MUL(CU* self, uword_t operand){
 	_controlInfo("Executing MUL instruction", NULL);
 	ALU* alu = self->__alu;
@@ -233,6 +281,11 @@ static void __MUL(CU* self, uword_t operand){
 	__set_register_with_address(self, address, signed_to_unsigned(result));
 }
 
+/**
+* @brief: divides value in first register by value in second register and stores result in the first, sets overflow flag when appropriate
+* @param self: current instance of CU
+* @param operand: 12bit operand of the instruction
+*/
 static void __DIV(CU* self, uword_t operand){
 	_controlInfo("Executing DIV instruction", NULL);
 	ALU* alu = self->__alu;
@@ -244,6 +297,11 @@ static void __DIV(CU* self, uword_t operand){
 	__set_register_with_address(self, address, signed_to_unsigned(result));
 }
 
+/**
+* @brief: bitwise AND of two registers, storing answer in first
+* @param self: current instance of CU
+* @param operand: 12bit operand of the instruction
+*/
 static void __AND(CU* self, uword_t operand){
 	_controlInfo("Executing AND instruction", NULL);
 	ALU* alu = self->__alu;
@@ -254,6 +312,11 @@ static void __AND(CU* self, uword_t operand){
 	__set_register_with_address(self, address, signed_to_unsigned(result));
 }
 
+/**
+* @brief: bitwise OR of two registers, storing answer in first
+* @param self: current instance of CU
+* @param operand: 12bit operand of the instruction
+*/
 static void __OR(CU* self, uword_t operand){
 	_controlInfo("Executing OR instruction", NULL);
 	ALU* alu = self->__alu;
@@ -265,6 +328,11 @@ static void __OR(CU* self, uword_t operand){
 	__set_register_with_address(self, address, signed_to_unsigned(result));
 }
 
+/**
+* @brief: bitwise NOT of a value in one register
+* @param self: current instance of CU
+* @param operand: 12bit operand of the instruction
+*/
 static void __NOT(CU* self, uword_t operand){
 	_controlInfo("Executing NOT instruction", NULL);
 	ALU* alu = self->__alu;
@@ -275,6 +343,11 @@ static void __NOT(CU* self, uword_t operand){
 	__set_register_with_address(self, address, signed_to_unsigned(result));
 }
 
+/**
+* @brief: logical left shift of first register given by amount in second register
+* @param self: current instance of CU
+* @param operand: 12bit operand of the instruction
+*/
 static void __SHL(CU* self, uword_t operand){
 	_controlInfo("Executing SHL instruction", NULL);
 	ALU* alu = self->__alu;
@@ -286,6 +359,11 @@ static void __SHL(CU* self, uword_t operand){
 	__set_register_with_address(self, address, signed_to_unsigned(result));
 }
 
+/**
+* @brief: logical right shift of first register given by amount in second register
+* @param self: current instance of CU
+* @param operand: 12bit operand of the instruction
+*/
 static void __SHR(CU* self, uword_t operand){
 	_controlInfo("Executing SHR instruction", NULL);
 	ALU* alu = self->__alu;
@@ -296,6 +374,12 @@ static void __SHR(CU* self, uword_t operand){
 	__set_register_with_address(self, address, signed_to_unsigned(result));
 }
 
+/**
+* @brief: sets register at address to a given value
+* @param self: current instance of CU
+* @param address: 4bit register address
+* @param value: 16bit value
+*/
 static void __set_register_with_address(CU* self, uint8_t address, uword_t value){
 	_controlInfo("Setting register (Address: %d)", address);
 	Registers* registers = self->__registers;
@@ -355,6 +439,11 @@ static void __set_register_with_address(CU* self, uint8_t address, uword_t value
 	}
 }
 
+/**
+* @brief: gets value of register at given address
+* @param self: current instance of CU
+* @param address: 4bit register address
+*/
 static uword_t __get_register_value_with_address(CU* self, uint8_t address) {
 	Registers* registers = self->__registers;
 	struct FlagDelegate* flagDelegate = self->__flagDelegate;
@@ -403,6 +492,11 @@ static uword_t __get_register_value_with_address(CU* self, uint8_t address) {
 // ...
 
 // Public instance methods for CU
+/**
+* @brief: chooses intruction to execute by given 4 bit opcode
+* @param self: current instance of CU
+* @param instruction (and operand(s)).
+*/
 void CU_Execute_Instruction(CU* self, instruction_t instruction){
 	_controlInfo("Executing instruction (Opcode: %x, Operand: %x)", instruction.opcode, instruction.operand);
 	Registers* registers = self->__registers;
