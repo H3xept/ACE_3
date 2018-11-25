@@ -1,15 +1,66 @@
-<<<<<<< HEAD
-# ACE3
-### Note
-Any references to 'padding' refer to the act of filling in the bits to the left of a value.
-
-=======
 # TBTTBSQSA (The Bigger Than Tiny But Still Quite Small Architecture)
->>>>>>> feat_disassembler
-## Spec
-16 Operators, 16 Registers
+### Notes
++ Any references to 'padding' refer to the act of filling in the bits to the left of a value.
++ Assembly code for this architecture is __not__ case sensitive.
 
-4 Bit Opcodes, 12 Bit Operands
+## Spec
++ Von Neumann Architecture
++ 16 Bit Words
++ Word Addressable
++ 12 Bit Addresses, 4096 Words in Memory
++ 16 Instructions
++ 16 Registers
++ Single Word Instructions
++ 4 Bit Opcodes, 12 Bit Operands
+
+## Assembling Programs
+Programs can be assembled by running `Assembler` as follows:
+
+```
+Assembler <file_name> <output_file_name>
+```
+
+The assembler will output a binary file containing the assembled program, which can be given as input to the virtual machine.
+
+## Using The Virtual Machine
+The programs can be ran on the virtual machine (`TBTTBSQSA`) as follows:
+
+```
+TBTTBSQSA <mode> <loading_flags>
+```
+
+### Modes
+There are three modes that the virtual machine can be ran in:
+
++ `dm` (Disassemble Mode): Runs the disassembler on the loaded program
++ `rm` (Run Mode): Runs the virtual machine on the loaded program
++ `drm` (Disassemble + Run Mode): Disassembles and runs the loaded program
+
+### Loading Flags
+Different flags can be used to specify how the virtual machine loads a program:
++ `-d` or `--default`: Load the default program
++ `-c` or `--console`: Load a program from stdin
++ `-f <filename>` or `--file <filename>`: Load a program from a specified file
+
+### Disassembly
+When ran in disassemble mode, the virtual machine will prompt the user to input an output filename. The disassembler will differentiate between instructions and data based which words in the program are executed as instructions. Programs are statically disassembled, but jumps to labels and jumps to `$ra` are tracked to determine what is data and what is an instruction.
+
+The disassembler will be able to disassemble any valid program such that it can be reassembled and ran, but will not be able to distinguish between instructions and data in every case.
+
+## Using The Architecture
+
+### Loading A Program
+The machine uses a bootloader to load programs, which is written into the end of memory automatically when the VM is initialised. The bootloader will read in programs up to 3/4 of the memory space in size, by loading them, a word at a time, from the input queue. Programs are loaded into memory location 1 (as 0 contains an instruction to jump to the bootloader). Once the program is loaded in, the stack and frame pointers are set to be equal to the first free memory location (i.e. not containing program data).
+
+### Program Execution
+Programs are executed starting at the first line, which is assumed to be an instruction. If data is entered as the first line of a program, that will be executed as an instruction. They will then run until a halt instruction is reached, printing data to the console and getting user input through `IN` and `OUT` when needed. Programs may also halt when a fault occurs. When a program halts it will do so with an exit code corresponding to what caused the halt (exit codes are listed below).
+
+### The Stack
+The `$fp` (frame pointer) and `$sp` (stack pointer) registers indicate the bounds of the current stack frame in memory. `$fp` should always point to the first memory location in the current stack frame, while `$sp` should always point to the memory location after the end of the stack frame (the top of the stack). When a program is initialised, `$fp` and `$sp` will both be equal to the first free memory location after the program. The stack must be managed by the programmer.
+
+### Subroutines
+The convention for this architecture is that saved registers (`$s1`-`$s5`), the stack and frame pointers (`$sp` and `$fp`), and the return address (`$ra`) are callee-saved, and the temporary registers (`$t1`-`$t4`) are caller-saved. All subroutines should begin by creating a stack frame and storing all the callee-saved register values on the stack frame. This frame can then be deconstructed upon completion of the subroutine, and the thread can then jump to `$ra`. This is done so by using the instruction `jump 0xfff`, which will jump to `$ra`.
+
 ## Operators
 + `0000 / HALT` Halt
 + `0001 / JUMP` Jump
@@ -29,22 +80,22 @@ Any references to 'padding' refer to the act of filling in the bits to the left 
 + `1111 / SHR` Shift Right
 
 ## Registers
-+ `0000 / PC` Program Counter (12 bits)
-+ `0001 / IR` Instruction Register (16 bits)
-+ `0010 / RA` Return Address Register (12 bits)
-+ `0011 / SP` Stack Pointer (12 bits)
-+ `0100 / FP` Frame Pointer (12 bits)
-+ `0101 / T1` Temporary Register 1 (16 bits)
-+ `0110 / T2` Temporary Register 2 (16 bits)
-+ `0111 / T3` Temporary Register 3 (16 bits)
-+ `1000 / T4` Temporary Register 4 (16 bits)
-+ `1001 / S1` Saved Register 1 (16 bits)
-+ `1010 / S2` Saved Register 2 (16 bits)
-+ `1011 / S3` Saved Register 3 (16 bits)
-+ `1100 / S4` Saved Register 4 (16 bits)
-+ `1101 / S5` Saved Register 5 (16 bits)
-+ `1110 / PR` Pseudoinstruction Register (16 bits)
-+ `1111 / FR` Flag Register (5 bits)
++ `0000 / $pc` Program Counter (12 bits)
++ `0001 / $ir` Instruction Register (16 bits)
++ `0010 / $ra` Return Address Register (12 bits)
++ `0011 / $sp` Stack Pointer (12 bits)
++ `0100 / $fp` Frame Pointer (12 bits)
++ `0101 / $t1` Temporary Register 1 (16 bits)
++ `0110 / $t2` Temporary Register 2 (16 bits)
++ `0111 / $t3` Temporary Register 3 (16 bits)
++ `1000 / $t4` Temporary Register 4 (16 bits)
++ `1001 / $s1` Saved Register 1 (16 bits)
++ `1010 / $s2` Saved Register 2 (16 bits)
++ `1011 / $s3` Saved Register 3 (16 bits)
++ `1100 / $s4` Saved Register 4 (16 bits)
++ `1101 / $s5` Saved Register 5 (16 bits)
++ `1110 / $pr` Pseudoinstruction Register (16 bits)
++ `1111 / $fr` Flag Register (5 bits)
 
 ## Flag Register
 + 0: Halt
