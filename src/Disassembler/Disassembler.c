@@ -1,3 +1,29 @@
+/**************************************************************************
+ * Assessment Title:
+ * ACE 3 (TBTTBSQSA)
+ *
+ * Number of Submitted C Files: 
+ * 19 (51 total files including .h, .py, .asm and .md)
+ * 
+ * Date: 
+ * 25/11/2018
+ * 
+ * Authors: 
+ *	1. Leonardo Cascianelli, Reg no: 201710666
+ *	2. Rory Brown, Reg no: 201717976
+ *	3. Ewan Skene, Reg no: 201717413
+ * 
+ *
+ *	Statement: We confirm that this submission is all our own work.
+ *
+ *  (Signed)_Leonardo_Cascianelli________________(Leonardo Cascianelli)
+ *	
+ * 	(Signed)_Rory_Brown__________________________(Rory Brown)
+ *	
+ *	(Signed)_Ewan_Skene__________________________(Ewan Skene)
+ *
+ **************************************************************************/
+
 /**
 * Filename: Disassembler.c
 * Class: Disassembler
@@ -52,22 +78,13 @@ static struct Class_Descriptor _Disassembler_Class_Descriptor = {
 };
 const void * Disassembler_Class_Descriptor = &_Disassembler_Class_Descriptor;
 
-// Private fields for Disassembler
-// ...
-
-// Private class method declarations for Disassembler
-// ...
-
-// Private instance method declarations for Disassembler
-// ...
-
 /// Private overrides for 'Object' virtual methods (implementation)
 
 /**
 * @brief: Disassembler constructor.
 * @param self: A reference to the current instance of Disassembler
 * @param args: Variadic args list as follows:
-* - type: desc
+* - Program*: Pointer to Program object
 * @return: Object* - The constructed object instance.
 */
 static Object* _Object_Ctor(Object * self, va_list args)
@@ -141,6 +158,11 @@ static const char* const _Object_Descriptor(Object * self)
 	return "<Disassembler>";
 }
 
+/**
+* @brief: Checks for object equality between the current object and another object.
+* @param self: A reference to the current instance of Disassembler.
+* @return: unsigned int - A boolean representing the equality between the two objects.
+*/
 static unsigned int _Object_Equals(Object* self, Object* obj)
 {
 	// Downcast to Disassembler
@@ -155,6 +177,12 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 }
 
 // Private class methods for Disassembler
+
+/**
+* @brief: Returns the assosciated mnemonic of the given opcode.
+* @param opcode: Opcode to be parsed.
+* @return: char* - The mnemonic of the opcode.
+*/
 char* __Mnemonic_With_Opcode(uint8_t opcode)
 {
 	static char* op_mnemonics[] = {"HALT","JUMP","SKC","LOAD","STORE",
@@ -167,7 +195,11 @@ char* __Mnemonic_With_Opcode(uint8_t opcode)
 	return op_mnemonics[opcode];
 }
 
-
+/**
+* @brief: Returns the assosciated mnemonic of the given register address.
+* @param register_n: register address to be parsed.
+* @return: char* - The mnemonic of the register address.
+*/
 char* __Mnemonic_With_Register(uint8_t register_n)
 {
 	static char* reg_mnemonics[] = {"$PC","$IR","$RA","$SP","$FP",
@@ -182,6 +214,12 @@ char* __Mnemonic_With_Register(uint8_t register_n)
 
 // Private instance methods for Disassembler
 
+/**
+* @brief: Returns the assosciated mnemonic of the given opcode.
+* @param self: A reference to the current instance of Disassembler.
+* @param word: The word to converted to an instruction.
+* @return: instruction_t - The instruction generated from the given word.
+*/
 instruction_t __Instruction_With_Word(Disassembler* self, uword_t word)
 {
 	instruction_t ret = {0};
@@ -190,6 +228,12 @@ instruction_t __Instruction_With_Word(Disassembler* self, uword_t word)
 	return ret;
 }
 
+/**
+* @brief: Generates and returns a label corresponding to the given address.
+* @param self: A reference to the current instance of Disassembler.
+* @param label_address: The address of the label to be generated
+* @return: char - The label generated for the address.
+*/
 char __Next_Label(Disassembler* self, uword_t label_address)
 {	
 	if (!self->__current_label)
@@ -200,6 +244,11 @@ char __Next_Label(Disassembler* self, uword_t label_address)
 	return self->__current_label++;
 }
 
+/**
+* @brief: Kills the current 'thread' by reverting back to the last branching point in the program.
+* @param self: A reference to the current instance of Disassembler.
+* @return: uword_t - The address reverted to, to continue disassembly at.
+*/
 uword_t __Kill_Thread(Disassembler* self)
 {
 	Stack* ra_stack = NULL;
@@ -240,12 +289,23 @@ uword_t __Kill_Thread(Disassembler* self)
 	return ret;
 }
 
-
+/**
+* @brief: Disassembles an instruction that requires no registers.
+* @param self: A reference to the current instance of Disassembler.
+* @param instruction: Instruction to be disassembled.
+* @return: char* - The disassembled instruction.
+*/
 char* __Disassemble_Instruction_With_No_Registers(Disassembler* self, instruction_t* instruction)
 {
 	return __Mnemonic_With_Opcode(instruction->opcode);
 }
 
+/**
+* @brief: Disassembles an instruction that requires one register.
+* @param self: A reference to the current instance of Disassembler.
+* @param instruction: Instruction to be disassembled.
+* @return: char* - The disassembled instruction.
+*/
 char* __Disassemble_Instruction_With_One_Register(Disassembler* self, instruction_t* instruction)
 {
 	char* op_mnemonic = __Mnemonic_With_Opcode(instruction->opcode);
@@ -255,6 +315,12 @@ char* __Disassemble_Instruction_With_One_Register(Disassembler* self, instructio
 	return ret;
 }
 
+/**
+* @brief: Disassembles an instruction that requires two registers.
+* @param self: A reference to the current instance of Disassembler.
+* @param instruction: Instruction to be disassembled.
+* @return: char* - The disassembled instruction.
+*/
 char* __Disassemble_Instruction_With_Two_Registers(Disassembler* self, instruction_t* instruction)
 {
 	char* op_mnemonic = __Mnemonic_With_Opcode(instruction->opcode);
@@ -267,6 +333,12 @@ char* __Disassemble_Instruction_With_Two_Registers(Disassembler* self, instructi
 	return ret;
 }
 
+/**
+* @brief: Disassembles a jump instruction.
+* @param self: A reference to the current instance of Disassembler.
+* @param instruction: Instruction to be disassembled.
+* @return: char* - The disassembled instruction.
+*/
 char* __Disassemble_Jump(Disassembler* self, instruction_t* instruction, uword_t current_address, uword_t* new_address)
 {
 	uword_t jump_address = instruction->operand;
@@ -304,6 +376,12 @@ char* __Disassemble_Jump(Disassembler* self, instruction_t* instruction, uword_t
 	return ret;
 }
 
+/**
+* @brief: Disassembles a load instruction.
+* @param self: A reference to the current instance of Disassembler.
+* @param instruction: Instruction to be disassembled.
+* @return: char* - The disassembled instruction.
+*/
 char* __Disassemble_Load(Disassembler* self, instruction_t* instruction)
 {
 	char* op_mnemonic = __Mnemonic_With_Opcode(instruction->opcode);
@@ -352,6 +430,12 @@ char* __Disassemble_Load(Disassembler* self, instruction_t* instruction)
 	return ret;
 }
 
+/**
+* @brief: Disassembles an out instruction.
+* @param self: A reference to the current instance of Disassembler.
+* @param instruction: Instruction to be disassembled.
+* @return: char* - The disassembled instruction.
+*/
 char* __Disassemble_Out(Disassembler* self, instruction_t* instruction)
 {
 	char* op_mnemonic = __Mnemonic_With_Opcode(instruction->opcode);
@@ -363,6 +447,12 @@ char* __Disassemble_Out(Disassembler* self, instruction_t* instruction)
 	return ret;
 }
 
+/**
+* @brief: Finishes disassembly by inserting labels into the disassembled code.
+* @param self: A reference to the current instance of Disassembler.
+* @param without_labels: The disassembled code without labels.
+* @return: char** - The disassembled code with labels inserted.
+*/
 char** __Finalize_Disassembly(Disassembler* self, char** without_labels)
 {
 	char** ret = calloc(self->program->size+self->__labels_n, sizeof(char*));
@@ -383,6 +473,12 @@ char** __Finalize_Disassembly(Disassembler* self, char** without_labels)
 	return ret;
 }
 
+/**
+* @brief: Inserts data into disassembled instructions to produce disassembled code without labels.
+* @param self: A reference to the current instance of Disassembler.
+* @param without_labels: The disassembled code without data.
+* @return: char** - The disassembled code with data inserted.
+*/
 char** __Insert_Data(Disassembler* self, char** without_data)
 {
 	size_t size = self->program->size+self->__labels_n;
@@ -401,12 +497,24 @@ char** __Insert_Data(Disassembler* self, char** without_data)
 	return without_data; // But with data!
 }
 
+/**
+* @brief: Handles extra conditions required for halt disassembly
+* @param self: A reference to the current instance of Disassembler.
+* @param instruction: The halt instruction being disassembled.
+* @param new_address: A pointer to the address to continue disassembly at once halt is disassembled.
+*/
 void __Extra_Conditions_For_Halt(Disassembler* self, instruction_t* instruction, uword_t* new_address)
 {
 	*new_address = __Kill_Thread(self);
 }
 
 // Public class methods for Disassembler
+
+/**
+* @brief: Initialises a Disassembler object with the given program.
+* @param program: The program to be disassembled.
+* @return: char** - The Disassembler with program loaded.
+*/
 Disassembler* Disassembler_With_Program(Program* program)
 {
 	Disassembler* disassembler = alloc_init(Disassembler_Class_Descriptor,program);
@@ -415,6 +523,14 @@ Disassembler* Disassembler_With_Program(Program* program)
 
 // Public instance methods for Disassembler
 
+/**
+* @brief: Disassembles a given instruction.
+* @param self: A reference to the current instance of Disassembler.
+* @param instruction: The instruction to be disassembled.
+* @param current_address: The address of the instruction being disassembled.
+* @param new_address: The location of the address to disassemble at next.
+* @return: char* - The disassembled instruction.
+*/
 char* Disassembler_Disassemble_Instruction(Disassembler* self, instruction_t* instruction, uword_t current_address, uword_t* new_address)
 {	
 	char* ret;
@@ -467,6 +583,12 @@ char* Disassembler_Disassemble_Instruction(Disassembler* self, instruction_t* in
 	return ret;
 }
 
+/**
+* @brief: Statically disassembles with the loaded program.
+* @param self: A reference to the current instance of Disassembler.
+* @param size: The size of the loaded program.
+* @return: char** - The disassembled code.
+*/
 char** Disassembler_Statically_Disassemble(Disassembler* self, int* size)
 {
 	char** disassembled = calloc(WORDS_IN_MEM + MAX_LABELS, sizeof(char*));
@@ -504,6 +626,12 @@ char** Disassembler_Statically_Disassemble(Disassembler* self, int* size)
 	return ret;
 }
 
+/**
+* @brief: Statically disassembles with the loaded program, and dumps the disassembly to a file.
+* @param self: A reference to the current instance of Disassembler.
+* @param size: The size of the loaded program.
+* @param filename: The name of the file to dump to.
+*/
 void Disassembler_Statically_Disassemble_And_Dump(Disassembler* self, int* size, char* filename)
 {
 	FILE* file = fopen(filename, "w");

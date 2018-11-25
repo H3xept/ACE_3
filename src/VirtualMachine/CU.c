@@ -1,3 +1,29 @@
+/**************************************************************************
+ * Assessment Title:
+ * ACE 3 (TBTTBSQSA)
+ *
+ * Number of Submitted C Files: 
+ * 19 (51 total files including .h, .py, .asm and .md)
+ * 
+ * Date: 
+ * 25/11/2018
+ * 
+ * Authors: 
+ *	1. Leonardo Cascianelli, Reg no: 201710666
+ *	2. Rory Brown, Reg no: 201717976
+ *	3. Ewan Skene, Reg no: 201717413
+ * 
+ *
+ *	Statement: We confirm that this submission is all our own work.
+ *
+ *  (Signed)_Leonardo_Cascianelli________________(Leonardo Cascianelli)
+ *	
+ * 	(Signed)_Rory_Brown__________________________(Rory Brown)
+ *	
+ *	(Signed)_Ewan_Skene__________________________(Ewan Skene)
+ *
+ **************************************************************************/
+
 /**
 * Filename: CU.c
 * Class: CU
@@ -80,7 +106,11 @@ static uword_t __get_register_value_with_address(CU* self, uint8_t address);
 * @brief: CU constructor.
 * @param self: A reference to the current instance of CU
 * @param args: Variadic args list as follows:
-* - type: desc
+* - Registers*: Pointer to registers object
+* - ALU*: Pointer to ALU
+* - struct IODelegate*: Pointer to struct IODelegate
+* - struct FlagDelegate*: Pointer to struct FlagDelegate
+* - struct MemoryDelegate*: Pointer to struct MemoryDelegate
 * @return: Object* - The constructed object instance.
 */
 static Object* _Object_Ctor(Object * self, va_list args)
@@ -132,10 +162,8 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 	return Object_Equals(self,obj);
 }
 
-// Private class methods for CU
-// ...
-
 // Private instance methods for CU
+
 /**
 * @brief: instruction to stop executing program on a virtual machine
 * @param self: current instance of CU
@@ -487,14 +515,12 @@ static uword_t __get_register_value_with_address(CU* self, uint8_t address) {
 	}
 }
 
-// Public class methods for CU
-// ...
-
 // Public instance methods for CU
+
 /**
 * @brief: chooses intruction to execute by given 4 bit opcode
 * @param self: current instance of CU
-* @param instruction (and operand(s)).
+* @param instruction (including operand(s)).
 */
 void CU_Execute_Instruction(CU* self, instruction_t instruction){
 	_controlInfo("Executing instruction (Opcode: %x, Operand: %x)", instruction.opcode, instruction.operand);

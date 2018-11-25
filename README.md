@@ -13,6 +13,11 @@
 + Single Word Instructions
 + 4 Bit Opcodes, 12 Bit Operands
 
+## Compiling The Virtual Machine and Assembler
+The supplied makefile can be used to compile the VM and assembler.
++ Run `make` in the root directory of the project to compile the VM.
++ Run `make asm` in the root directory of the project to compile the assembler.
+
 ## Assembling Programs
 Programs can be assembled by running `Assembler` as follows:
 

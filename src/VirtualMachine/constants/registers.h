@@ -1,19 +1,28 @@
-// + `0000 / PC` Program Counter (12 bits)
-// + `0001 / IR` Instruction Register (16 bits)
-// + `0010 / RA` Return Address Register (12 bits)
-// + `0011 / SP` Stack Pointer (12 bits)
-// + `0100 / FP` Frame Pointer (12 bits)
-// + `0101 / T1` Temporary Register 1 (16 bits)
-// + `0110 / T2` Temporary Register 2 (16 bits)
-// + `0111 / T3` Temporary Register 3 (16 bits)
-// + `1000 / S1` Temporary Register 4 (16 bits)
-// + `1001 / S2` Saved Register 1 (16 bits)
-// + `1010 / S3` Saved Register 2 (16 bits)
-// + `1011 / S3` Saved Register 3 (16 bits)
-// + `1100 / S3` Saved Register 4 (16 bits)
-// + `1101 / S3` Saved Register 5 (16 bits)
-// + `1110 / PR` Pseudoinstruction Register (16 bits)
-// + `1111 / FR` Flag Register (5 bits)
+/**************************************************************************
+ * Assessment Title:
+ * ACE 3 (TBTTBSQSA)
+ *
+ * Number of Submitted C Files: 
+ * 19 (51 total files including .h, .py, .asm and .md)
+ * 
+ * Date: 
+ * 25/11/2018
+ * 
+ * Authors: 
+ *	1. Leonardo Cascianelli, Reg no: 201710666
+ *	2. Rory Brown, Reg no: 201717976
+ *	3. Ewan Skene, Reg no: 201717413
+ * 
+ *
+ *	Statement: We confirm that this submission is all our own work.
+ *
+ *  (Signed)_Leonardo_Cascianelli________________(Leonardo Cascianelli)
+ *	
+ * 	(Signed)_Rory_Brown__________________________(Rory Brown)
+ *	
+ *	(Signed)_Ewan_Skene__________________________(Ewan Skene)
+ *
+ **************************************************************************/
 
 #ifndef __REGISTERS__
 #define __REGISTERS__
