@@ -30,7 +30,7 @@
 * Authors: Leonardo Cascianelli, Rory Brown, Ewan Skene
 * Date: 2018-11-23
 * 
-* Description: A
+* Description: A stack of pointers
 */
 
 #ifndef __Stack__
@@ -47,9 +47,6 @@ typedef struct _Stack {
 } Stack;
 
 extern const void * Stack_Class_Descriptor;
-
-// Public class methods for Stack
-// ...
 
 // Public instance methods for Stack
 

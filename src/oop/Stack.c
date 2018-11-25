@@ -30,7 +30,7 @@
 * Authors: Leonardo Cascianelli,Rory Brown,Ewan Skene
 * Date: 2018-11-23
 * 
-* Description: A
+* Description: A stack of pointers
 */
 
 #include <assert.h>
@@ -69,22 +69,13 @@ static struct Class_Descriptor _Stack_Class_Descriptor = {
 };
 const void * Stack_Class_Descriptor = &_Stack_Class_Descriptor;
 
-// Private fields for Stack
-// ...
-
-// Private class method declarations for Stack
-// ...
-
-// Private instance method declarations for Stack
-// ...
-
 /// Private overrides for 'Object' virtual methods (implementation)
 
 /**
 * @brief: Stack constructor.
 * @param self: A reference to the current instance of Stack
 * @param args: Variadic args list as follows:
-* - type: desc
+* - int: Number of elements for stack to hold.
 * @return: Object* - The constructed object instance.
 */
 static Object* _Object_Ctor(Object * self, va_list args)
@@ -132,21 +123,26 @@ static const char* const _Object_Descriptor(Object * self)
 	return "<Stack>";
 }
 
+/**
+* @brief: Returns 0 if object is not the same instance as another.
+* @param self: A reference to the current instance of Stack.
+* @param obj: A reference to the another instance of Stack.
+* @return: unsigned int: 0 if not equal.
+*/
 static unsigned int _Object_Equals(Object* self, Object* obj)
 {
 	return self == obj;
 }
 
-// Private class methods for Stack
-// ...
-
-// Private instance methods for Stack
-// ...
-
-// Public class methods for Stack
-// ...
 
 // Public instance methods for Stack
+
+/**
+* @brief: Pushes the given element onto the stack.
+* @param self: A reference to the current instance of Stack.
+* @param element: The element to be pushed onto the stack.
+* @return: int - 1 if push was successful, 0 otherwise.
+*/
 int Stack_Push(Stack* self, void* element)
 {
 	if (self->length + 1 == self->max_len)
@@ -155,6 +151,11 @@ int Stack_Push(Stack* self, void* element)
 	return 1;
 }
 
+/**
+* @brief: Pops the given element from the stack.
+* @param self: A reference to the current instance of Stack.
+* @return: void* - Pointer to popped element.
+*/
 void* Stack_Pop(Stack* self)
 {
 	if (self->length >= self->max_len) 
@@ -173,6 +174,11 @@ void* Stack_Pop(Stack* self)
 	return rt;
 }
 
+/**
+* @brief: Examines the top element of the stack.
+* @param self: A reference to the current instance of Stack.
+* @return: void* - Pointer to examined element.
+*/
 void* Stack_Examine(Stack* self)
 {
 	if (self->length == 0){
@@ -181,6 +187,11 @@ void* Stack_Examine(Stack* self)
 	return *(self->__elements+self->length-1);
 }
 
+/**
+* @brief: Returns if stack is empty.
+* @param self: A reference to the current instance of Stack.
+* @return: unsigned int - boolean representing if stack is empty.
+*/
 unsigned int Stack_Is_Empty(Stack* self)
 {
 	return self->length == 0;

@@ -30,7 +30,7 @@
 * Authors: Leonardo Cascianelli,Rory Brown,Ewan Skene
 * Date: 2018-11-16
 * 
-* Description: a queue of uint16_t
+* Description: A queue of uint16_t
 */
 
 #include <assert.h>
@@ -80,8 +80,7 @@ const void * Queue_Class_Descriptor = &_Queue_Class_Descriptor;
 /**
 * @brief: Queue constructor.
 * @param self: A reference to the current instance of Queue
-* @param args: Variadic args list as follows:
-* - type: desc
+* @param args: Does not take any variadic args.
 * @return: Object* - The constructed object instance.
 */
 static Object* _Object_Ctor(Object * self, va_list args)
@@ -138,15 +137,6 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 {
 	return Object_Equals(self,obj);
 }
-
-// Private class methods for Queue
-// ...
-
-// Private instance methods for Queue
-// ...
-
-// Public class methods for Queue
-// ...
 
 // Public instance methods for Queue
 

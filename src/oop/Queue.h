@@ -30,7 +30,7 @@
 * Authors: Leonardo Cascianelli, Rory Brown, Ewan Skene
 * Date: 2018-11-16
 * 
-* Description: a queue
+* Description: A queue of uint16_t
 */
 
 #ifndef __Queue__
@@ -48,9 +48,6 @@ typedef struct _Queue {
 } Queue;
 
 extern const void * Queue_Class_Descriptor;
-
-// Public class methods for Queue
-// ...
 
 // Public instance methods for Queue
 void Queue_Enqueue(Queue* self, uint16_t element);

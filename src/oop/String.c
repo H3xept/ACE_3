@@ -151,8 +151,6 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 	return _self->text == _obj->text;
 }
 
-// ------------- END BOILERPLATE
-
 // NON-VIRTUAL METHODS
 
 /**
@@ -180,18 +178,34 @@ void String_Set_Text(String * self, char* text)
 
 
 // PRIVATE METHODS 
+
+/**
+* @brief: frees and dereferences the description.
+* @param self: A reference to the current instance of String.
+*/
 static void __Invalidate_Description(String* self)
 {
 	if (self->description)
 		free(self->description); self->description = 0;
 }
 
+/**
+* @brief: Computes the description.
+* @param self: A reference to the current instance of String.
+*/
 static char* __Compute_Description(String* self)
 {
 	return make_description(DESCRIPTOR_PREFIX, DESCRIPTOR_SUFFIX, String_Get_Text(self));
 }
 
 // PRIVATE FUNCTIONS
+
+/**
+* @brief: generate a description
+* @param prefix: description prefix.
+* @param suffix: description suffix.
+* @param str: description string.
+*/
 static char* make_description(const char* const prefix, const char* const suffix, const char* const str)
 {
 	size_t len_prefix = strlen(prefix);
