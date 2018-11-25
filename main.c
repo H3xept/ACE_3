@@ -37,7 +37,7 @@ Type 'help' as first argument for the list of available commands."
 #define k_FLAG_FILE "-f"
 #define k_FLAG_FILE_LONG "--file"
 
-#define k_DEFAULT_PROGRAM_PATH "./VirtualMachine/vm_programs/binaryCounter.bin"
+#define k_DEFAULT_PROGRAM_PATH "./src/VirtualMachine/vm_programs/binaryCounter.bin"
 
 typedef enum {
 	Program_Mode_Run, Program_Mode_Disassemble,
@@ -48,7 +48,7 @@ void display_help(void);
 uint16_t* input_words(void);
 Program* handle_program_loading_flag(const char* flag, int* argc, char const *argv[]);
 Program_Mode handle_running_mode_flag(const char* flag);
-void setup_program_mode(Program_Mode mode, VirtualMachine* vm, Disassembler* disasm, Program* program, char* file_out);
+void setup_program_mode(Program_Mode mode, VirtualMachine** vm, Disassembler** disasm, Program* program, char** file_out);
 void detect_help(int argc, char const *argv[]);
 char* request_file_out();
 
@@ -170,21 +170,21 @@ Program_Mode handle_running_mode_flag(const char* flag)
 * @param program: the program to use
 * @param file_out: the file to output to
 */
-void setup_program_mode(Program_Mode mode, VirtualMachine* vm, Disassembler* disasm, Program* program, char* file_out)
+void setup_program_mode(Program_Mode mode, VirtualMachine** vm, Disassembler** disasm, Program* program, char** file_out)
 {
 	switch(mode)
 	{
 		case Program_Mode_Run:
-			vm = alloc_init(VirtualMachine_Class_Descriptor);
+			*vm = alloc_init(VirtualMachine_Class_Descriptor);
 		break;
 		case Program_Mode_Disassemble:
 			goto DISASM_ONLY;
 		break;
 		case Program_Mode_Disassemble_And_Run:
-			vm = alloc_init(VirtualMachine_Class_Descriptor);
+			*vm = alloc_init(VirtualMachine_Class_Descriptor);
 DISASM_ONLY:
-			disasm = Disassembler_With_Program(program);
-			file_out = request_file_out();
+			*disasm = Disassembler_With_Program(program);
+			*file_out = request_file_out();
 		break;
 	}
 }
@@ -216,7 +216,7 @@ char* request_file_out()
 	
 	int ind = 0;
 	while(*(rt+ind++) != '\n');
-	*(rt+ind) = '\0';
+	*(rt+ind-1) = '\0';
 
 	return rt;
 }
@@ -242,13 +242,13 @@ int main(int argc, char const *argv[])
 	int program_size;		
 	char* file_out = NULL;
 
-	setup_program_mode(handle_running_mode_flag(argv[1]), vm, disasm, program, file_out);
+	setup_program_mode(handle_running_mode_flag(argv[1]), &vm, &disasm, program, &file_out);
 
 	if (disasm) {
 		Disassembler_Statically_Disassemble_And_Dump(disasm, &program_size, file_out);
 	} if (vm) {
 		Virtual_Machine_Run(vm, program);
 	}
-
+	
 	return 0;
 }

@@ -44,6 +44,7 @@
 #include "MemoryController.h"
 #include "VirtualMachine.h"
 #include "IO.h"
+#include "VMLogger.h"
 
 struct CPU {
 	Object super;
@@ -54,6 +55,7 @@ struct CPU {
 	FlagRegister* __flagRegister;
 	MemoryController* __memoryController;
 	IO* __iOController;
+	VMLogger* __logger;
 	struct FlagDelegate* flagDelegateVptr;
 	struct MemoryDelegate* memoryDelegateVptr;
 	struct IODelegate* iODelegateVptr;

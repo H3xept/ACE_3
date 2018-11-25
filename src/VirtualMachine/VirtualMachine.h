@@ -39,6 +39,7 @@
 
 #include "./protocols/IOWrapperDelegate.h"
 #include "Program.h"
+#include "VMLogger.h"
 
 // Forward declaration - Actual structure in CPU.h
 typedef struct CPU CPU;
@@ -53,6 +54,7 @@ typedef struct _VirtualMachine {
 	Object super;
 	CPU* cpu;
 	CPU_Mode cpu_mode;
+	VMLogger* __logger;
 	// Implements IOWrapperDelegate
 	struct IOWrapperDelegate* iOWrapperDelegateVptr;
 } VirtualMachine;

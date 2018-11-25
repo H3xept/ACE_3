@@ -219,6 +219,15 @@ static void MemoryDelegate_Load_Memory_From_Ptr(struct MemoryDelegate* delegate,
 }
 
 /**
+* @brief: Dumps memory through a readonly pointer
+* @param self: reference to the current instance of MemoryController implementing MemoryDelegate
+*/
+const void* MemoryDelegate_Dump_Readonly_Memory(struct MemoryDelegate* delegate)
+{
+	return __memory;
+}
+
+/**
 * @brief: Sets up delegates for MemoryController
 * @param self: reference to the current instance of MemoryController
 */
@@ -231,7 +240,8 @@ static void __Setup_Delegates(MemoryController* self)
 		&MemoryDelegate_Word_At_Address,
 		&MemoryDelegate_Set_Word_At_Address,
 		&MemoryDelegate_Clear_Memory,
-		&MemoryDelegate_Load_Memory_From_Ptr
+		&MemoryDelegate_Load_Memory_From_Ptr,
+		&MemoryDelegate_Dump_Readonly_Memory
 	};
 	memoryDelegateVtbl.delegateObject = self;
 	self->memoryDelegateVptr = &memoryDelegateVtbl;
