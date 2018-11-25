@@ -1,3 +1,29 @@
+/**************************************************************************
+ * Assessment Title:
+ * ACE 3 (TBTTBSQSA)
+ *
+ * Number of Submitted C Files: 
+ * 19 (51 total files including .h, .py, .asm and .md)
+ * 
+ * Date: 
+ * 25/11/2018
+ * 
+ * Authors: 
+ *	1. Leonardo Cascianelli, Reg no: 201710666
+ *	2. Rory Brown, Reg no: 201717976
+ *	3. Ewan Skene, Reg no: 201717413
+ * 
+ *
+ *	Statement: We confirm that this submission is all our own work.
+ *
+ *  (Signed)_Leonardo_Cascianelli________________(Leonardo Cascianelli)
+ *	
+ * 	(Signed)_Rory_Brown__________________________(Rory Brown)
+ *	
+ *	(Signed)_Ewan_Skene__________________________(Ewan Skene)
+ *
+ **************************************************************************/
+
 /**
 * Filename: VMLogger.c
 * Class: VMLogger
@@ -44,15 +70,6 @@ static struct Class_Descriptor _VMLogger_Class_Descriptor = {
 };
 const void * VMLogger_Class_Descriptor = &_VMLogger_Class_Descriptor;
 
-// Private fields for VMLogger
-// ...
-
-// Private class method declarations for VMLogger
-// ...
-
-// Private instance method declarations for VMLogger
-// ...
-
 /// Private overrides for 'Object' virtual methods (implementation)
 
 typedef struct {
@@ -64,7 +81,9 @@ typedef struct {
 * @brief: VMLogger constructor.
 * @param self: A reference to the current instance of VMLogger
 * @param args: Variadic args list as follows:
-* - type: desc
+* - char*: filename for trace file
+* - char*: filename for memdump file
+* - char*: filename for reg dump file
 * @return: Object* - The constructed object instance.
 */
 static Object* _Object_Ctor(Object * self, va_list args)
@@ -113,14 +132,22 @@ static const char* const _Object_Descriptor(Object * self)
 	return "<VMLogger>";
 }
 
+/**
+* @brief: Returns 0 if object is not the same instance as another.
+* @param self: A reference to the current instance of VMLogger.
+* @param obj: A reference to the another instance of VMLogger.
+* @return: unsigned int: 0 if not equal.
+*/
 static unsigned int _Object_Equals(Object* self, Object* obj)
 {
 	return Object_Equals(self, obj);
 }
 
-// Private class methods for VMLogger
-
-// Private class methods for Disassembler
+/**
+* @brief: Gets mnemonic of operation from opcode.
+* @param opcode: The opcode to be decoded.
+* @return: char*: The mnemonic assosciated with the opcode.
+*/
 char* __Mnemonic_With_Opcode(uint8_t opcode)
 {
 	static char* op_mnemonics[] = {"HALT","JUMP","SKC","LOAD","STORE","IN","OUT","MOVE","ADD","MUL","DIV","AND","OR","NOT","SHL","SHR"};
@@ -131,7 +158,11 @@ char* __Mnemonic_With_Opcode(uint8_t opcode)
 	return op_mnemonics[opcode];
 }
 
-
+/**
+* @brief: Gets mnemonic of register from address.
+* @param opcode: The register address to be decoded.
+* @return: char*: The mnemonic assosciated with the register.
+*/
 char* __Mnemonic_With_Register(uint8_t register_n)
 {
 	static char* reg_mnemonics[] = {"$PC","$IR","$RA","$SP","$FP","$T1","$T2","$T3","$T4","$S1","$S2","$S3","$S4","$S5","$PR","$FR"};
@@ -142,11 +173,21 @@ char* __Mnemonic_With_Register(uint8_t register_n)
 	return reg_mnemonics[register_n];	
 }
 
+/**
+* @brief: Disassembles instruction that takes no registers.
+* @param instruction_t: The instruction to be disassembled.
+* @return: char*: The disassembled instruction.
+*/
 char* __Disassemble_Instruction_With_No_Registers(instruction_t* instruction)
 {
 	return __Mnemonic_With_Opcode(instruction->opcode);
 }
 
+/**
+* @brief: Disassembles instruction that takes one register.
+* @param instruction_t: The instruction to be disassembled.
+* @return: char*: The disassembled instruction.
+*/
 char* __Disassemble_Instruction_With_One_Register(instruction_t* instruction)
 {
 	char* op_mnemonic = __Mnemonic_With_Opcode(instruction->opcode);
@@ -156,6 +197,11 @@ char* __Disassemble_Instruction_With_One_Register(instruction_t* instruction)
 	return ret;
 }
 
+/**
+* @brief: Disassembles instruction that takes two registers.
+* @param instruction_t: The instruction to be disassembled.
+* @return: char*: The disassembled instruction.
+*/
 char* __Disassemble_Instruction_With_Two_Registers(instruction_t* instruction)
 {
 	char* op_mnemonic = __Mnemonic_With_Opcode(instruction->opcode);
@@ -168,6 +214,11 @@ char* __Disassemble_Instruction_With_Two_Registers(instruction_t* instruction)
 	return ret;
 }
 
+/**
+* @brief: Disassembles a jump instruction.
+* @param instruction_t: The instruction to be disassembled.
+* @return: char*: The disassembled instruction.
+*/
 char* __Disassemble_Jump(instruction_t* instruction)
 {
 	uword_t jump_address = instruction->operand;
@@ -176,6 +227,11 @@ char* __Disassemble_Jump(instruction_t* instruction)
 	return ret;
 }
 
+/**
+* @brief: Disassembles a load instruction.
+* @param instruction_t: The instruction to be disassembled.
+* @return: char*: The disassembled instruction.
+*/
 char* __Disassemble_Load(instruction_t* instruction)
 {
 	char* op_mnemonic = __Mnemonic_With_Opcode(instruction->opcode);
@@ -202,6 +258,11 @@ char* __Disassemble_Load(instruction_t* instruction)
 	return ret;
 }
 
+/**
+* @brief: Disassembles an out instruction.
+* @param instruction_t: The instruction to be disassembled.
+* @return: char*: The disassembled instruction.
+*/
 char* __Disassemble_Out(instruction_t* instruction)
 {
 	char* op_mnemonic = __Mnemonic_With_Opcode(instruction->opcode);
@@ -213,7 +274,11 @@ char* __Disassemble_Out(instruction_t* instruction)
 	return ret;
 }
 
-// Private instance methods for Disassembler
+/**
+* @brief: Generates an instruction_t from a word.
+* @param word: The word to build an instruction from.
+* @return: instruction_t*: The instruction generated from the word.
+*/
 instruction_t* __Instruction_With_Word(uword_t word)
 {
 	instruction_t* ret = calloc(1, sizeof(instruction_t));
@@ -222,6 +287,11 @@ instruction_t* __Instruction_With_Word(uword_t word)
 	return ret;
 }
 
+/**
+* @brief: Disassembles a given instruction.
+* @param word: The instruction to disassemble.
+* @return: char*: The disassembled instruction.
+*/
 char* __Disassemble_Instruction(instruction_t* instruction)
 {
 	switch(instruction->opcode) {
@@ -252,15 +322,13 @@ char* __Disassemble_Instruction(instruction_t* instruction)
 	}
 }
 
-
-// Private instance methods for VMLogger
-// ...
-
-// Public class methods for VMLogger
-// ...
-
 // Public instance methods for VMLogger
 
+/**
+* @brief: Dumps the current memory of the VM.
+* @param self: A reference to the current instance of VMLogger.
+* @param memory: A pointer to the current memory.
+*/
 void VMLogger_Dump_Memory(VMLogger* self, const void* memory)
 {
 	assert(self->__memdump_file);
@@ -275,6 +343,11 @@ void VMLogger_Dump_Memory(VMLogger* self, const void* memory)
 	fclose(file);
 }
 
+/**
+* @brief: Dumps the current registers of the VM.
+* @param self: A reference to the current instance of VMLogger.
+* @param registers: A pointer to the current registers.
+*/
 void VMLogger_Dump_Registers(VMLogger* self, Registers* registers)
 {
 	assert(self->__reg_file);
@@ -304,6 +377,11 @@ void VMLogger_Dump_Registers(VMLogger* self, Registers* registers)
 	fclose(file);
 }
 
+/**
+* @brief: Disassembles and writes the given instruction to the trace file.
+* @param self: A reference to the current instance of VMLogger.
+* @param instruction: Instruction to log.
+*/
 void VMLogger_Append_New_Binary_Instruction(VMLogger* self, uword_t instruction)
 {
 
@@ -321,6 +399,10 @@ void VMLogger_Append_New_Binary_Instruction(VMLogger* self, uword_t instruction)
 	fprintf(self->__trace_file_obj, "%s\n", __Disassemble_Instruction(&_instruction));
 }
 
+/**
+* @brief: Closes the trace file.
+* @param self: A reference to the current instance of VMLogger.
+*/
 void VMLogger_Close_Trace_File(VMLogger* self)
 {
 	if (self->__trace_file_obj)
