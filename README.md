@@ -3,6 +3,7 @@
 Any references to 'padding' refer to the act of filling in the bits to the left of a value.
 
 ## Spec
++ Von Neumann Architecture
 + 16 Bit Words
 + Word Addressable
 + 12 Bit Addresses, 4096 Words in Memory
@@ -11,8 +12,35 @@ Any references to 'padding' refer to the act of filling in the bits to the left 
 + Single Word Instructions
 + 4 Bit Opcodes, 12 Bit Operands
 
-## Using The Virtual Machine
+## Assembling Programs
+Programs can be assembled by running `Assembler` as follows:
 
+`Assembler <file_name> <output_file_name>`
+
+The assembler will output a binary file containing the assembled program, which can be given as input to the virtual machine.
+
+## Using The Virtual Machine
+The programs can be ran on the virtual machine (`TBTTBSQSA`) as follows:
+
+`TBTTBSQSA <mode> <loading flags>`
+
+### Modes
+There are three modes that the virtual machine can be ran in:
+
++ `dm` (Disassemble Mode): Runs the disassembler on the loaded program
++ `rm` (Run Mode): Runs the virtual machine on the loaded program
++ `drm` (Disassemble + Run Mode): Disassembles and runs the loaded program
+
+### Loading Flags
+Different flags can be used to specify how the virtual machine loads a program:
++ `-d` or `--default`: Load the default program
++ `-c` or `--console`: Load a program from stdin
++ `-f <filename>` or `--file <filename>`: Load a program from a specified file
+
+### Disassembly
+When ran in disassemble mode, the virtual machine will prompt the user to input an output filename. The disassembler will differentiate between instructions and data based which words in the program are executed as instructions. Programs are statically disassembled, but jumps to labels and jumps to `$ra` are tracked to determine what is data and what is an instruction.
+
+The disassembler will be able to disassemble any valid program such that it can be reassembled and ran, but will not be able to distinguish between instructions and data in every case.
 
 ## Using The Architecture
 
