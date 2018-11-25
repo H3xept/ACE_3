@@ -60,6 +60,8 @@ The machine uses a bootloader to load programs, which is written into the end of
 ### Program Execution
 Programs are executed starting at the first line, which is assumed to be an instruction. If data is entered as the first line of a program, that will be executed as an instruction. They will then run until a halt instruction is reached, printing data to the console and getting user input through `IN` and `OUT` when needed. Programs may also halt when a fault occurs. When a program halts it will do so with an exit code corresponding to what caused the halt (exit codes are listed below).
 
+The virtual machine outputs the memory dump and trace of the most recently ran program in the "logs" folder. (Note that the memory dump cannot be correctly disassembled as a program as it contains the bootloader and occupies the full memory space, which programs are not allowed to do.)
+
 ### The Stack
 The `$fp` (frame pointer) and `$sp` (stack pointer) registers indicate the bounds of the current stack frame in memory. `$fp` should always point to the first memory location in the current stack frame, while `$sp` should always point to the memory location after the end of the stack frame (the top of the stack). When a program is initialised, `$fp` and `$sp` will both be equal to the first free memory location after the program. The stack must be managed by the programmer.
 
