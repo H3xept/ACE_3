@@ -15,14 +15,18 @@ Any references to 'padding' refer to the act of filling in the bits to the left 
 ## Assembling Programs
 Programs can be assembled by running `Assembler` as follows:
 
-`Assembler <file_name> <output_file_name>`
+```
+Assembler <file_name> <output_file_name>
+```
 
 The assembler will output a binary file containing the assembled program, which can be given as input to the virtual machine.
 
 ## Using The Virtual Machine
 The programs can be ran on the virtual machine (`TBTTBSQSA`) as follows:
 
-`TBTTBSQSA <mode> <loading flags>`
+```
+TBTTBSQSA <mode> <loading_flags>
+```
 
 ### Modes
 There are three modes that the virtual machine can be ran in:
