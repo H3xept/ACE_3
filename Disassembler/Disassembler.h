@@ -41,5 +41,6 @@ extern const void * Disassembler_Class_Descriptor;
 Disassembler* Disassembler_With_Program(Program* program);
 // Public instance methods for Disassembler
 char** Disassembler_Statically_Disassemble(Disassembler* self, int* size);
+void Disassembler_Statically_Disassemble_And_Dump(Disassembler* self, int* size, char* filename);
 
 #endif

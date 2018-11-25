@@ -1,6 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -pedantic -std=c99
-PROGRAM_NAME = test.out
+PROGRAM_NAME = TBTTBSQSA
+ASSEMBLER_NAME = Assembler
 
 all: framework disasm
 	@echo "Compiling Project"

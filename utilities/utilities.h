@@ -9,9 +9,9 @@
 
 #ifndef __UTILITIES__
 #define __UTILITIES__ 
-#define __DEBUG__
-#define __DELEGATES__
-#define __CONTROL_UNIT__
+// #define __DEBUG__
+// #define __DELEGATES__
+// #define __CONTROL_UNIT__
 #include "colors.h"
 #include <stdint.h>
 
@@ -45,6 +45,10 @@
 #else
 #define _info(S, ...)
 #endif
+
+#define _pinfo(S, ...) 	{ g_printf("[INFO] ",NULL); \
+						g_printf(S, __VA_ARGS__); \
+						puts(""); }
 
 #define MIN(X,Y) (X < Y) ? X : Y
 #define MAX(X,Y) (X > Y) ? X : Y

@@ -56,7 +56,7 @@ const void * Disassembler_Class_Descriptor = &_Disassembler_Class_Descriptor;
 // ...
 
 // Private class method declarations for Disassembler
-SKC_Pair __Disassembler_SKC_Pair_Constructor(uword_t branch_address, uword_t ra_stack_length);
+// ...
 
 // Private instance method declarations for Disassembler
 // ...
@@ -241,7 +241,7 @@ uword_t __Kill_Thread(Disassembler* self)
 }
 
 
-inline char* __Disassemble_Instruction_With_No_Registers(Disassembler* self, instruction_t* instruction)
+char* __Disassemble_Instruction_With_No_Registers(Disassembler* self, instruction_t* instruction)
 {
 	return __Mnemonic_With_Opcode(instruction->opcode);
 }
@@ -403,7 +403,6 @@ char** __Insert_Data(Disassembler* self, char** without_data)
 
 void __Extra_Conditions_For_Halt(Disassembler* self, instruction_t* instruction, uword_t* new_address)
 {
-	ret =__Disassemble_Instruction_With_No_Registers(self, instruction);
 	*new_address = __Kill_Thread(self);
 }
 
@@ -424,6 +423,7 @@ char* Disassembler_Disassemble_Instruction(Disassembler* self, instruction_t* in
 
 	switch(instruction->opcode) {
 		case 0x0: // HLT
+			ret =__Disassemble_Instruction_With_No_Registers(self, instruction);
 			__Extra_Conditions_For_Halt(self, instruction, new_address);
 			break;
 		case 0x2: // SKC
@@ -502,4 +502,16 @@ char** Disassembler_Statically_Disassemble(Disassembler* self, int* size)
 	*size = self->program->size+self->__labels_n;
 
 	return ret;
+}
+
+void Disassembler_Statically_Disassemble_And_Dump(Disassembler* self, int* size, char* filename)
+{
+	FILE* file = fopen(filename, "w");
+	if (!file) { _err("Can't open file %s.",filename); }
+
+	char** dump = Disassembler_Statically_Disassemble(self, size);
+	for (int i = 0; i < *size; ++i)
+		fprintf(file, "%s\n", *(dump+i));
+
+	fclose(file);
 }
