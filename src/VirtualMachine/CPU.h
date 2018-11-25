@@ -61,9 +61,6 @@ struct CPU {
 
 extern const void * CPU_Class_Descriptor;
 
-// Public class methods for CPU
-// ...
-
 // Public instance methods for CPU
 void CPU_Fetch_Execute_Cycle(CPU* self);
 void CPU_Load_Words_In_Input_Queue(CPU* self, uword_t* words, size_t word_n);

@@ -58,9 +58,6 @@ typedef struct _CU {
 
 extern const void * CU_Class_Descriptor;
 
-// Public class methods for CU
-// ...
-
 // Public instance methods for CU
 void CU_Execute_Instruction(CU* self, instruction_t instruction);
 

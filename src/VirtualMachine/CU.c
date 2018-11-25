@@ -77,9 +77,6 @@ const void * CU_Class_Descriptor = &_CU_Class_Descriptor;
 
 // Private fields for CU
 
-// Private class method declarations for CU
-// ...
-
 // Private instance method declarations for CU
 static void __HALT(CU* self);
 static void __JUMP(CU* self, uword_t operand);
@@ -157,6 +154,12 @@ static const char* const _Object_Descriptor(Object * self)
 	return "<ControlUnit>";
 }
 
+/**
+* @brief: Returns 0 if object is not the same instance as another.
+* @param self: A reference to the current instance of CU.
+* @param obj: A reference to the another instance of CU.
+* @return: unsigned int: 0 if not equal.
+*/
 static unsigned int _Object_Equals(Object* self, Object* obj)
 {
 	return Object_Equals(self,obj);

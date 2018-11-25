@@ -67,16 +67,12 @@ static struct Class_Descriptor _ALU_Class_Descriptor = {
 };
 const void * ALU_Class_Descriptor = &_ALU_Class_Descriptor;
 
-// private fields
-// ...
-
 /// Private overrides for 'Object' virtual methods (implementation)
 
 /**
 * @brief: ALU constructor.
 * @param self: A reference to the current instance of ALU
-* @param args: Variadic args list as follows:
-* - type: desc
+* @param args: Takes no variadic args.
 * @return: Object* - The constructed object instance.
 */
 static Object* _Object_Ctor(Object * self, va_list args)
@@ -118,15 +114,6 @@ static const char* const _Object_Descriptor(Object * self)
 {
 	return "<ALU>";
 }
-
-// Private class methods for ALU
-// ...
-
-// Private instance methods for ALU
-// ...
-
-// Public class methods for ALU
-// ...
 
 // Public instance methods for ALU
 

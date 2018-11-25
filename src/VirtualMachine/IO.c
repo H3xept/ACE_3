@@ -69,12 +69,6 @@ static struct Class_Descriptor _IO_Class_Descriptor = {
 };
 const void * IO_Class_Descriptor = &_IO_Class_Descriptor;
 
-// Private fields for IO
-// ...
-
-// Private class method declarations for IO
-// ...
-
 // Private instance method declarations for IO
 static void __Setup_Delegates(IO* self);
 
@@ -84,7 +78,8 @@ static void __Setup_Delegates(IO* self);
 * @brief: IO constructor.
 * @param self: A reference to the current instance of IO
 * @param args: Variadic args list as follows:
-* - type: desc
+* - struct FlagDelegate*: Pointer to struct FlagDelegate
+* - struct IOWrapperDelegate: Pointer to struct IOWrapper
 * @return: Object* - The constructed object instance.
 */
 static Object* _Object_Ctor(Object * self, va_list args)
@@ -137,10 +132,8 @@ static const char* const _Object_Descriptor(Object * self)
 	return "<IO>";
 }
 
-// Private class methods for IO
-// ...
-
 // Private instance methods for IO
+
 /**
 * @brief: Returns a word from the input queue.
 * @param IODelegate: A reference to the implementer of this method
@@ -181,6 +174,10 @@ static void IODelegate_Put_Word_To_Output_Queue(struct IODelegate * delegate, uw
 		iOWrapperDelegate->IOWrapperDelegate_Output(iOWrapperDelegate,self->__out_q);
 }
 
+/**
+* @brief: Sets up delegates for IO
+* @param self: reference to the current instance of IO
+*/
 static void __Setup_Delegates(IO* self)
 {
 	_info("Setting up delegates for %s", __FILE__);
@@ -193,9 +190,3 @@ static void __Setup_Delegates(IO* self)
 	ioDelegateVtbl.delegateObject = self;
 	self->iODelegateVptr = &ioDelegateVtbl;
 }
-
-// Public class methods for IO
-// ...
-
-// Public instance methods for IO
-// ...

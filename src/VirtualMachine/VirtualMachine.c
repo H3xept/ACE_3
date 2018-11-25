@@ -77,22 +77,16 @@ static struct Class_Descriptor _VirtualMachine_Class_Descriptor = {
 };
 const void * VirtualMachine_Class_Descriptor = &_VirtualMachine_Class_Descriptor;
 
-// Private fields for VirtualMachine
-// ...
-
-// Private class method declarations for VirtualMachine
-// ...
-
 // Private instance method declarations for VirtualMachine
 static void __Setup_Delegates(VirtualMachine* self);
 static void __Load_Bootloader(VirtualMachine* self);
+
 /// Private overrides for 'Object' virtual methods (implementation)
 
 /**
 * @brief: VirtualMachine constructor.
 * @param self: A reference to the current instance of VirtualMachine
-* @param args: Variadic args list as follows:
-* - type: desc
+* @param args: No variadic args
 * @return: Object* - The constructed object instance.
 */
 static Object* _Object_Ctor(Object * self, va_list args)
@@ -137,15 +131,19 @@ static const char* const _Object_Descriptor(Object * self)
 	return "<VirtualMachine>";
 }
 
+/**
+* @brief: Returns 0 if object is not the same instance as another.
+* @param self: A reference to the current instance of VirtualMachine.
+* @param obj: A reference to the another instance of VirtualMachine.
+* @return: unsigned int: 0 if not equal.
+*/
 static unsigned int _Object_Equals(Object* self, Object* obj)
 {
 	return Object_Equals(self,obj);
 }
 
-// Private class methods for VirtualMachine
-// ...
-
 // Private instance methods for VirtualMachine
+
 /**
 * @brief: takes user input in hex, bin or decimal.
 * @param IOWrapperDelegate: A reference to the implementer of this method
@@ -223,7 +221,10 @@ void IOWrapperDelegate_Output(struct IOWrapperDelegate * delegate, Queue* output
 	}puts("");
 }
 
-
+/**
+* @brief: Sets up delegates for VirtualMachine
+* @param self: reference to the current instance of VirtualMachine
+*/
 static void __Setup_Delegates(VirtualMachine* self)
 {
 	_info("Setting up delegates for %s", __FILE__);
@@ -267,10 +268,13 @@ static void __Load_Program(VirtualMachine* self, Program* program)
 	CPU_Load_Words_In_Input_Queue(self->cpu, program->source, program->size);
 }
 
-// Public class methods for VirtualMachine
-// ...
-
 // Public instance methods for VirtualMachine
+
+/**
+* @brief: Runs the virtual machine with a given program
+* @param self: A reference to an instance of VirtualMachine
+* @param program: pointer to the program instructions
+*/
 void Virtual_Machine_Run(VirtualMachine* self, Program* program)
 {	
 	if (!program)

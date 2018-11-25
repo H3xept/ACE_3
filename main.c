@@ -52,11 +52,18 @@ void setup_program_mode(Program_Mode mode, VirtualMachine* vm, Disassembler* dis
 void detect_help(int argc, char const *argv[]);
 char* request_file_out();
 
+/**
+* @brief: displays the help string
+*/
 void display_help(void)
 {
 	_pinfo(k_HELP_STRING,NULL);
 }
 
+/**
+* @brief: takes in words as input
+* @return uint16_t*: an array of words from input
+*/
 uint16_t* input_words(void)
 {
 	uint16_t max_accepted = (uword_t)pow(2, WORD_SIZE)-1;
@@ -90,6 +97,13 @@ uint16_t* input_words(void)
 	return ret;
 }
 
+/**
+* @brief: generates a program based on loading flag
+* @param flag: string containing loading flag
+* @param argc: pointer to argument count
+* @param argv: pointer to args array
+* return Program*: program generated using loading flag
+*/
 Program* handle_program_loading_flag(const char* flag, int* argc, char const *argv[])
 {
 	Program* program = NULL;
@@ -130,6 +144,11 @@ Program* handle_program_loading_flag(const char* flag, int* argc, char const *ar
 	return program;
 }
 
+/**
+* @brief: returns a Program_Mode based on the running mode flag
+* @param flag: string containing running mode flag
+* return Program_Mode: program mode corresponding to running mode flag
+*/
 Program_Mode handle_running_mode_flag(const char* flag)
 {
 	if (!strcmp(flag, "rm")) {
@@ -143,6 +162,14 @@ Program_Mode handle_running_mode_flag(const char* flag)
 	}
 }
 
+/**
+* @brief: sets up the program with the mode and objects required to run
+* @param mode: the program mode to run in
+* @param vm: the virtual machine to use
+* @param disasm: the disassembler to use
+* @param program: the program to use
+* @param file_out: the file to output to
+*/
 void setup_program_mode(Program_Mode mode, VirtualMachine* vm, Disassembler* disasm, Program* program, char* file_out)
 {
 	switch(mode)
@@ -162,6 +189,11 @@ DISASM_ONLY:
 	}
 }
 
+/**
+* @brief: detects if the help string needs to be printed, and does so if needed.
+* @param argc: argument count
+* @param argv: argument array
+*/
 void detect_help(int argc, char const *argv[])
 {
 	if (!(argc-1)) return;
@@ -172,6 +204,10 @@ void detect_help(int argc, char const *argv[])
 	}
 }
 
+/**
+* @brief: requests a file to output the disassembled code to
+* return char*: returns the sanitised filename
+*/
 char* request_file_out()
 {
 	char* rt = calloc(1, 100);
@@ -185,6 +221,12 @@ char* request_file_out()
 	return rt;
 }
 
+/**
+* @brief: main function, runs disassembler and/or vm based on flags
+* @param argc: argument count
+* @param argv: argument array
+* return int: exit code
+*/
 int main(int argc, char const *argv[])
 {
 	detect_help(argc, argv);

@@ -73,22 +73,15 @@ static struct Class_Descriptor _Program_Class_Descriptor = {
 };
 const void * Program_Class_Descriptor = &_Program_Class_Descriptor;
 
-// Private fields for Program
-// ...
-
 // Private class method declarations for Program
 uword_t __To_Big_Endian(uword_t word);
-
-// Private instance method declarations for Program
-// ...
 
 /// Private overrides for 'Object' virtual methods (implementation)
 
 /**
 * @brief: Program constructor.
 * @param self: A reference to the current instance of Program
-* @param args: Variadic args list as follows:
-* - type: desc
+* @param args: No variadic args
 * @return: Object* - The constructed object instance.
 */
 static Object* _Object_Ctor(Object * self, va_list args)
@@ -130,6 +123,10 @@ static const char* const _Object_Descriptor(Object * self)
 	return "<Program>";
 }
 
+/**
+* @brief: Sets up delegates for Program
+* @param self: reference to the current instance of Program
+*/
 static unsigned int _Object_Equals(Object* self, Object* obj)
 {
 	// Downcast to Program
@@ -154,6 +151,7 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 }
 
 // Private class methods for Program
+
 /**
 * @brief: converts 16/32 bit uint to big endian format
 * @param self: current instance of CU
@@ -169,10 +167,8 @@ uword_t __To_Big_Endian(uword_t word)
 	#endif	
 }
 
-// Private instance methods for Program
-// ...
-
 // Public class methods for Program
+
 /**
 * @brief: reads program from file
 * @param filename: name of program file
@@ -224,7 +220,3 @@ Program* Program_With_Buffer(uword_t* buffer, size_t len)
 
 	return rt;
 }
-
-
-// Public instance methods for Program
-// ...

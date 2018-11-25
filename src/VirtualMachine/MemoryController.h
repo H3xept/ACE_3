@@ -45,10 +45,4 @@ typedef struct _MemoryController {
 
 extern const void * MemoryController_Class_Descriptor;
 
-// Public class methods for MemoryController
-// ...
-
-// Public instance methods for MemoryController
-// ...
-
 #endif

@@ -50,10 +50,4 @@ typedef struct _IO {
 
 extern const void * IO_Class_Descriptor;
 
-// Public class methods for IO
-// ...
-
-// Public instance methods for IO
-// ...
-
 #endif

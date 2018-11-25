@@ -47,9 +47,6 @@ typedef struct _ALU {
 
 extern const void * ALU_Class_Descriptor;
 
-// Public class methods for ALU
-// ...
-
 // Public instance methods for ALU
 word_t ALU_Add(ALU* self, word_t num_1, word_t num_2);
 word_t ALU_Multiply(ALU* self, word_t num_1, word_t num_2);

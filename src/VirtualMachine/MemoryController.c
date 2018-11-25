@@ -75,9 +75,6 @@ const void * MemoryController_Class_Descriptor = &_MemoryController_Class_Descri
 // Private fields for MemoryController
 const void* __memory;
 
-// Private class method declarations for MemoryController
-// ...
-
 // Private instance method declarations for MemoryController
 static void __Setup_Delegates(MemoryController* self);
 
@@ -86,8 +83,7 @@ static void __Setup_Delegates(MemoryController* self);
 /**
 * @brief: MemoryController constructor.
 * @param self: A reference to the current instance of MemoryController
-* @param args: Variadic args list as follows:
-* - type: desc
+* @param args: No variadic args.
 * @return: Object* - The constructed object instance.
 */
 static Object* _Object_Ctor(Object * self, va_list args)
@@ -145,10 +141,8 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 	return Object_Equals(self,obj);
 }
 
-// Private class methods for MemoryController
-// ...
-
 // Private instance methods for MemoryController
+
 /**
 * @brief: gets a pointer for a value at the specified address.
 * @param self: A reference to the current instance of Memorycontroller
@@ -173,10 +167,6 @@ static void __Set_Word_At_Ptr(MemoryController* self, uword_t* ptr, uword_t word
 {
 	*ptr = word;
 }
-
-// Public class methods for MemoryController
-// ...
-
 // Public instance methods for MemoryController
 /**
 * @brief: gets word at the specified address.
@@ -228,6 +218,10 @@ static void MemoryDelegate_Load_Memory_From_Ptr(struct MemoryDelegate* delegate,
 	memcpy((void*)__memory, ptr, size);
 }
 
+/**
+* @brief: Sets up delegates for MemoryController
+* @param self: reference to the current instance of MemoryController
+*/
 static void __Setup_Delegates(MemoryController* self)
 {
 	_info("Setting up delegates for %s", __FILE__);

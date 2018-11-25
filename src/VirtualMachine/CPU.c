@@ -78,12 +78,6 @@ static struct Class_Descriptor _CPU_Class_Descriptor = {
 };
 const void * CPU_Class_Descriptor = &_CPU_Class_Descriptor;
 
-// Private fields for CPU
-// ...
-
-// Private class method declarations for CPU
-// ...
-
 // Private instance method declarations for CPU
 static inline void __CPU_Init_Registers(CPU* self);
 static void __Setup_Delegates(CPU* self);
@@ -95,7 +89,7 @@ static inline void __CPU_Init_Flag_Register(CPU* self);
 * @brief: CPU constructor.
 * @param self: A reference to the current instance of CPU
 * @param args: Variadic args list as follows:
-* - type: desc
+* - VirtualMachine*: Pointer to parent VM.
 * @return: Object* - The constructed object instance.
 */
 static Object* _Object_Ctor(Object * self, va_list args)
@@ -184,19 +178,23 @@ static const char* const _Object_Descriptor(Object * self)
 	return "<CPU>";
 }
 
+/**
+* @brief: Returns 0 if object is not the same instance as another.
+* @param self: A reference to the current instance of CPU.
+* @param obj: A reference to the another instance of CPU.
+* @return: unsigned int: 0 if not equal.
+*/
 static unsigned int _Object_Equals(Object* self, Object* obj)
 {
 	return Object_Equals(self,obj);
 }
-
-// Private class methods for CPU
 
 // Private instance methods for CPU
 
 // MemoryDelegate ADAPTOR
 /**
 * @brief: retrieves word at address.
-* @param IODelegate: A reference to the implementer of this method
+* @param MemoryDelegate: A reference to the implementer of this method
 * @param addr: memory address to fetch from
 * @return uint16/32 word at the specified address.
 */
@@ -210,7 +208,7 @@ static uword_t MemoryDelegate_Word_At_Address(struct MemoryDelegate* delegate, u
 
 /**
 * @brief: sets word at address.
-* @param IODelegate: A reference to the implementer of this method
+* @param MemoryDelegate: A reference to the implementer of this method
 * @param addr: memory address to set word
 * @param word: value to set
 * @return uint16/32 word at the specified address.
@@ -225,7 +223,7 @@ static void MemoryDelegate_Set_Word_At_Address(struct MemoryDelegate* delegate, 
 
 /**
 * @brief: sets all memory values to 0.
-* @param IODelegate: A reference to the implementer of this method
+* @param MemoryDelegate: A reference to the implementer of this method
 */
 static void MemoryDelegate_Clear_Memory(struct MemoryDelegate* delegate)
 {	
@@ -350,8 +348,11 @@ static uint8_t FlagDelegate_Read_Flag(struct FlagDelegate * delegate, k_Status_F
 			_err("The requested flag does not exist: %d",flag);
 	}
 }
-// ---
 
+/**
+* @brief: Sets up delegates for CPU
+* @param self: reference to the current instance of CPU
+*/
 static void __Setup_Delegates(CPU* self)
 {
 	_info("Setting up delegates for %s", __FILE__);
@@ -384,7 +385,10 @@ static void __Setup_Delegates(CPU* self)
 	self->flagDelegateVptr = &flagDelegateVtbl;
 }
 
-///initialises registers to 0
+/**
+* @brief: Sets all registers to 0
+* @param self: reference to the current instance of CPU
+*/
 static inline void __CPU_Init_Registers(CPU* self)
 {
 	self->__registers->PC = 0;
@@ -404,7 +408,10 @@ static inline void __CPU_Init_Registers(CPU* self)
 	self->__registers->PR = 0;
 }
 
-///initialises flags to 0
+/**
+* @brief: Sets all flags to 0
+* @param self: reference to the current instance of CPU
+*/
 static inline void __CPU_Init_Flag_Register(CPU* self) 
 {
 	self->__flagRegister->halt = 0;
@@ -413,10 +420,8 @@ static inline void __CPU_Init_Flag_Register(CPU* self)
 	self->__flagRegister->exit_code = 0;
 }
 
-// Public class methods for CPU
-// ...
-
 // Public instance methods for CPU
+
 /**
 * @brief: simulates FEC using the components of the cpu.
 * @param self: reference to the current instance of CPU
@@ -447,6 +452,7 @@ void CPU_Fetch_Execute_Cycle(CPU* self)
 // WARNING - Viable only during CPU idle stage
 /**
 * @brief: put words into the input queue.
+* @param self: reference to the current instance of CPU
 * @param words: array of words to load
 * @param word_n: number of words to load
 */
