@@ -22,8 +22,13 @@
 #include "./constants/arch_const.h"
 #include "Program.h"
 #include <errno.h>
+#include "VMLogger.h"
 
 #define MAX_INPUT_LEN 200
+
+#define k_TRACE_FILE "./logs/last_trace.log"
+#define k_MEMDUMP_FILE "./logs/last_memdump.log"
+#define k_REGDUMP_FILE "./logs/last_regdump.log"
 
 /// The type string of VirtualMachine
 static const char* const 	type_string = "VirtualMachine";
@@ -73,8 +78,11 @@ static Object* _Object_Ctor(Object * self, va_list args)
 {
 	VirtualMachine* _self = (VirtualMachine*)self;
 	__Setup_Delegates(_self);
-	_self->cpu = alloc_init(CPU_Class_Descriptor, _self);
+	_self->__logger = alloc_init(VMLogger_Class_Descriptor, k_TRACE_FILE, k_MEMDUMP_FILE, k_REGDUMP_FILE);
+
+	_self->cpu = alloc_init(CPU_Class_Descriptor, _self, _self->__logger);
 	_self->cpu_mode = CPU_Mode_Idle;
+
 	return self;
 }
 

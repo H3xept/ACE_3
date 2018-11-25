@@ -202,6 +202,11 @@ static void MemoryDelegate_Load_Memory_From_Ptr(struct MemoryDelegate* delegate,
 	memcpy((void*)__memory, ptr, size);
 }
 
+const void* MemoryDelegate_Dump_Readonly_Memory(struct MemoryDelegate* delegate)
+{
+	return __memory;
+}
+
 static void __Setup_Delegates(MemoryController* self)
 {
 	_info("Setting up delegates for %s", __FILE__);
@@ -211,7 +216,8 @@ static void __Setup_Delegates(MemoryController* self)
 		&MemoryDelegate_Word_At_Address,
 		&MemoryDelegate_Set_Word_At_Address,
 		&MemoryDelegate_Clear_Memory,
-		&MemoryDelegate_Load_Memory_From_Ptr
+		&MemoryDelegate_Load_Memory_From_Ptr,
+		&MemoryDelegate_Dump_Readonly_Memory
 	};
 	memoryDelegateVtbl.delegateObject = self;
 	self->memoryDelegateVptr = &memoryDelegateVtbl;

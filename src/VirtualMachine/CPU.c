@@ -25,6 +25,7 @@
 #include "./protocols/MemoryDelegate.h" // Acting as an adaptor
 #include "./protocols/IODelegate.h" // Acting as an adaptor
 #include "VirtualMachine.h"
+#include "VMLogger.h"
 
 /// The type string of CPU
 static const char* const 	type_string = "CPU";
@@ -79,6 +80,7 @@ static Object* _Object_Ctor(Object * self, va_list args)
 	__Setup_Delegates(_self);
 
 	_self->vm = va_arg(args, VirtualMachine*);
+	_self->__logger = va_arg(args, VMLogger*);
 
 	_self->__registers = malloc(sizeof(Registers));
 	_self->__flagRegister = malloc(sizeof(FlagRegister));
@@ -223,6 +225,19 @@ static void MemoryDelegate_Load_Memory_From_Ptr(struct MemoryDelegate* delegate,
 	struct MemoryDelegate* adaptedDelegate = self->__memoryController->memoryDelegateVptr; // Explicit downcast
 	adaptedDelegate->MemoryDelegate_Load_Memory_From_Ptr(adaptedDelegate, ptr, size);
 }
+
+/**
+* @brief: Dumps memory.
+* @param IODelegate: A reference to the implementer of this method
+*/
+static const void* MemoryDelegate_Dump_Readonly_Memory(struct MemoryDelegate* delegate)
+{	
+	_delegCall();
+	CPU* self = (CPU*)(delegate->delegateObject);
+	struct MemoryDelegate* adaptedDelegate = self->__memoryController->memoryDelegateVptr; // Explicit downcast
+	return adaptedDelegate->MemoryDelegate_Dump_Readonly_Memory(adaptedDelegate);
+}
+
 // ---
 
 // IODelegate ADAPTOR
@@ -335,7 +350,8 @@ static void __Setup_Delegates(CPU* self)
 		&MemoryDelegate_Word_At_Address,
 		&MemoryDelegate_Set_Word_At_Address,
 		&MemoryDelegate_Clear_Memory,
-		&MemoryDelegate_Load_Memory_From_Ptr
+		&MemoryDelegate_Load_Memory_From_Ptr,
+		&MemoryDelegate_Dump_Readonly_Memory
 	};
 	memoryDelegateVtbl.delegateObject = self;
 	self->memoryDelegateVptr = &memoryDelegateVtbl;
@@ -410,8 +426,21 @@ void CPU_Fetch_Execute_Cycle(CPU* self)
 		uword_t pc_word = MemoryDelegate_Word_At_Address(memoryDelegate,self->__registers->PC);
 		instruction.operand = pc_word&((uword_t)pow(2,WORD_SIZE - OPCODE_LENGTH)-1);
 		instruction.opcode = pc_word>>(WORD_SIZE - OPCODE_LENGTH);
+
+		if (self->__logger)
+			VMLogger_Append_New_Binary_Instruction(self->__logger, pc_word);
+
 		CU_Execute_Instruction(self->__controlUnit, instruction);
 	}
+
+	if (self->__logger)
+	{
+		VMLogger_Close_Trace_File(self->__logger);
+		VMLogger_Dump_Memory(self->__logger, 
+			MemoryDelegate_Dump_Readonly_Memory(memoryDelegate));
+		VMLogger_Dump_Registers(self->__logger,self->__registers);
+	}
+
 	self->vm->cpu_mode = CPU_Mode_Idle;
 
 	__CPU_Init_Registers(self);

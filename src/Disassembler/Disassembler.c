@@ -155,7 +155,7 @@ static unsigned int _Object_Equals(Object* self, Object* obj)
 }
 
 // Private class methods for Disassembler
-char* __Mnemonic_With_Opcode(uint8_t opcode)
+static char* __Mnemonic_With_Opcode(uint8_t opcode)
 {
 	static char* op_mnemonics[] = {"HALT","JUMP","SKC","LOAD","STORE",
 	"IN","OUT","MOVE","ADD","MUL","DIV","AND","OR","NOT","SHL","SHR"};
@@ -168,7 +168,7 @@ char* __Mnemonic_With_Opcode(uint8_t opcode)
 }
 
 
-char* __Mnemonic_With_Register(uint8_t register_n)
+static char* __Mnemonic_With_Register(uint8_t register_n)
 {
 	static char* reg_mnemonics[] = {"$PC","$IR","$RA","$SP","$FP",
 	"$T1","$T2","$T3","$T4","$S1","$S2","$S3","$S4","$S5","$PR","$FR"};
@@ -182,7 +182,7 @@ char* __Mnemonic_With_Register(uint8_t register_n)
 
 // Private instance methods for Disassembler
 
-instruction_t __Instruction_With_Word(Disassembler* self, uword_t word)
+static instruction_t __Instruction_With_Word(Disassembler* self, uword_t word)
 {
 	instruction_t ret = {0};
 	ret.operand = word&((uword_t)pow(2,WORD_SIZE - OPCODE_LENGTH)-1);
@@ -190,7 +190,7 @@ instruction_t __Instruction_With_Word(Disassembler* self, uword_t word)
 	return ret;
 }
 
-char __Next_Label(Disassembler* self, uword_t label_address)
+static char __Next_Label(Disassembler* self, uword_t label_address)
 {	
 	if (!self->__current_label)
 		self->__current_label = 'A';
@@ -200,7 +200,7 @@ char __Next_Label(Disassembler* self, uword_t label_address)
 	return self->__current_label++;
 }
 
-uword_t __Kill_Thread(Disassembler* self)
+static uword_t __Kill_Thread(Disassembler* self)
 {
 	Stack* ra_stack = NULL;
 	SKC_Pair *pair = NULL;
@@ -241,12 +241,12 @@ uword_t __Kill_Thread(Disassembler* self)
 }
 
 
-char* __Disassemble_Instruction_With_No_Registers(Disassembler* self, instruction_t* instruction)
+static char* __Disassemble_Instruction_With_No_Registers(Disassembler* self, instruction_t* instruction)
 {
 	return __Mnemonic_With_Opcode(instruction->opcode);
 }
 
-char* __Disassemble_Instruction_With_One_Register(Disassembler* self, instruction_t* instruction)
+static char* __Disassemble_Instruction_With_One_Register(Disassembler* self, instruction_t* instruction)
 {
 	char* op_mnemonic = __Mnemonic_With_Opcode(instruction->opcode);
 	uint8_t reg_number = instruction->operand & 0x00f;
@@ -255,7 +255,7 @@ char* __Disassemble_Instruction_With_One_Register(Disassembler* self, instructio
 	return ret;
 }
 
-char* __Disassemble_Instruction_With_Two_Registers(Disassembler* self, instruction_t* instruction)
+static char* __Disassemble_Instruction_With_Two_Registers(Disassembler* self, instruction_t* instruction)
 {
 	char* op_mnemonic = __Mnemonic_With_Opcode(instruction->opcode);
 
@@ -267,7 +267,7 @@ char* __Disassemble_Instruction_With_Two_Registers(Disassembler* self, instructi
 	return ret;
 }
 
-char* __Disassemble_Jump(Disassembler* self, instruction_t* instruction, uword_t current_address, uword_t* new_address)
+static char* __Disassemble_Jump(Disassembler* self, instruction_t* instruction, uword_t current_address, uword_t* new_address)
 {
 	uword_t jump_address = instruction->operand;
 
@@ -304,7 +304,7 @@ char* __Disassemble_Jump(Disassembler* self, instruction_t* instruction, uword_t
 	return ret;
 }
 
-char* __Disassemble_Load(Disassembler* self, instruction_t* instruction)
+static char* __Disassemble_Load(Disassembler* self, instruction_t* instruction)
 {
 	char* op_mnemonic = __Mnemonic_With_Opcode(instruction->opcode);
 
@@ -352,7 +352,7 @@ char* __Disassemble_Load(Disassembler* self, instruction_t* instruction)
 	return ret;
 }
 
-char* __Disassemble_Out(Disassembler* self, instruction_t* instruction)
+static char* __Disassemble_Out(Disassembler* self, instruction_t* instruction)
 {
 	char* op_mnemonic = __Mnemonic_With_Opcode(instruction->opcode);
 	uint8_t flag = (instruction->operand & 0x0f0) >> 4;
@@ -363,7 +363,7 @@ char* __Disassemble_Out(Disassembler* self, instruction_t* instruction)
 	return ret;
 }
 
-char** __Finalize_Disassembly(Disassembler* self, char** without_labels)
+static char** __Finalize_Disassembly(Disassembler* self, char** without_labels)
 {
 	char** ret = calloc(self->program->size+self->__labels_n, sizeof(char*));
 	for (int i = 0, labels_inserted = 0; i < self->program->size; ++i)
@@ -383,7 +383,7 @@ char** __Finalize_Disassembly(Disassembler* self, char** without_labels)
 	return ret;
 }
 
-char** __Insert_Data(Disassembler* self, char** without_data)
+static char** __Insert_Data(Disassembler* self, char** without_data)
 {
 	size_t size = self->program->size+self->__labels_n;
 	for (int i = 1; i < size+1; ++i)
@@ -401,7 +401,7 @@ char** __Insert_Data(Disassembler* self, char** without_data)
 	return without_data; // But with data!
 }
 
-void __Extra_Conditions_For_Halt(Disassembler* self, instruction_t* instruction, uword_t* new_address)
+static void __Extra_Conditions_For_Halt(Disassembler* self, instruction_t* instruction, uword_t* new_address)
 {
 	*new_address = __Kill_Thread(self);
 }
