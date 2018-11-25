@@ -8,6 +8,7 @@
 #include <string.h>
 #include <math.h>
 #include "Disassembler/Disassembler.h"
+#include <assert.h>
 
 #define k_HELP_STRING "Help:\n\
 Usage: ... <disassembler_flag> <print_flag> <build_flag>\
@@ -73,7 +74,6 @@ uint16_t* input_words(void)
 
 Program* handle_build_flag(const char* flag, int argc, char const *argv[])
 {
-	va_list args;
 	Program* program = NULL;
 	uint16_t* words = NULL;
 	uint16_t n_words = 0;
@@ -111,20 +111,15 @@ Program* handle_build_flag(const char* flag, int argc, char const *argv[])
 
 int main(int argc, char const *argv[])
 {
-	// Program* program;
-	// VirtualMachine* vm;
 
-	// if (argc < 4)
-	// {
-	// 	_err(k_NOT_ENOUGH_PARAMS, argv[0]);
-	// }
-
-	// program = handle_build_flag(argv[1], argc, argv+2);
-	// vm = alloc_init(VirtualMachine_Class_Descriptor);
-	// Virtual_Machine_Run(vm, program);
-	// return 0;
+	int size = 0;
 	Program* p = Program_With_File("out3");
 	Disassembler* dsm = Disassembler_With_Program(p);
-	Disassembler_Statically_Disassemble(dsm);
+	char** disasm = Disassembler_Statically_Disassemble(dsm, &size);
+	for (int i = 0; i < size; ++i)
+	{
+		printf("%s\n",disasm[i]);
+	}
+
 	return 0;
 }

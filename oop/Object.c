@@ -54,7 +54,7 @@ static const char* const _Object_Descriptor(Object * self)
 
 static unsigned int _Object_Equals(Object* self, Object* obj)
 {
-	return &self == &obj;
+	return self == obj;
 }
 
 // VIRTUAL METHODS HANDLES (PUBLIC)

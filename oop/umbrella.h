@@ -6,5 +6,6 @@
 #include "String.h"
 #include "../utilities/utilities.h"
 #include "Queue.h"
+#include "Stack.h"
 
 #endif

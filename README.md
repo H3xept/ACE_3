@@ -1,4 +1,4 @@
-# ACE3
+# TBTTBSQSA (The Bigger Than Tiny But Still Quite Small Architecture)
 ## Spec
 16 Operators, 16 Registers
 
