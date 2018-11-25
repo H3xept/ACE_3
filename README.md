@@ -1,6 +1,7 @@
 # TBTTBSQSA (The Bigger Than Tiny But Still Quite Small Architecture)
-### Note
-Any references to 'padding' refer to the act of filling in the bits to the left of a value.
+### Notes
++ Any references to 'padding' refer to the act of filling in the bits to the left of a value.
++ Assembly code for this architecture is __not__ case sensitive.
 
 ## Spec
 + Von Neumann Architecture
