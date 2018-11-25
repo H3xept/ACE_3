@@ -1,3 +1,38 @@
+/**************************************************************************
+ * Assessment Title:
+ * ACE 3 (TBTTBSQSA)
+ *
+ * Number of Submitted C Files: 
+ * 19 (51 total files including .h, .py, .asm and .md)
+ * 
+ * Date: 
+ * 25/11/2018
+ * 
+ * Authors: 
+ *	1. Leonardo Cascianelli, Reg no: 201710666
+ *	2. Rory Brown, Reg no: 201717976
+ *	3. Ewan Skene, Reg no: 201717413
+ * 
+ *
+ *	Statement: We confirm that this submission is all our own work.
+ *
+ *  (Signed)_Leonardo_Cascianelli________________(Leonardo Cascianelli)
+ *	
+ * 	(Signed)_Rory_Brown__________________________(Rory Brown)
+ *	
+ *	(Signed)_Ewan_Skene__________________________(Ewan Skene)
+ *
+ **************************************************************************/
+
+/**
+* Filename: main.c
+* Class: VirtualMachine
+* Authors: Leonardo Cascianelli,Rory Brown,Ewan Skene
+* Date: 2018-11-25
+* 
+* Description: The main file, runs the virtual machine/disassembler
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -38,6 +73,11 @@ Type 'help' as first argument for the list of available commands."
 #define k_FLAG_FILE_LONG "--file"
 
 #define k_DEFAULT_PROGRAM_PATH "./src/VirtualMachine/vm_programs/binaryCounter.bin"
+#define k_MODE_RUN_MODE "rm"
+#define k_MODE_DISASSEMBLE_MODE "dm"
+#define k_MODE_DISASSEMBLE_RUN_MODE "drm"
+
+#define k_HELP "help"
 
 typedef enum {
 	Program_Mode_Run, Program_Mode_Disassemble,
@@ -130,7 +170,7 @@ Program* handle_program_loading_flag(const char* flag, int* argc, char const *ar
 
 		program = Program_With_File(filename);
 
-	} else if (!strcmp(flag, "help")) {
+	} else if (!strcmp(flag, k_HELP)) {
 		
 		display_help();
 		exit(0);
@@ -151,11 +191,11 @@ Program* handle_program_loading_flag(const char* flag, int* argc, char const *ar
 */
 Program_Mode handle_running_mode_flag(const char* flag)
 {
-	if (!strcmp(flag, "rm")) {
+	if (!strcmp(flag, k_MODE_RUN_MODE)) {
 		return Program_Mode_Run;
-	} else if (!strcmp(flag, "dm")) {
+	} else if (!strcmp(flag, k_MODE_DISASSEMBLE_MODE)) {
 		return Program_Mode_Disassemble;
-	} else if (!strcmp(flag, "drm")) {
+	} else if (!strcmp(flag, k_MODE_DISASSEMBLE_RUN_MODE)) {
 		return Program_Mode_Disassemble_And_Run;
 	} else {
 		_err("Running mode %s not recognised.",flag);
@@ -197,7 +237,7 @@ DISASM_ONLY:
 void detect_help(int argc, char const *argv[])
 {
 	if (!(argc-1)) return;
-	if (!strcmp(argv[1], "help"))
+	if (!strcmp(argv[1], k_HELP))
 	{
 		_pinfo(k_HELP_STRING, argv[0]);
 		exit(0);
