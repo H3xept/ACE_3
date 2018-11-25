@@ -23,4 +23,10 @@ framework:
 
 clean:
 	@echo "Cleanup..."
+	rm logs/last_memdump.log
+	rm logs/last_regdump.log
+	rm logs/last_trace.log
+	touch logs/last_memdump.log
+	touch logs/last_regdump.log
+	touch logs/last_trace.log
 	rm *.o
