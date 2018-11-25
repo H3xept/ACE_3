@@ -30,7 +30,7 @@
 * Authors: Leonardo Cascianelli, Rory Brown, Ewan Skene
 * Date: 2018-11-22
 * 
-* Description: A
+* Description: A disassembler for TBTTBSQSA (The Bigger Than Tiny But Still Quite Small Architecture)
 */
 
 #ifndef __Disassembler__
