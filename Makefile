@@ -5,21 +5,21 @@ ASSEMBLER_NAME = Assembler
 
 all: framework disasm
 	@echo "Compiling Project"
-	$(CC) *.c ./VirtualMachine/*.c $(CFLAGS) -o $(PROGRAM_NAME) *.o
+	$(CC) *.c ./src/VirtualMachine/*.c $(CFLAGS) -o $(PROGRAM_NAME) *.o
 	rm *.o
 
 asm: framework
 	@echo "Compiling Assembler"
-	$(CC) ./Assembler/*.c $(CFLAGS) -o asm.out *.o
+	$(CC) ./src/Assembler/*.c $(CFLAGS) -o asm.out *.o
 	rm *.o
 
 disasm: framework
 	@echo "Compiling Disassembler"
-	$(CC) -c ./Disassembler/*.c $(CFLAGS)
+	$(CC) -c ./src/Disassembler/*.c $(CFLAGS)
 
 framework:
 	@echo "Compiling OOP Framework"
-	$(CC) -c ./oop/*.c ./utilities/*.c $(CFLAGS)
+	$(CC) -c ./src/oop/*.c ./src/utilities/*.c $(CFLAGS)
 
 clean:
 	@echo "Cleanup..."
