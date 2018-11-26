@@ -450,7 +450,7 @@ Shifts the first register right by a number of bits equal to the value in the se
 
 ---
 ## Labels
-Labels are used by referencing them in `jump` or `load` instructions, and placing them somewhere in the program with a colon.
+Labels are used by referencing them in `jump` or `loadl` instructions (`loadl` is a pseudoinstruction), and placing them somewhere in the program with a colon.
 
 The label `loop` may be used by placing `loop:` on its own line somewhere in the program, and using `jump loop` or `load $[some register] loop`.
 
@@ -475,9 +475,9 @@ This will produce an output as follows:
 
 `10 9 8 7 6 5 4 3 2 1`
 
-### Load Example
+### Loadl Example
 ```asm
-load $t1 dataSegment
+loadl $t1 dataSegment
 load $t2 $t1
 out $t2 1
 halt
