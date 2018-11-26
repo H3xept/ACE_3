@@ -27,6 +27,12 @@ Assembler <file_name> <output_file_name>
 
 The assembler will output a binary file containing the assembled program, which can be given as input to the virtual machine.
 
+In the assembly code, labels can be loaded as memory addresses with the `loadl` pseudoinstruction:
+
+```
+loadl <register> <label>
+```
+
 ## Using The Virtual Machine
 The programs can be ran on the virtual machine (`TBTTBSQSA`) as follows:
 
